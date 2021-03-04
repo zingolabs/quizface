@@ -97,8 +97,7 @@ fn interpret_help_message(
     raw_command_help: &str,
 ) -> (String, serde_json::Value) {
     let (cmd_name, result_data) = extract_name_and_result(raw_command_help);
-    let scrubbed_result =
-        scrub(cmd_name.clone(), result_data);
+    let scrubbed_result = scrub(cmd_name.clone(), result_data);
     (cmd_name, annotate_result(&mut scrubbed_result.chars()))
 }
 
@@ -171,6 +170,8 @@ fn annotate_array(result_chars: &mut std::str::Chars) -> serde_json::Value {
                 if viewed.trim().is_empty() {
                     break;
                 }
+                dbg!(&viewed);
+                ordered_results.push(get_arrray_terminal(viewed.clone()));
                 viewed.clear();
                 break;
             }
@@ -192,7 +193,23 @@ fn annotate_array(result_chars: &mut std::str::Chars) -> serde_json::Value {
             _ => panic!("character is UTF-8 but not ASCII!"),
         }
     }
+
     Value::Array(ordered_results)
+}
+
+fn get_arrray_terminal(viewed: String) -> Value {
+    let viewed_lines = viewed
+        .trim_end()
+        .lines()
+        .map(|line| line.to_string())
+        .collect::<Vec<String>>();
+    dbg!(&viewed_lines);
+    let raw_label = viewed_lines[1]
+        .split(|c| c == '(' || c == ')')
+        .collect::<Vec<&str>>()[1]
+        .to_string();
+    dbg!(&raw_label);
+    json!(make_label(raw_label))
 }
 
 // TODO could be cleaned up, and/or broken into cases
@@ -314,7 +331,7 @@ mod unit {
         let expected_result = test::HELP_GETBLOCKCHAININFO_RESULT_SCRUBBED;
         let result = scrub(
             "getblockchaininfo".to_string(),
-            test::HELP_GETBLOCKCHAININFO_RESULT.to_string()
+            test::HELP_GETBLOCKCHAININFO_RESULT.to_string(),
         );
         assert_eq!(expected_result, result);
     }

@@ -24,6 +24,12 @@ fn getchaintips(raw: String) -> String {
 "#)
 }
 
+fn getblockhashes(raw: String) -> String {
+    raw.replace(r#"hex string"#, r#"hexadecimal"#)
+        .replace(r#"hexstring"#, r#"hexadecimal"#)
+        .replace(r#", ..."#, r#""#)
+}
+
 fn getspentinfo(raw: String) -> String {
     raw.replace(r#"number"#, r#"numeric"#).replace(
         r#"  ,...
@@ -132,6 +138,7 @@ macro_rules! getblockdeltas {
         $result_data
             .replace(r#"hex string"#, r#"hexadecimal"#)
             .replace(r#"hexstring"#, r#"hexadecimal"#)
+            .replace(r#", ..."#, r#""#)
     };
 }
 
@@ -157,36 +164,42 @@ macro_rules! getaddressmempool {
     };
 }
 
-pub(crate) fn scrub (cmd_name: String, result_data: String ) -> String {
-        if cmd_name == "getblockchaininfo".to_string() {
-            getblockchaininfo(result_data)
-        } else if cmd_name == "getchaintips".to_string() {
-            getchaintips(result_data)
-        } else if cmd_name == "getaddressmempool".to_string() {
-            getaddressmempool!(result_data)
-        } else if cmd_name == "getblockdeltas".to_string() {
-            getblockdeltas!(result_data)
-        } else if cmd_name == "getspentinfo".to_string() {
-            getspentinfo(result_data)
-        } else if cmd_name == "submitblock".to_string() {
-            submitblock!(result_data)
-        } else if cmd_name == "listaccounts".to_string() {
-            listaccounts(result_data)
-        } else if cmd_name == "listreceivedbyaccount".to_string() {
-            listreceivedbyaccount(result_data)
-        } else if cmd_name == "listreceivedbyaddress".to_string() {
-            listreceivedbyaddress(result_data)
-        } else if cmd_name == "listtransactions".to_string() {
-            listtransactions(result_data)
-        } else if cmd_name == "z_listreceivedbyaddress".to_string() {
-            z_listreceivedbyaddress(result_data)
-        } else if cmd_name == "z_getoperationstatus".to_string() {
-            z_getoperationstatus(result_data)
-        } else if cmd_name == "z_getoperationresult".to_string() {
-            z_getoperationresult(result_data)
-        } else if cmd_name == "getaddressdeltas".to_string() {
-            getaddressdeltas(result_data)
-        } else {
-            result_data
-        }
+fn dotdotdot(raw: String) -> String {
+    raw.replace(r#", ..."#, r#""#).replace(r#",..."#, r#""#)
+}
+
+pub(crate) fn scrub(cmd_name: String, result_data: String) -> String {
+    if cmd_name == "getblockchaininfo".to_string() {
+        getblockchaininfo(result_data)
+    } else if cmd_name == "getchaintips".to_string() {
+        getchaintips(result_data)
+    } else if cmd_name == "getaddressmempool".to_string() {
+        getaddressmempool!(result_data)
+    } else if cmd_name == "getblockdeltas".to_string() {
+        getblockdeltas!(result_data)
+    } else if cmd_name == "getspentinfo".to_string() {
+        getspentinfo(result_data)
+    } else if cmd_name == "submitblock".to_string() {
+        submitblock!(result_data)
+    } else if cmd_name == "listaccounts".to_string() {
+        listaccounts(result_data)
+    } else if cmd_name == "listreceivedbyaccount".to_string() {
+        listreceivedbyaccount(result_data)
+    } else if cmd_name == "listreceivedbyaddress".to_string() {
+        listreceivedbyaddress(result_data)
+    } else if cmd_name == "listtransactions".to_string() {
+        listtransactions(result_data)
+    } else if cmd_name == "z_listreceivedbyaddress".to_string() {
+        z_listreceivedbyaddress(result_data)
+    } else if cmd_name == "z_getoperationstatus".to_string() {
+        z_getoperationstatus(result_data)
+    } else if cmd_name == "z_getoperationresult".to_string() {
+        z_getoperationresult(result_data)
+    } else if cmd_name == "getaddressdeltas".to_string() {
+        getaddressdeltas(result_data)
+    } else if cmd_name == "getblockhashes".to_string() {
+        scrub_getblockhashes(result_data)
+    } else {
+        dotdotdot(result_data)
+    }
 }
