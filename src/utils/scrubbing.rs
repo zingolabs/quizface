@@ -82,6 +82,23 @@ fn z_getoperationstatus(raw: String) -> String {
     )
 }
 
+fn getnetworkinfo(raw: String) -> String {
+    raw.replace(r#"MagicBean:x.y.z[-v]"#, r#"MagicBean"#)
+        .replace(r#",..."#, r#""#)
+}
+fn getdeprecationinfo(raw: String) -> String {
+    raw.replace(r#"MagicBean:x.y.z[-v]"#, r#"MagicBean"#)
+}
+
+fn getpeerinfo(raw: String) -> String {
+    raw.replace(r#"MagicBean:x.y.z[-v]"#, r#"MagicBean"#)
+        .replace(r#",..."#, r#""#)
+}
+fn z_validateaddress(raw: String) -> String {
+    raw.replace(r#"[sprout]"#, r#"<sprout>"#)
+        .replace(r#"[sapling]"#, r#"<sapling>"#)
+}
+
 fn z_getoperationresult(raw: String) -> String {
     raw.replace(
         r#"(array) A list of JSON objects"#,
@@ -171,6 +188,12 @@ fn dotdotdot(raw: String) -> String {
 pub(crate) fn scrub(cmd_name: String, result_data: String) -> String {
     if cmd_name == "getblockchaininfo".to_string() {
         getblockchaininfo(result_data)
+    } else if cmd_name == "getdeprecationinfo".to_string() {
+        getdeprecationinfo(result_data)
+    } else if cmd_name == "getnetworkinfo".to_string() {
+        getnetworkinfo(result_data)
+    } else if cmd_name == "getpeerinfo".to_string() {
+        getpeerinfo(result_data)
     } else if cmd_name == "getchaintips".to_string() {
         getchaintips(result_data)
     } else if cmd_name == "getaddressmempool".to_string() {
@@ -191,6 +214,8 @@ pub(crate) fn scrub(cmd_name: String, result_data: String) -> String {
         listtransactions(result_data)
     } else if cmd_name == "z_listreceivedbyaddress".to_string() {
         z_listreceivedbyaddress(result_data)
+    } else if cmd_name == "z_validateaddress".to_string() {
+        z_validateaddress(result_data)
     } else if cmd_name == "z_getoperationstatus".to_string() {
         z_getoperationstatus(result_data)
     } else if cmd_name == "z_getoperationresult".to_string() {
@@ -198,7 +223,7 @@ pub(crate) fn scrub(cmd_name: String, result_data: String) -> String {
     } else if cmd_name == "getaddressdeltas".to_string() {
         getaddressdeltas(result_data)
     } else if cmd_name == "getblockhashes".to_string() {
-        scrub_getblockhashes(result_data)
+        getblockhashes(result_data)
     } else {
         dotdotdot(result_data)
     }

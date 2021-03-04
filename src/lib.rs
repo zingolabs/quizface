@@ -204,9 +204,14 @@ fn get_arrray_terminal(viewed: String) -> Value {
         .map(|line| line.to_string())
         .collect::<Vec<String>>();
     dbg!(&viewed_lines);
-    let raw_label = viewed_lines[1]
-        .split(|c| c == '(' || c == ')')
-        .collect::<Vec<&str>>()[1]
+
+    let raw_label = if viewed_lines.len() == 1 {
+        &viewed_lines[0]
+    } else {
+        &viewed_lines[1]
+    }
+    .split(|c| c == '(' || c == ')')
+    .collect::<Vec<&str>>()[1]
         .to_string();
     dbg!(&raw_label);
     json!(make_label(raw_label))
