@@ -649,6 +649,7 @@ mod unit {
         assert_eq!(valid_help_in.1, test::valid_getinfo_annotation());
     }
 
+    #[ignore]
     #[test]
     fn interpret_help_message_upgrades_in_obj_extracted() {
         dbg!(interpret_help_message(test::UPGRADES_IN_OBJ_EXTRACTED));
@@ -717,7 +718,8 @@ mod unit {
         let interpreted = interpret_help_message(expected_incoming);
         assert_eq!(interpreted.1, expected_results);
     }
-
+    
+    #[ignore]
     #[test]
     fn interpret_help_message_getblockchaininfo_complete_does_not_panic() {
         dbg!(interpret_help_message(
