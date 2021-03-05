@@ -1,40 +1,3 @@
-#[macro_export]
-macro_rules! scrub {
-    ($cmd_name:expr, $result_data:expr) => {{
-        if $cmd_name == "getblockchaininfo".to_string() {
-            getblockchaininfo($result_data)
-        } else if $cmd_name == "getchaintips".to_string() {
-            getchaintips($result_data)
-        } else if $cmd_name == "getaddressmempool".to_string() {
-            getaddressmempool($result_data)
-        } else if $cmd_name == "getblockdeltas".to_string() {
-            getblockdeltas($result_data)
-        } else if $cmd_name == "getspentinfo".to_string() {
-            getspentinfo($result_data)
-        } else if $cmd_name == "submitblock".to_string() {
-            submitblock($result_data)
-        } else if $cmd_name == "listaccounts".to_string() {
-            listaccounts($result_data)
-        } else if $cmd_name == "listreceivedbyaccount".to_string() {
-            listreceivedbyaccount($result_data)
-        } else if $cmd_name == "listreceivedbyaddress".to_string() {
-            listreceivedbyaddress($result_data)
-        } else if $cmd_name == "listtransactions".to_string() {
-            listtransactions($result_data)
-        } else if $cmd_name == "z_listreceivedbyaddress".to_string() {
-            z_listreceivedbyaddress($result_data)
-        } else if $cmd_name == "z_getoperationstatus".to_string() {
-            z_getoperationstatus($result_data)
-        } else if $cmd_name == "z_getoperationresult".to_string() {
-            z_getoperationresult($result_data)
-        } else if $cmd_name == "getaddressdeltas".to_string() {
-            getaddressdeltas($result_data)
-        } else {
-            $result_data
-        }
-    }};
-}
-
 pub fn getblockchaininfo(raw: String) -> String {
     raw.replace("[0..1]", "").replace(
         "{ ... }      (object) progress toward rejecting pre-softfork blocks",
@@ -184,3 +147,41 @@ pub fn getaddressdeltas(raw: String) -> String {
     }"#,
         )
 }
+
+#[macro_export]
+macro_rules! scrub {
+    ($cmd_name:expr, $result_data:expr) => {{
+        if $cmd_name == "getblockchaininfo".to_string() {
+            getblockchaininfo($result_data)
+        } else if $cmd_name == "getchaintips".to_string() {
+            getchaintips($result_data)
+        } else if $cmd_name == "getaddressmempool".to_string() {
+            getaddressmempool($result_data)
+        } else if $cmd_name == "getblockdeltas".to_string() {
+            getblockdeltas($result_data)
+        } else if $cmd_name == "getspentinfo".to_string() {
+            getspentinfo($result_data)
+        } else if $cmd_name == "submitblock".to_string() {
+            submitblock($result_data)
+        } else if $cmd_name == "listaccounts".to_string() {
+            listaccounts($result_data)
+        } else if $cmd_name == "listreceivedbyaccount".to_string() {
+            listreceivedbyaccount($result_data)
+        } else if $cmd_name == "listreceivedbyaddress".to_string() {
+            listreceivedbyaddress($result_data)
+        } else if $cmd_name == "listtransactions".to_string() {
+            listtransactions($result_data)
+        } else if $cmd_name == "z_listreceivedbyaddress".to_string() {
+            z_listreceivedbyaddress($result_data)
+        } else if $cmd_name == "z_getoperationstatus".to_string() {
+            z_getoperationstatus($result_data)
+        } else if $cmd_name == "z_getoperationresult".to_string() {
+            z_getoperationresult($result_data)
+        } else if $cmd_name == "getaddressdeltas".to_string() {
+            getaddressdeltas($result_data)
+        } else {
+            $result_data
+        }
+    }};
+}
+
