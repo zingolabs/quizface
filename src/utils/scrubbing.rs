@@ -1,4 +1,4 @@
-pub fn getblockchaininfo(raw: String) -> String {
+pub(crate) fn getblockchaininfo(raw: String) -> String {
     raw.replace("[0..1]", "").replace(
         "{ ... }      (object) progress toward rejecting pre-softfork blocks",
         "{
@@ -9,7 +9,7 @@ pub fn getblockchaininfo(raw: String) -> String {
 }").replace("(same fields as \"enforce\")", "").replace(", ...", "")
 }
 
-pub fn getchaintips(raw: String) -> String {
+pub(crate) fn getchaintips(raw: String) -> String {
     raw.replace(
             r#"Possible values for status:
 1.  "invalid"               This branch contains at least one invalid block
@@ -24,15 +24,15 @@ pub fn getchaintips(raw: String) -> String {
 "#)
 }
 
-pub fn getaddressmempool(raw: String) -> String {
+pub(crate) fn getaddressmempool(raw: String) -> String {
     raw.replace(r#"number"#, r#"numeric"#)
 }
 
-pub fn getblockdeltas(raw: String) -> String {
+pub(crate) fn getblockdeltas(raw: String) -> String {
     raw.replace(r#"hex string"#, r#"hexadecimal"#)
         .replace(r#"hexstring"#, r#"hexadecimal"#)
 }
-pub fn getspentinfo(raw: String) -> String {
+pub(crate) fn getspentinfo(raw: String) -> String {
     raw.replace(r#"number"#, r#"numeric"#).replace(
         r#"  ,...
 "#,
@@ -40,7 +40,7 @@ pub fn getspentinfo(raw: String) -> String {
     )
 }
 
-pub fn submitblock(raw: String) -> String {
+pub(crate) fn submitblock(raw: String) -> String {
     raw.replace(r#"duplicate" - node already has valid copy of block
 "duplicate-invalid" - node already has block, but it is invalid
 "duplicate-inconclusive" - node already has block but has not validated it
@@ -54,20 +54,20 @@ r#"duplicate": (boolean) node already has valid copy of block
 "rejected": (boolean) block was rejected as invalid"#)
 }
 
-pub fn listaccounts(raw: String) -> String {
+pub(crate) fn listaccounts(raw: String) -> String {
     raw.replace(r#"                      (json object where keys are account names, and values are numeric balances"#, "")
         .replace(r#"  ...
 "#, "")
 }
 
-pub fn listreceivedbyaccount(raw: String) -> String {
+pub(crate) fn listreceivedbyaccount(raw: String) -> String {
     raw.replace(r#"bool"#, "boolean").replace(
         r#"  ,...
 "#,
         "",
     )
 }
-pub fn listreceivedbyaddress(raw: String) -> String {
+pub(crate) fn listreceivedbyaddress(raw: String) -> String {
     raw.replace(r#"bool"#, "boolean").replace(
         r#"  ,...
 "#,
@@ -75,7 +75,7 @@ pub fn listreceivedbyaddress(raw: String) -> String {
     )
 }
 
-pub fn listtransactions(raw: String) -> String {
+pub(crate) fn listtransactions(raw: String) -> String {
     raw.lines()
         .filter(|l| !l.starts_with("                                         "))
         .fold(String::new(), |mut accumulator, new| {
@@ -85,25 +85,25 @@ pub fn listtransactions(raw: String) -> String {
         })
 }
 
-pub fn z_listreceivedbyaddress(raw: String) -> String {
+pub(crate) fn z_listreceivedbyaddress(raw: String) -> String {
     raw.replace(r#" (sprout) : n,"#, r#": n, <sprout> "#)
         .replace(r#" (sapling) : n,"#, r#": n, <sapling> "#)
 }
 
-pub fn z_getoperationstatus(raw: String) -> String {
+pub(crate) fn z_getoperationstatus(raw: String) -> String {
     raw.replace(
         r#"(array) A list of JSON objects"#,
         r#"(INSUFFICIENT) A list of JSON objects"#,
     )
 }
 
-pub fn z_getoperationresult(raw: String) -> String {
+pub(crate) fn z_getoperationresult(raw: String) -> String {
     raw.replace(
         r#"(array) A list of JSON objects"#,
         r#"(INSUFFICIENT) A list of JSON objects"#,
     )
 }
-pub fn getaddressdeltas(raw: String) -> String {
+pub(crate) fn getaddressdeltas(raw: String) -> String {
     raw.split(r#"(or, if chainInfo is true):"#)
         .collect::<Vec<&str>>()[1]
         .trim()
