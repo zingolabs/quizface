@@ -2,40 +2,40 @@
 macro_rules! scrub {
     ($cmd_name:expr, $result_data:expr) => {{
         if $cmd_name == "getblockchaininfo".to_string() {
-            scrub_getblockchaininfo($result_data)
+            getblockchaininfo($result_data)
         } else if $cmd_name == "getchaintips".to_string() {
-            scrub_getchaintips($result_data)
+            getchaintips($result_data)
         } else if $cmd_name == "getaddressmempool".to_string() {
-            scrub_getaddressmempool($result_data)
+            getaddressmempool($result_data)
         } else if $cmd_name == "getblockdeltas".to_string() {
-            scrub_getblockdeltas($result_data)
+            getblockdeltas($result_data)
         } else if $cmd_name == "getspentinfo".to_string() {
-            scrub_getspentinfo($result_data)
+            getspentinfo($result_data)
         } else if $cmd_name == "submitblock".to_string() {
-            scrub_submitblock($result_data)
+            submitblock($result_data)
         } else if $cmd_name == "listaccounts".to_string() {
-            scrub_listaccounts($result_data)
+            listaccounts($result_data)
         } else if $cmd_name == "listreceivedbyaccount".to_string() {
-            scrub_listreceivedbyaccount($result_data)
+            listreceivedbyaccount($result_data)
         } else if $cmd_name == "listreceivedbyaddress".to_string() {
-            scrub_listreceivedbyaddress($result_data)
+            listreceivedbyaddress($result_data)
         } else if $cmd_name == "listtransactions".to_string() {
-            scrub_listtransactions($result_data)
+            listtransactions($result_data)
         } else if $cmd_name == "z_listreceivedbyaddress".to_string() {
-            scrub_z_listreceivedbyaddress($result_data)
+            z_listreceivedbyaddress($result_data)
         } else if $cmd_name == "z_getoperationstatus".to_string() {
-            scrub_z_getoperationstatus($result_data)
+            z_getoperationstatus($result_data)
         } else if $cmd_name == "z_getoperationresult".to_string() {
-            scrub_z_getoperationresult($result_data)
+            z_getoperationresult($result_data)
         } else if $cmd_name == "getaddressdeltas".to_string() {
-            scrub_getaddressdeltas($result_data)
+            getaddressdeltas($result_data)
         } else {
             $result_data
         }
     }};
 }
 
-pub fn scrub_getblockchaininfo(raw: String) -> String {
+pub fn getblockchaininfo(raw: String) -> String {
     raw.replace("[0..1]", "").replace(
         "{ ... }      (object) progress toward rejecting pre-softfork blocks",
         "{
@@ -46,7 +46,7 @@ pub fn scrub_getblockchaininfo(raw: String) -> String {
 }").replace("(same fields as \"enforce\")", "").replace(", ...", "")
 }
 
-pub fn scrub_getchaintips(raw: String) -> String {
+pub fn getchaintips(raw: String) -> String {
     raw.replace(
             r#"Possible values for status:
 1.  "invalid"               This branch contains at least one invalid block
@@ -61,15 +61,15 @@ pub fn scrub_getchaintips(raw: String) -> String {
 "#)
 }
 
-pub fn scrub_getaddressmempool(raw: String) -> String {
+pub fn getaddressmempool(raw: String) -> String {
     raw.replace(r#"number"#, r#"numeric"#)
 }
 
-pub fn scrub_getblockdeltas(raw: String) -> String {
+pub fn getblockdeltas(raw: String) -> String {
     raw.replace(r#"hex string"#, r#"hexadecimal"#)
         .replace(r#"hexstring"#, r#"hexadecimal"#)
 }
-pub fn scrub_getspentinfo(raw: String) -> String {
+pub fn getspentinfo(raw: String) -> String {
     raw.replace(r#"number"#, r#"numeric"#).replace(
         r#"  ,...
 "#,
@@ -77,7 +77,7 @@ pub fn scrub_getspentinfo(raw: String) -> String {
     )
 }
 
-pub fn scrub_submitblock(raw: String) -> String {
+pub fn submitblock(raw: String) -> String {
     raw.replace(r#"duplicate" - node already has valid copy of block
 "duplicate-invalid" - node already has block, but it is invalid
 "duplicate-inconclusive" - node already has block but has not validated it
@@ -91,20 +91,20 @@ r#"duplicate": (boolean) node already has valid copy of block
 "rejected": (boolean) block was rejected as invalid"#)
 }
 
-pub fn scrub_listaccounts(raw: String) -> String {
+pub fn listaccounts(raw: String) -> String {
     raw.replace(r#"                      (json object where keys are account names, and values are numeric balances"#, "")
         .replace(r#"  ...
 "#, "")
 }
 
-pub fn scrub_listreceivedbyaccount(raw: String) -> String {
+pub fn listreceivedbyaccount(raw: String) -> String {
     raw.replace(r#"bool"#, "boolean").replace(
         r#"  ,...
 "#,
         "",
     )
 }
-pub fn scrub_listreceivedbyaddress(raw: String) -> String {
+pub fn listreceivedbyaddress(raw: String) -> String {
     raw.replace(r#"bool"#, "boolean").replace(
         r#"  ,...
 "#,
@@ -112,7 +112,7 @@ pub fn scrub_listreceivedbyaddress(raw: String) -> String {
     )
 }
 
-pub fn scrub_listtransactions(raw: String) -> String {
+pub fn listtransactions(raw: String) -> String {
     raw.lines()
         .filter(|l| !l.starts_with("                                         "))
         .fold(String::new(), |mut accumulator, new| {
@@ -122,25 +122,25 @@ pub fn scrub_listtransactions(raw: String) -> String {
         })
 }
 
-pub fn scrub_z_listreceivedbyaddress(raw: String) -> String {
+pub fn z_listreceivedbyaddress(raw: String) -> String {
     raw.replace(r#" (sprout) : n,"#, r#": n, <sprout> "#)
         .replace(r#" (sapling) : n,"#, r#": n, <sapling> "#)
 }
 
-pub fn scrub_z_getoperationstatus(raw: String) -> String {
+pub fn z_getoperationstatus(raw: String) -> String {
     raw.replace(
         r#"(array) A list of JSON objects"#,
         r#"(INSUFFICIENT) A list of JSON objects"#,
     )
 }
 
-pub fn scrub_z_getoperationresult(raw: String) -> String {
+pub fn z_getoperationresult(raw: String) -> String {
     raw.replace(
         r#"(array) A list of JSON objects"#,
         r#"(INSUFFICIENT) A list of JSON objects"#,
     )
 }
-pub fn scrub_getaddressdeltas(raw: String) -> String {
+pub fn getaddressdeltas(raw: String) -> String {
     raw.split(r#"(or, if chainInfo is true):"#)
         .collect::<Vec<&str>>()[1]
         .trim()
