@@ -24,9 +24,6 @@ pub(crate) fn getchaintips(raw: String) -> String {
 "#)
 }
 
-pub(crate) fn getaddressmempool(raw: String) -> String {
-    raw.replace(r#"number"#, r#"numeric"#)
-}
 
 pub(crate) fn getblockdeltas(raw: String) -> String {
     raw.replace(r#"hex string"#, r#"hexadecimal"#)
@@ -149,14 +146,23 @@ pub(crate) fn getaddressdeltas(raw: String) -> String {
 }
 
 #[macro_export]
+macro_rules! getaddressmempool {
+    ($result_data:expr) => {
+        $result_data.replace(r#"number"#, r#"numeric"#)
+    }
+}
+
+#[macro_export]
 macro_rules! scrub {
-    ($cmd_name:expr, $result_data:expr) => {{
+    ($cmd_name:expr, $result_data:expr) => {
+        
         if $cmd_name == "getblockchaininfo".to_string() {
             getblockchaininfo($result_data)
         } else if $cmd_name == "getchaintips".to_string() {
             getchaintips($result_data)
         } else if $cmd_name == "getaddressmempool".to_string() {
-            getaddressmempool($result_data)
+            getaddressmempool!($result_data)
+         //   getaddressmempool($result_data)
         } else if $cmd_name == "getblockdeltas".to_string() {
             getblockdeltas($result_data)
         } else if $cmd_name == "getspentinfo".to_string() {
@@ -182,6 +188,7 @@ macro_rules! scrub {
         } else {
             $result_data
         }
-    }};
+        
+    };
 }
 
