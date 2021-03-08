@@ -1,4 +1,4 @@
-pub(crate) fn getblockchaininfo(raw: String) -> String {
+fn getblockchaininfo(raw: String) -> String {
     raw.replace("[0..1]", "").replace(
         "{ ... }      (object) progress toward rejecting pre-softfork blocks",
         "{
@@ -9,7 +9,7 @@ pub(crate) fn getblockchaininfo(raw: String) -> String {
 }").replace("(same fields as \"enforce\")", "").replace(", ...", "")
 }
 
-pub(crate) fn getchaintips(raw: String) -> String {
+fn getchaintips(raw: String) -> String {
     raw.replace(
             r#"Possible values for status:
 1.  "invalid"               This branch contains at least one invalid block
@@ -24,7 +24,7 @@ pub(crate) fn getchaintips(raw: String) -> String {
 "#)
 }
 
-pub(crate) fn getspentinfo(raw: String) -> String {
+fn getspentinfo(raw: String) -> String {
     raw.replace(r#"number"#, r#"numeric"#).replace(
         r#"  ,...
 "#,
@@ -32,13 +32,13 @@ pub(crate) fn getspentinfo(raw: String) -> String {
     )
 }
 
-pub(crate) fn listaccounts(raw: String) -> String {
+fn listaccounts(raw: String) -> String {
     raw.replace(r#"                      (json object where keys are account names, and values are numeric balances"#, "")
         .replace(r#"  ...
 "#, "")
 }
 
-pub(crate) fn listreceivedbyaccount(raw: String) -> String {
+fn listreceivedbyaccount(raw: String) -> String {
     raw.replace(r#"bool"#, "boolean").replace(
         r#"  ,...
 "#,
@@ -46,7 +46,7 @@ pub(crate) fn listreceivedbyaccount(raw: String) -> String {
     )
 }
 
-pub(crate) fn listreceivedbyaddress(raw: String) -> String {
+fn listreceivedbyaddress(raw: String) -> String {
     raw.replace(r#"bool"#, "boolean").replace(
         r#"  ,...
 "#,
@@ -54,7 +54,7 @@ pub(crate) fn listreceivedbyaddress(raw: String) -> String {
     )
 }
 
-pub(crate) fn listtransactions(raw: String) -> String {
+fn listtransactions(raw: String) -> String {
     raw.lines()
         .filter(|l| !l.starts_with("                                         "))
         .fold(String::new(), |mut accumulator, new| {
@@ -64,25 +64,25 @@ pub(crate) fn listtransactions(raw: String) -> String {
         })
 }
 
-pub(crate) fn z_listreceivedbyaddress(raw: String) -> String {
+fn z_listreceivedbyaddress(raw: String) -> String {
     raw.replace(r#" (sprout) : n,"#, r#": n, <sprout> "#)
         .replace(r#" (sapling) : n,"#, r#": n, <sapling> "#)
 }
 
-pub(crate) fn z_getoperationstatus(raw: String) -> String {
+fn z_getoperationstatus(raw: String) -> String {
     raw.replace(
         r#"(array) A list of JSON objects"#,
         r#"(INSUFFICIENT) A list of JSON objects"#,
     )
 }
 
-pub(crate) fn z_getoperationresult(raw: String) -> String {
+fn z_getoperationresult(raw: String) -> String {
     raw.replace(
         r#"(array) A list of JSON objects"#,
         r#"(INSUFFICIENT) A list of JSON objects"#,
     )
 }
-pub(crate) fn getaddressdeltas(raw: String) -> String {
+fn getaddressdeltas(raw: String) -> String {
     raw.split(r#"(or, if chainInfo is true):"#)
         .collect::<Vec<&str>>()[1]
         .trim()
@@ -127,7 +127,6 @@ pub(crate) fn getaddressdeltas(raw: String) -> String {
         )
 }
 
-#[macro_export]
 macro_rules! getblockdeltas {
     ($result_data:expr) => {
         $result_data
@@ -136,7 +135,6 @@ macro_rules! getblockdeltas {
     };
 }
 
-#[macro_export]
 macro_rules! submitblock {
     ($result_data:expr) => {
         $result_data.replace(r#"duplicate" - node already has valid copy of block
@@ -153,46 +151,42 @@ r#"duplicate": (boolean) node already has valid copy of block
     }
 }
 
-#[macro_export]
 macro_rules! getaddressmempool {
     ($result_data:expr) => {
         $result_data.replace(r#"number"#, r#"numeric"#)
     };
 }
 
-#[macro_export]
-macro_rules! scrub {
-    ($cmd_name:expr, $result_data:expr) => {
-        if $cmd_name == "getblockchaininfo".to_string() {
-            getblockchaininfo($result_data)
-        } else if $cmd_name == "getchaintips".to_string() {
-            getchaintips($result_data)
-        } else if $cmd_name == "getaddressmempool".to_string() {
-            getaddressmempool!($result_data)
-        } else if $cmd_name == "getblockdeltas".to_string() {
-            getblockdeltas!($result_data)
-        } else if $cmd_name == "getspentinfo".to_string() {
-            getspentinfo($result_data)
-        } else if $cmd_name == "submitblock".to_string() {
-            submitblock!($result_data)
-        } else if $cmd_name == "listaccounts".to_string() {
-            listaccounts($result_data)
-        } else if $cmd_name == "listreceivedbyaccount".to_string() {
-            listreceivedbyaccount($result_data)
-        } else if $cmd_name == "listreceivedbyaddress".to_string() {
-            listreceivedbyaddress($result_data)
-        } else if $cmd_name == "listtransactions".to_string() {
-            listtransactions($result_data)
-        } else if $cmd_name == "z_listreceivedbyaddress".to_string() {
-            z_listreceivedbyaddress($result_data)
-        } else if $cmd_name == "z_getoperationstatus".to_string() {
-            z_getoperationstatus($result_data)
-        } else if $cmd_name == "z_getoperationresult".to_string() {
-            z_getoperationresult($result_data)
-        } else if $cmd_name == "getaddressdeltas".to_string() {
-            getaddressdeltas($result_data)
+pub(crate) fn scrub (cmd_name: String, result_data: String ) -> String {
+        if cmd_name == "getblockchaininfo".to_string() {
+            getblockchaininfo(result_data)
+        } else if cmd_name == "getchaintips".to_string() {
+            getchaintips(result_data)
+        } else if cmd_name == "getaddressmempool".to_string() {
+            getaddressmempool!(result_data)
+        } else if cmd_name == "getblockdeltas".to_string() {
+            getblockdeltas!(result_data)
+        } else if cmd_name == "getspentinfo".to_string() {
+            getspentinfo(result_data)
+        } else if cmd_name == "submitblock".to_string() {
+            submitblock!(result_data)
+        } else if cmd_name == "listaccounts".to_string() {
+            listaccounts(result_data)
+        } else if cmd_name == "listreceivedbyaccount".to_string() {
+            listreceivedbyaccount(result_data)
+        } else if cmd_name == "listreceivedbyaddress".to_string() {
+            listreceivedbyaddress(result_data)
+        } else if cmd_name == "listtransactions".to_string() {
+            listtransactions(result_data)
+        } else if cmd_name == "z_listreceivedbyaddress".to_string() {
+            z_listreceivedbyaddress(result_data)
+        } else if cmd_name == "z_getoperationstatus".to_string() {
+            z_getoperationstatus(result_data)
+        } else if cmd_name == "z_getoperationresult".to_string() {
+            z_getoperationresult(result_data)
+        } else if cmd_name == "getaddressdeltas".to_string() {
+            getaddressdeltas(result_data)
         } else {
-            $result_data
+            result_data
         }
-    };
 }
