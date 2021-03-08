@@ -189,7 +189,7 @@ fn dotdotdot(raw: String) -> String {
 }
 
 pub(crate) fn scrub(cmd_name: String, result_data: String) -> String {
-    } else if cmd_name == "getaddressdeltas".to_string() {
+    if cmd_name == "getaddressdeltas".to_string() {
         getaddressdeltas(result_data)
     } else if cmd_name == "getaddressmempool".to_string() {
         getaddressmempool!(result_data)
