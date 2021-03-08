@@ -112,6 +112,21 @@ fn getspentinfo(raw: String) -> String {
     )
 }
 
+fn gettransaction(raw: String) -> String {
+    (raw.replace(r#"      "nullifiers" : [ string, ... ]      (string) Nullifiers of input notes
+      "commitments" : [ string, ... ]     (string) Note commitments for note outputs
+      "macs" : [ string, ... ]            (string) Message authentication tags"#,
+    r#""nullifiers": [
+        "nullifier" (string)
+    ],
+    "commitments": [
+        "commitment" (string)
+    ],
+    "macs": [
+        "mac" (string)
+    ],"#).replace(r#",..."#,r#""#).replace(r#", ..."#,r#""#)
+}
+
 fn listaccounts(raw: String) -> String {
     raw.replace(r#"                      (json object where keys are account names, and values are numeric balances"#, "")
         .replace(r#"  ...
@@ -209,6 +224,8 @@ pub(crate) fn scrub(cmd_name: String, result_data: String) -> String {
         getpeerinfo(result_data)
     } else if cmd_name == "getspentinfo".to_string() {
         getspentinfo(result_data)
+    } else if cmd_name == "gettransaction".to_string() {
+        gettransaction(result_data)
     } else if cmd_name == "listaccounts".to_string() {
         listaccounts(result_data)
     } else if cmd_name == "listreceivedbyaccount".to_string() {
