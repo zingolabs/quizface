@@ -1,7 +1,7 @@
 pub mod utils;
 use crate::logging::create_log_dirs;
 use crate::logging::log_masterhelp_output;
-use crate::utils::scrubbing::*;
+use crate::utils::scrubbing::scrub;
 use serde_json::{json, map::Map, Value};
 use std::path::Path;
 use utils::logging;
@@ -98,8 +98,7 @@ fn interpret_help_message(
 ) -> (String, serde_json::Value) {
     let (cmd_name, result_data) = extract_name_and_result(raw_command_help);
     let scrubbed_result =
-      //scrubbing::scrub_result(cmd_name.clone(), result_data);
-      scrub!(cmd_name.clone(), result_data);
+        scrub(cmd_name.clone(), result_data);
     (cmd_name, annotate_result(&mut scrubbed_result.chars()))
 }
 
@@ -313,7 +312,7 @@ mod unit {
     #[test]
     fn scrub_result_getblockchaininfo_scrubbed() {
         let expected_result = test::HELP_GETBLOCKCHAININFO_RESULT_SCRUBBED;
-        let result = scrub!(
+        let result = scrub(
             "getblockchaininfo".to_string(),
             test::HELP_GETBLOCKCHAININFO_RESULT.to_string()
         );
