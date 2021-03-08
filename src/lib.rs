@@ -97,8 +97,7 @@ fn interpret_help_message(
     raw_command_help: &str,
 ) -> (String, serde_json::Value) {
     let (cmd_name, result_data) = extract_name_and_result(raw_command_help);
-    let scrubbed_result =
-        scrub(cmd_name.clone(), result_data);
+    let scrubbed_result = scrub(cmd_name.clone(), result_data);
     (cmd_name, annotate_result(&mut scrubbed_result.chars()))
 }
 
@@ -171,6 +170,8 @@ fn annotate_array(result_chars: &mut std::str::Chars) -> serde_json::Value {
                 if viewed.trim().is_empty() {
                     break;
                 }
+                dbg!(&viewed);
+                ordered_results.push(get_array_terminal(viewed.clone()));
                 viewed.clear();
                 break;
             }
@@ -192,7 +193,15 @@ fn annotate_array(result_chars: &mut std::str::Chars) -> serde_json::Value {
             _ => panic!("character is UTF-8 but not ASCII!"),
         }
     }
+
     Value::Array(ordered_results)
+}
+
+fn get_array_terminal(viewed: String) -> Value {
+    let viewed_lines = viewed_to_lines(viewed);
+    let raw_label = make_raw_label((&viewed_lines[1]).to_string());
+    dbg!(&raw_label);
+    json!(make_label(raw_label))
 }
 
 // TODO could be cleaned up, and/or broken into cases
@@ -201,11 +210,7 @@ fn bind_idents_labels(
     viewed: String,
     inner_value: Option<Value>,
 ) -> Map<String, Value> {
-    let mut viewed_lines = viewed
-        .trim_end()
-        .lines()
-        .map(|line| line.to_string())
-        .collect::<Vec<String>>();
+    let mut viewed_lines = viewed_to_lines(viewed);
     // ignoring the first line if it is only whitespace or
     // does not contain a `:` char.
     if viewed_lines[0].trim().is_empty()
@@ -252,6 +257,21 @@ fn bind_idents_labels(
     }
 }
 
+fn make_raw_label(meta_data: String) -> String {
+    meta_data
+        .split(|c| c == '(' || c == ')')
+        .collect::<Vec<&str>>()[1]
+        .to_string()
+}
+
+fn viewed_to_lines(viewed: String) -> Vec<String> {
+    viewed
+        .trim_end()
+        .lines()
+        .map(|line| line.to_string())
+        .collect()
+}
+
 fn raw_to_ident_and_metadata(ident_with_metadata: String) -> (String, String) {
     let trimmed = ident_with_metadata.trim().to_string();
     let mut split = trimmed.splitn(3, '"').collect::<Vec<&str>>();
@@ -265,10 +285,7 @@ fn raw_to_ident_and_metadata(ident_with_metadata: String) -> (String, String) {
 // assumes well-formed `ident_with_metadata`
 fn label_identifier(ident_with_metadata: String) -> (String, String) {
     let (mut ident, meta_data) = raw_to_ident_and_metadata(ident_with_metadata);
-    let mut raw_label = meta_data
-        .split(|c| c == '(' || c == ')')
-        .collect::<Vec<&str>>()[1]
-        .to_string();
+    let mut raw_label = make_raw_label(meta_data);
     if raw_label.contains(", optional") {
         ident = format!("Option<{}>", ident);
         raw_label = raw_label.replace(", optional", "");
@@ -314,7 +331,7 @@ mod unit {
         let expected_result = test::HELP_GETBLOCKCHAININFO_RESULT_SCRUBBED;
         let result = scrub(
             "getblockchaininfo".to_string(),
-            test::HELP_GETBLOCKCHAININFO_RESULT.to_string()
+            test::HELP_GETBLOCKCHAININFO_RESULT.to_string(),
         );
         assert_eq!(expected_result, result);
     }
