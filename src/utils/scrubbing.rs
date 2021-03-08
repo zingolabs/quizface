@@ -25,10 +25,6 @@ pub(crate) fn getchaintips(raw: String) -> String {
 }
 
 
-pub(crate) fn getblockdeltas(raw: String) -> String {
-    raw.replace(r#"hex string"#, r#"hexadecimal"#)
-        .replace(r#"hexstring"#, r#"hexadecimal"#)
-}
 pub(crate) fn getspentinfo(raw: String) -> String {
     raw.replace(r#"number"#, r#"numeric"#).replace(
         r#"  ,...
@@ -132,6 +128,14 @@ pub(crate) fn getaddressdeltas(raw: String) -> String {
 }
 
 #[macro_export]
+macro_rules! getblockdeltas {
+    ($result_data:expr) => {
+        $result_data.replace(r#"hex string"#, r#"hexadecimal"#)
+        .replace(r#"hexstring"#, r#"hexadecimal"#)
+    }
+}
+
+#[macro_export]
 macro_rules! submitblock {
     ($result_data:expr) => {
         $result_data.replace(r#"duplicate" - node already has valid copy of block
@@ -165,14 +169,13 @@ macro_rules! scrub {
             getchaintips($result_data)
         } else if $cmd_name == "getaddressmempool".to_string() {
             getaddressmempool!($result_data)
-         //   getaddressmempool($result_data)
         } else if $cmd_name == "getblockdeltas".to_string() {
-            getblockdeltas($result_data)
+            //getblockdeltas($result_data)
+            getblockdeltas!($result_data)
         } else if $cmd_name == "getspentinfo".to_string() {
             getspentinfo($result_data)
         } else if $cmd_name == "submitblock".to_string() {
             submitblock!($result_data)
-            //submitblock($result_data)
         } else if $cmd_name == "listaccounts".to_string() {
             listaccounts($result_data)
         } else if $cmd_name == "listreceivedbyaccount".to_string() {
