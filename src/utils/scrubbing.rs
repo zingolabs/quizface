@@ -24,7 +24,6 @@ pub(crate) fn getchaintips(raw: String) -> String {
 "#)
 }
 
-
 pub(crate) fn getspentinfo(raw: String) -> String {
     raw.replace(r#"number"#, r#"numeric"#).replace(
         r#"  ,...
@@ -46,6 +45,7 @@ pub(crate) fn listreceivedbyaccount(raw: String) -> String {
         "",
     )
 }
+
 pub(crate) fn listreceivedbyaddress(raw: String) -> String {
     raw.replace(r#"bool"#, "boolean").replace(
         r#"  ,...
@@ -130,9 +130,10 @@ pub(crate) fn getaddressdeltas(raw: String) -> String {
 #[macro_export]
 macro_rules! getblockdeltas {
     ($result_data:expr) => {
-        $result_data.replace(r#"hex string"#, r#"hexadecimal"#)
-        .replace(r#"hexstring"#, r#"hexadecimal"#)
-    }
+        $result_data
+            .replace(r#"hex string"#, r#"hexadecimal"#)
+            .replace(r#"hexstring"#, r#"hexadecimal"#)
+    };
 }
 
 #[macro_export]
@@ -156,13 +157,12 @@ r#"duplicate": (boolean) node already has valid copy of block
 macro_rules! getaddressmempool {
     ($result_data:expr) => {
         $result_data.replace(r#"number"#, r#"numeric"#)
-    }
+    };
 }
 
 #[macro_export]
 macro_rules! scrub {
     ($cmd_name:expr, $result_data:expr) => {
-        
         if $cmd_name == "getblockchaininfo".to_string() {
             getblockchaininfo($result_data)
         } else if $cmd_name == "getchaintips".to_string() {
@@ -170,7 +170,6 @@ macro_rules! scrub {
         } else if $cmd_name == "getaddressmempool".to_string() {
             getaddressmempool!($result_data)
         } else if $cmd_name == "getblockdeltas".to_string() {
-            //getblockdeltas($result_data)
             getblockdeltas!($result_data)
         } else if $cmd_name == "getspentinfo".to_string() {
             getspentinfo($result_data)
@@ -195,7 +194,5 @@ macro_rules! scrub {
         } else {
             $result_data
         }
-        
     };
 }
-
