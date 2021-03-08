@@ -37,20 +37,6 @@ pub(crate) fn getspentinfo(raw: String) -> String {
     )
 }
 
-pub(crate) fn submitblock(raw: String) -> String {
-    raw.replace(r#"duplicate" - node already has valid copy of block
-"duplicate-invalid" - node already has block, but it is invalid
-"duplicate-inconclusive" - node already has block but has not validated it
-"inconclusive" - node has not validated the block, it may not be on the node's current best chain
-"rejected" - block was rejected as invalid
-For more information on submitblock parameters and results, see: https://github.com/bitcoin/bips/blob/master/bip-0022.mediawiki#block-submission"#,
-r#"duplicate": (boolean) node already has valid copy of block
-"duplicate-invalid": (boolean) node already has block, but it is invalid
-"duplicate-inconclusive": (boolean) node already has block but has not validated it
-"inconclusive": (boolean)node has not validated the block, it may not be on the node's current best chain
-"rejected": (boolean) block was rejected as invalid"#)
-}
-
 pub(crate) fn listaccounts(raw: String) -> String {
     raw.replace(r#"                      (json object where keys are account names, and values are numeric balances"#, "")
         .replace(r#"  ...
@@ -146,6 +132,23 @@ pub(crate) fn getaddressdeltas(raw: String) -> String {
 }
 
 #[macro_export]
+macro_rules! submitblock {
+    ($result_data:expr) => {
+        $result_data.replace(r#"duplicate" - node already has valid copy of block
+"duplicate-invalid" - node already has block, but it is invalid
+"duplicate-inconclusive" - node already has block but has not validated it
+"inconclusive" - node has not validated the block, it may not be on the node's current best chain
+"rejected" - block was rejected as invalid
+For more information on submitblock parameters and results, see: https://github.com/bitcoin/bips/blob/master/bip-0022.mediawiki#block-submission"#,
+r#"duplicate": (boolean) node already has valid copy of block
+"duplicate-invalid": (boolean) node already has block, but it is invalid
+"duplicate-inconclusive": (boolean) node already has block but has not validated it
+"inconclusive": (boolean)node has not validated the block, it may not be on the node's current best chain
+"rejected": (boolean) block was rejected as invalid"#)
+    }
+}
+
+#[macro_export]
 macro_rules! getaddressmempool {
     ($result_data:expr) => {
         $result_data.replace(r#"number"#, r#"numeric"#)
@@ -168,7 +171,8 @@ macro_rules! scrub {
         } else if $cmd_name == "getspentinfo".to_string() {
             getspentinfo($result_data)
         } else if $cmd_name == "submitblock".to_string() {
-            submitblock($result_data)
+            submitblock!($result_data)
+            //submitblock($result_data)
         } else if $cmd_name == "listaccounts".to_string() {
             listaccounts($result_data)
         } else if $cmd_name == "listreceivedbyaccount".to_string() {
