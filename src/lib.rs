@@ -171,7 +171,7 @@ fn annotate_array(result_chars: &mut std::str::Chars) -> serde_json::Value {
                     break;
                 }
                 dbg!(&viewed);
-                ordered_results.push(get_arrray_terminal(viewed.clone()));
+                ordered_results.push(get_array_terminal(viewed.clone()));
                 viewed.clear();
                 break;
             }
@@ -197,22 +197,9 @@ fn annotate_array(result_chars: &mut std::str::Chars) -> serde_json::Value {
     Value::Array(ordered_results)
 }
 
-fn get_arrray_terminal(viewed: String) -> Value {
-    let viewed_lines = viewed
-        .trim_end()
-        .lines()
-        .map(|line| line.to_string())
-        .collect::<Vec<String>>();
-    dbg!(&viewed_lines);
-
-    let raw_label = if viewed_lines.len() == 1 {
-        &viewed_lines[0]
-    } else {
-        &viewed_lines[1]
-    }
-    .split(|c| c == '(' || c == ')')
-    .collect::<Vec<&str>>()[1]
-        .to_string();
+fn get_array_terminal(viewed: String) -> Value {
+    let viewed_lines = viewed_to_lines(viewed);
+    let raw_label = make_raw_label((&viewed_lines[1]).to_string());
     dbg!(&raw_label);
     json!(make_label(raw_label))
 }
@@ -223,11 +210,7 @@ fn bind_idents_labels(
     viewed: String,
     inner_value: Option<Value>,
 ) -> Map<String, Value> {
-    let mut viewed_lines = viewed
-        .trim_end()
-        .lines()
-        .map(|line| line.to_string())
-        .collect::<Vec<String>>();
+    let mut viewed_lines = viewed_to_lines(viewed);
     // ignoring the first line if it is only whitespace or
     // does not contain a `:` char.
     if viewed_lines[0].trim().is_empty()
@@ -274,6 +257,21 @@ fn bind_idents_labels(
     }
 }
 
+fn make_raw_label(meta_data: String) -> String {
+    meta_data
+        .split(|c| c == '(' || c == ')')
+        .collect::<Vec<&str>>()[1]
+        .to_string()
+}
+
+fn viewed_to_lines(viewed: String) -> Vec<String> {
+    viewed
+        .trim_end()
+        .lines()
+        .map(|line| line.to_string())
+        .collect()
+}
+
 fn raw_to_ident_and_metadata(ident_with_metadata: String) -> (String, String) {
     let trimmed = ident_with_metadata.trim().to_string();
     let mut split = trimmed.splitn(3, '"').collect::<Vec<&str>>();
@@ -287,10 +285,7 @@ fn raw_to_ident_and_metadata(ident_with_metadata: String) -> (String, String) {
 // assumes well-formed `ident_with_metadata`
 fn label_identifier(ident_with_metadata: String) -> (String, String) {
     let (mut ident, meta_data) = raw_to_ident_and_metadata(ident_with_metadata);
-    let mut raw_label = meta_data
-        .split(|c| c == '(' || c == ')')
-        .collect::<Vec<&str>>()[1]
-        .to_string();
+    let mut raw_label = make_raw_label(meta_data);
     if raw_label.contains(", optional") {
         ident = format!("Option<{}>", ident);
         raw_label = raw_label.replace(", optional", "");

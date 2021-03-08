@@ -113,7 +113,7 @@ fn getspentinfo(raw: String) -> String {
 }
 
 fn gettransaction(raw: String) -> String {
-    (raw.replace(r#"      "nullifiers" : [ string, ... ]      (string) Nullifiers of input notes
+    raw.replace(r#"      "nullifiers" : [ string, ... ]      (string) Nullifiers of input notes
       "commitments" : [ string, ... ]     (string) Note commitments for note outputs
       "macs" : [ string, ... ]            (string) Message authentication tags"#,
     r#""nullifiers": [
