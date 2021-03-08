@@ -718,7 +718,7 @@ mod unit {
         let interpreted = interpret_help_message(expected_incoming);
         assert_eq!(interpreted.1, expected_results);
     }
-    
+
     #[ignore]
     #[test]
     fn interpret_help_message_getblockchaininfo_complete_does_not_panic() {
