@@ -1,5 +1,6 @@
-fn getaddressdeltas(raw: String) -> String {
-    raw.split(r#"(or, if chainInfo is true):"#)
+macro_rules! getaddressdeltas{
+    ($result_data:expr) => {
+    $result_data.split(r#"(or, if chainInfo is true):"#)
         .collect::<Vec<&str>>()[1]
         .trim()
         .to_string()
@@ -41,6 +42,7 @@ fn getaddressdeltas(raw: String) -> String {
       "height":       (numeric) The height of the end block
     }"#,
         )
+    };
 }
 
 macro_rules! getaddressmempool {
@@ -49,8 +51,9 @@ macro_rules! getaddressmempool {
     };
 }
 
-fn getblockchaininfo(raw: String) -> String {
-    raw.replace("[0..1]", "").replace(
+macro_rules! getblockchaininfo{
+    ($result_data:expr) => {
+    $result_data.replace("[0..1]", "").replace(
         "{ ... }      (object) progress toward rejecting pre-softfork blocks",
         "{
 \"status\": (boolean)
@@ -58,6 +61,7 @@ fn getblockchaininfo(raw: String) -> String {
 \"required\": (numeric)
 \"window\": (numeric)
 }").replace("(same fields as \"enforce\")", "").replace(", ...", "")
+    };
 }
 
 macro_rules! getblockdeltas {
@@ -69,14 +73,17 @@ macro_rules! getblockdeltas {
     };
 }
 
-fn getblockhashes(raw: String) -> String {
-    raw.replace(r#"hex string"#, r#"hexadecimal"#)
+macro_rules! getblockhashes{
+    ($result_data:expr) => {
+    $result_data.replace(r#"hex string"#, r#"hexadecimal"#)
         .replace(r#"hexstring"#, r#"hexadecimal"#)
         .replace(r#", ..."#, r#""#)
+    };
 }
 
-fn getchaintips(raw: String) -> String {
-    raw.replace(
+macro_rules! getchaintips{
+    ($result_data:expr) => {
+    $result_data.replace(
             r#"Possible values for status:
 1.  "invalid"               This branch contains at least one invalid block
 2.  "headers-only"          Not all blocks for this branch are available, but the headers are valid
@@ -88,32 +95,42 @@ fn getchaintips(raw: String) -> String {
 "#).replace(r#""hash": "xxxx",
 "#, r#""hash": "xxxx",         (string) block hash of the tip
 "#)
+    };
 }
 
-fn getdeprecationinfo(raw: String) -> String {
-    raw.replace(r#"MagicBean:x.y.z[-v]"#, r#"MagicBean"#)
+macro_rules! getdeprecationinfo{
+    ($result_data:expr) => {
+    $result_data.replace(r#"MagicBean:x.y.z[-v]"#, r#"MagicBean"#)
+    };
 }
 
-fn getnetworkinfo(raw: String) -> String {
-    raw.replace(r#"MagicBean:x.y.z[-v]"#, r#"MagicBean"#)
+macro_rules! getnetworkinfo{
+    ($result_data:expr) => {
+    $result_data.replace(r#"MagicBean:x.y.z[-v]"#, r#"MagicBean"#)
         .replace(r#",..."#, r#""#)
+    };
 }
 
-fn getpeerinfo(raw: String) -> String {
-    raw.replace(r#"MagicBean:x.y.z[-v]"#, r#"MagicBean"#)
+macro_rules! getpeerinfo{
+    ($result_data:expr) => {
+    $result_data.replace(r#"MagicBean:x.y.z[-v]"#, r#"MagicBean"#)
         .replace(r#",..."#, r#""#)
+    };
 }
 
-fn getspentinfo(raw: String) -> String {
-    raw.replace(r#"number"#, r#"numeric"#).replace(
+macro_rules! getspentinfo{
+    ($result_data:expr) => {
+    $result_data.replace(r#"number"#, r#"numeric"#).replace(
         r#"  ,...
 "#,
         r#""#,
     )
+    };
 }
 
-fn gettransaction(raw: String) -> String {
-    raw.replace(r#"      "nullifiers" : [ string, ... ]      (string) Nullifiers of input notes
+macro_rules! gettransaction{
+    ($result_data:expr) => {
+    $result_data.replace(r#"      "nullifiers" : [ string, ... ]      (string) Nullifiers of input notes
       "commitments" : [ string, ... ]     (string) Note commitments for note outputs
       "macs" : [ string, ... ]            (string) Message authentication tags"#,
     r#""nullifiers": [
@@ -125,38 +142,46 @@ fn gettransaction(raw: String) -> String {
     "macs": [
         "mac" (string)
     ],"#).replace(r#",..."#,r#""#).replace(r#", ..."#,r#""#)
+    };
 }
 
-fn listaccounts(raw: String) -> String {
-    raw.replace(r#"                      (json object where keys are account names, and values are numeric balances"#, "")
+macro_rules! listaccounts{
+    ($result_data:expr) => {
+    $result_data.replace(r#"                      (json object where keys are account names, and values are numeric balances"#, "")
         .replace(r#"  ...
 "#, "")
+    };
 }
 
-fn listreceivedbyaccount(raw: String) -> String {
-    raw.replace(r#"bool"#, "boolean").replace(
+macro_rules! listreceivedbyaccount{
+    ($result_data:expr) => {
+    $result_data.replace(r#"bool"#, "boolean").replace(
         r#"  ,...
 "#,
         "",
     )
+    };
 }
 
-fn listreceivedbyaddress(raw: String) -> String {
-    raw.replace(r#"bool"#, "boolean").replace(
+macro_rules! listreceivedbyaddress{
+    ($result_data:expr) => {
+    $result_data.replace(r#"bool"#, "boolean").replace(
         r#"  ,...
 "#,
         "",
     )
+    };
 }
-
-fn listtransactions(raw: String) -> String {
-    raw.lines()
+macro_rules! listtransactions{
+    ($result_data:expr) => {
+    $result_data.lines()
         .filter(|l| !l.starts_with("                                         "))
         .fold(String::new(), |mut accumulator, new| {
             accumulator.push_str(new);
             accumulator.push_str("\n");
             accumulator
         })
+    };
 }
 
 macro_rules! submitblock {
@@ -175,76 +200,86 @@ r#"duplicate": (boolean) node already has valid copy of block
     }
 }
 
-fn z_getoperationresult(raw: String) -> String {
-    raw.replace(
+macro_rules! z_getoperationresult{
+    ($result_data:expr) => {
+    $result_data.replace(
         r#"(array) A list of JSON objects"#,
         r#"(INSUFFICIENT) A list of JSON objects"#,
     )
+    };
 }
 
-fn z_getoperationstatus(raw: String) -> String {
-    raw.replace(
+macro_rules! z_getoperationstatus{
+    ($result_data:expr) => {
+    $result_data.replace(
         r#"(array) A list of JSON objects"#,
         r#"(INSUFFICIENT) A list of JSON objects"#,
     )
+    };
 }
 
-fn z_listreceivedbyaddress(raw: String) -> String {
-    raw.replace(r#" (sprout) : n,"#, r#": n, <sprout> "#)
+macro_rules! z_listreceivedbyaddress{
+    ($result_data:expr) => {
+    $result_data.replace(r#" (sprout) : n,"#, r#": n, <sprout> "#)
         .replace(r#" (sapling) : n,"#, r#": n, <sapling> "#)
+    };
 }
 
-fn z_validateaddress(raw: String) -> String {
-    raw.replace(r#"[sprout]"#, r#"<sprout>"#)
+macro_rules! z_validateaddress{
+    ($result_data:expr) => {
+    $result_data.replace(r#"[sprout]"#, r#"<sprout>"#)
         .replace(r#"[sapling]"#, r#"<sapling>"#)
+    };
 }
 
-fn dotdotdot(raw: String) -> String {
-    raw.replace(r#", ..."#, r#""#).replace(r#",..."#, r#""#)
+macro_rules! dotdotdot{
+    ($result_data:expr) => {
+    $result_data.replace(r#", ..."#, r#""#).replace(r#",..."#, r#""#)
+    };
 }
 
 pub(crate) fn scrub(cmd_name: String, result_data: String) -> String {
     if cmd_name == "getaddressdeltas".to_string() {
-        getaddressdeltas(result_data)
+        getaddressdeltas!(result_data)
     } else if cmd_name == "getaddressmempool".to_string() {
         getaddressmempool!(result_data)
     } else if cmd_name == "getchaintips".to_string() {
-        getchaintips(result_data)
+        getchaintips!(result_data)
     } else if cmd_name == "getblockchaininfo".to_string() {
-        getblockchaininfo(result_data)
+        getblockchaininfo!(result_data)
     } else if cmd_name == "getblockdeltas".to_string() {
         getblockdeltas!(result_data)
     } else if cmd_name == "getblockhashes".to_string() {
-        getblockhashes(result_data)
+        getblockhashes!(result_data)
     } else if cmd_name == "getdeprecationinfo".to_string() {
-        getdeprecationinfo(result_data)
+        getdeprecationinfo!(result_data)
     } else if cmd_name == "getnetworkinfo".to_string() {
-        getnetworkinfo(result_data)
+        getnetworkinfo!(result_data)
     } else if cmd_name == "getpeerinfo".to_string() {
-        getpeerinfo(result_data)
+        getpeerinfo!(result_data)
     } else if cmd_name == "getspentinfo".to_string() {
-        getspentinfo(result_data)
+        getspentinfo!(result_data)
     } else if cmd_name == "gettransaction".to_string() {
-        gettransaction(result_data)
+        gettransaction!(result_data)
     } else if cmd_name == "listaccounts".to_string() {
-        listaccounts(result_data)
+        listaccounts!(result_data)
     } else if cmd_name == "listreceivedbyaccount".to_string() {
-        listreceivedbyaccount(result_data)
+        listreceivedbyaccount!(result_data)
     } else if cmd_name == "listreceivedbyaddress".to_string() {
-        listreceivedbyaddress(result_data)
+        listreceivedbyaddress!(result_data)
     } else if cmd_name == "listtransactions".to_string() {
-        listtransactions(result_data)
+        listtransactions!(result_data)
     } else if cmd_name == "submitblock".to_string() {
         submitblock!(result_data)
     } else if cmd_name == "z_getoperationresult".to_string() {
-        z_getoperationresult(result_data)
+        z_getoperationresult!(result_data)
     } else if cmd_name == "z_getoperationstatus".to_string() {
-        z_getoperationstatus(result_data)
+        z_getoperationstatus!(result_data)
     } else if cmd_name == "z_listreceivedbyaddress".to_string() {
-        z_listreceivedbyaddress(result_data)
+        z_listreceivedbyaddress!(result_data)
     } else if cmd_name == "z_validateaddress".to_string() {
-        z_validateaddress(result_data)
+        z_validateaddress!(result_data)
     } else {
-        dotdotdot(result_data)
+        dotdotdot!(result_data)
     }
 }
