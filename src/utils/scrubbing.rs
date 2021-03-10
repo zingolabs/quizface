@@ -200,21 +200,21 @@ r#"duplicate": (boolean) node already has valid copy of block
     }
 }
 
+macro_rules! getblocktemplate{
+    ($result_data:expr) => {
+    r#""do_not_use_this": (INSUFFICIENT)"#.to_string()
+    };
+}
+
 macro_rules! z_getoperationresult{
     ($result_data:expr) => {
-    $result_data.replace(
-        r#"(array) A list of JSON objects"#,
-        r#"(INSUFFICIENT) A list of JSON objects"#,
-    )
+    r#""do_not_use_this": (INSUFFICIENT)"#.to_string()
     };
 }
 
 macro_rules! z_getoperationstatus{
     ($result_data:expr) => {
-    $result_data.replace(
-        r#"(array) A list of JSON objects"#,
-        r#"(INSUFFICIENT) A list of JSON objects"#,
-    )
+    r#""do_not_use_this": (INSUFFICIENT)"#.to_string()
     };
 }
 
@@ -232,6 +232,7 @@ macro_rules! z_validateaddress{
     };
 }
 
+//TODO turn into individual scrubbers
 macro_rules! dotdotdot{
     ($result_data:expr) => {
     $result_data.replace(r#", ..."#, r#""#).replace(r#",..."#, r#""#)
@@ -279,6 +280,8 @@ pub(crate) fn scrub(cmd_name: String, result_data: String) -> String {
         z_listreceivedbyaddress!(result_data)
     } else if cmd_name == "z_validateaddress".to_string() {
         z_validateaddress!(result_data)
+    } else if cmd_name == "getblocktemplate".to_string(){
+        getblocktemplate!(result_data)
     } else {
         dotdotdot!(result_data)
     }
