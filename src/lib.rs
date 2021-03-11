@@ -103,9 +103,18 @@ fn interpret_help_message(
 
 fn annotate_result(result_chars: &mut std::str::Chars) -> serde_json::Value {
     match result_chars.next().unwrap() {
-        '{' => {dbg!("annotate {"); annotate_object(result_chars)},
-        '[' => {dbg!("annotate ["); annotate_array(result_chars)},
-        '"' => {dbg!("annotate lone"); annotate_lonetype(result_chars.as_str().to_string())},
+        '{' => {
+            //dbg!("annotate {");
+            annotate_object(result_chars)
+        }
+        '[' => {
+            //dbg!("annotate [");
+            annotate_array(result_chars)
+        }
+        '"' => {
+            //dbg!("annotate lone");
+            annotate_lonetype(result_chars.as_str().to_string())
+        }
         _ => todo!(),
     }
 }
