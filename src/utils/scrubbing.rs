@@ -1,4 +1,4 @@
-macro_rules! getaddressdeltas{
+macro_rules! getaddressdeltas {
     ($result_data:expr) => {
     $result_data.split(r#"(or, if chainInfo is true):"#)
         .collect::<Vec<&str>>()[1]
@@ -51,7 +51,7 @@ macro_rules! getaddressmempool {
     };
 }
 
-macro_rules! getblockchaininfo{
+macro_rules! getblockchaininfo {
     ($result_data:expr) => {
     $result_data.replace("[0..1]", "").replace(
         "{ ... }      (object) progress toward rejecting pre-softfork blocks",
@@ -73,7 +73,7 @@ macro_rules! getblockdeltas {
     };
 }
 
-macro_rules! getblockhashes{
+macro_rules! getblockhashes {
     ($result_data:expr) => {
     $result_data.replace(r#"hex string"#, r#"hexadecimal"#)
         .replace(r#"hexstring"#, r#"hexadecimal"#)
@@ -81,7 +81,7 @@ macro_rules! getblockhashes{
     };
 }
 
-macro_rules! getchaintips{
+macro_rules! getchaintips {
     ($result_data:expr) => {
     $result_data.replace(
             r#"Possible values for status:
@@ -98,27 +98,27 @@ macro_rules! getchaintips{
     };
 }
 
-macro_rules! getdeprecationinfo{
+macro_rules! getdeprecationinfo {
     ($result_data:expr) => {
     $result_data.replace(r#"MagicBean:x.y.z[-v]"#, r#"MagicBean"#)
     };
 }
 
-macro_rules! getnetworkinfo{
-    ($result_data:expr) => {
-    $result_data.replace(r#"MagicBean:x.y.z[-v]"#, r#"MagicBean"#)
-        .replace(r#",..."#, r#""#)
-    };
-}
-
-macro_rules! getpeerinfo{
+macro_rules! getnetworkinfo {
     ($result_data:expr) => {
     $result_data.replace(r#"MagicBean:x.y.z[-v]"#, r#"MagicBean"#)
         .replace(r#",..."#, r#""#)
     };
 }
 
-macro_rules! getspentinfo{
+macro_rules! getpeerinfo {
+    ($result_data:expr) => {
+    $result_data.replace(r#"MagicBean:x.y.z[-v]"#, r#"MagicBean"#)
+        .replace(r#",..."#, r#""#)
+    };
+}
+
+macro_rules! getspentinfo {
     ($result_data:expr) => {
     $result_data.replace(r#"number"#, r#"numeric"#).replace(
         r#"  ,...
@@ -128,7 +128,7 @@ macro_rules! getspentinfo{
     };
 }
 
-macro_rules! gettransaction{
+macro_rules! gettransaction {
     ($result_data:expr) => {
     $result_data.replace(r#"      "nullifiers" : [ string, ... ]      (string) Nullifiers of input notes
       "commitments" : [ string, ... ]     (string) Note commitments for note outputs
@@ -146,14 +146,14 @@ macro_rules! gettransaction{
 }
 
 macro_rules! listaccounts{
-    ($result_data:expr) => {
+    ($result_data:expr) =>  {
     $result_data.replace(r#"                      (json object where keys are account names, and values are numeric balances"#, "")
         .replace(r#"  ...
 "#, "")
     };
 }
 
-macro_rules! listreceivedbyaccount{
+macro_rules! listreceivedbyaccount {
     ($result_data:expr) => {
     $result_data.replace(r#"bool"#, "boolean").replace(
         r#"  ,...
@@ -163,7 +163,7 @@ macro_rules! listreceivedbyaccount{
     };
 }
 
-macro_rules! listreceivedbyaddress{
+macro_rules! listreceivedbyaddress {
     ($result_data:expr) => {
     $result_data.replace(r#"bool"#, "boolean").replace(
         r#"  ,...
@@ -172,7 +172,7 @@ macro_rules! listreceivedbyaddress{
     )
     };
 }
-macro_rules! listtransactions{
+macro_rules! listtransactions {
     ($result_data:expr) => {
     $result_data.lines()
         .filter(|l| !l.starts_with("                                         "))
@@ -183,6 +183,7 @@ macro_rules! listtransactions{
         })
     };
 }
+
 
 macro_rules! submitblock {
     ($result_data:expr) => {
@@ -200,32 +201,39 @@ r#"duplicate": (boolean) node already has valid copy of block
     }
 }
 
-macro_rules! getblocktemplate{
+/*
+macro_rules! submitblock {
+    ($result_data:expr) => {
+        r#"{"enum": ["duplicate, duplicate-invalid, duplicate-inconclusive, inconclusive, rejected"]}"#.to_string()
+    };
+}
+*/
+macro_rules! getblocktemplate {
     ($result_data:expr) => {
     r#""do_not_use_this": (INSUFFICIENT)"#.to_string()
     };
 }
 
-macro_rules! z_getoperationresult{
+macro_rules! z_getoperationresult {
     ($result_data:expr) => {
     r#""do_not_use_this": (INSUFFICIENT)"#.to_string()
     };
 }
 
-macro_rules! z_getoperationstatus{
+macro_rules! z_getoperationstatus {
     ($result_data:expr) => {
     r#""do_not_use_this": (INSUFFICIENT)"#.to_string()
     };
 }
 
-macro_rules! z_listreceivedbyaddress{
+macro_rules! z_listreceivedbyaddress {
     ($result_data:expr) => {
     $result_data.replace(r#" (sprout) : n,"#, r#": n, <sprout> "#)
         .replace(r#" (sapling) : n,"#, r#": n, <sapling> "#)
     };
 }
 
-macro_rules! z_validateaddress{
+macro_rules! z_validateaddress {
     ($result_data:expr) => {
     $result_data.replace(r#"[sprout]"#, r#"<sprout>"#)
         .replace(r#"[sapling]"#, r#"<sapling>"#)
@@ -233,14 +241,16 @@ macro_rules! z_validateaddress{
 }
 
 //TODO turn into individual scrubbers
-macro_rules! dotdotdot{
+macro_rules! dotdotdot {
     ($result_data:expr) => {
     $result_data.replace(r#", ..."#, r#""#).replace(r#",..."#, r#""#)
     };
 }
 
+const ALPHABET: &str = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
 pub(crate) fn scrub(cmd_name: String, result_data: String) -> String {
-    if cmd_name == "getaddressdeltas".to_string() {
+    let mut intermediate_result_data = if cmd_name == "getaddressdeltas".to_string() {
         getaddressdeltas!(result_data)
     } else if cmd_name == "getaddressmempool".to_string() {
         getaddressmempool!(result_data)
@@ -284,5 +294,13 @@ pub(crate) fn scrub(cmd_name: String, result_data: String) -> String {
         getblocktemplate!(result_data)
     } else {
         dotdotdot!(result_data)
+    };
+
+    if ALPHABET.contains(intermediate_result_data.chars().next().unwrap()){
+        //dbg!("first char alphanumeric!");
+        intermediate_result_data.insert(0, '"');
+        intermediate_result_data.insert(result_data.len() - 1, '"'); 
     }
+
+    intermediate_result_data
 }
