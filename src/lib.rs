@@ -292,15 +292,14 @@ fn label_identifier(ident_with_metadata: String) -> (String, String) {
 
 fn make_label(raw_label: String) -> String {
     match raw_label {
-        label if label.starts_with("numeric") => "Decimal",
-        label if label.starts_with("string") => "String",
-        label if label.starts_with("boolean") => "bool",
-        label if label.starts_with("hexadecimal") => "hexadecimal",
-        label if label.starts_with("INSUFFICIENT") => "INSUFFICIENT",
-        label if label.starts_with("enum") => "enum: duplicate, duplicate-invalid, duplicate-inconclusive, inconclusive, rejected",
+        label if label.starts_with("numeric") => "Decimal".to_string(),
+        label if label.starts_with("string") => "String".to_string(),
+        label if label.starts_with("boolean") => "bool".to_string(),
+        label if label.starts_with("hexadecimal") => "hexadecimal".to_string(),
+        label if label.starts_with("INSUFFICIENT") => "INSUFFICIENT".to_string(),
+        label if label.starts_with("enum") => label,
         label => panic!("Label '{}' is invalid", label),
     }
-    .to_string()
 }
 
 // ------------------- tests ----------------------------------------
