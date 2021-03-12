@@ -296,7 +296,9 @@ fn make_label(raw_label: String) -> String {
         label if label.starts_with("string") => "String".to_string(),
         label if label.starts_with("boolean") => "bool".to_string(),
         label if label.starts_with("hexadecimal") => "hexadecimal".to_string(),
-        label if label.starts_with("INSUFFICIENT") => "INSUFFICIENT".to_string(),
+        label if label.starts_with("INSUFFICIENT") => {
+            "INSUFFICIENT".to_string()
+        }
         label if label.starts_with("enum") => label,
         label => panic!("Label '{}' is invalid", label),
     }
