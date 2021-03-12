@@ -101,28 +101,26 @@ fn interpret_help_message(
     (cmd_name, annotate_result(&mut scrubbed_result.chars()))
 }
 
-fn alpha_predicate(c: char) -> bool {
-    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".contains(c)
-}
-
 fn annotate_result(result_chars: &mut std::str::Chars) -> serde_json::Value {
     match result_chars.next().unwrap() {
-        '{' => annotate_object(result_chars),
-        '[' => annotate_array(result_chars),
-        '"' => annotate_lonetype(result_chars.as_str().to_string()),
-        c if alpha_predicate(c) => quote_lonetype(c, result_chars.as_str()),
+        '{' => {
+            //dbg!("annotate {");
+            annotate_object(result_chars)
+        }
+        '[' => {
+            //dbg!("annotate [");
+            annotate_array(result_chars)
+        }
+        '"' => {
+            //dbg!("annotate lone");
+            annotate_lonetype(result_chars.as_str().to_string())
+        }
         _ => todo!(),
     }
 }
 
-fn quote_lonetype(initial_char: char, result_chars: &str) -> serde_json::Value {
-    annotate_lonetype(format!(r#""{}"{}"#, initial_char, result_chars))
-}
-fn annotate_lonetype(result_chars: String) -> serde_json::Value {
-    let (ident, annotation) = label_identifier(result_chars);
-    let mut lonetype = Map::new();
-    lonetype.insert(ident, Value::String(annotation));
-    Value::Object(lonetype)
+fn annotate_lonetype(lonetype_result: String) -> serde_json::Value {
+    Value::String(make_label(make_raw_label(lonetype_result)))
 }
 
 fn annotate_object(result_chars: &mut std::str::Chars) -> serde_json::Value {
@@ -170,7 +168,6 @@ fn annotate_array(result_chars: &mut std::str::Chars) -> serde_json::Value {
                 if viewed.trim().is_empty() {
                     break;
                 }
-                dbg!(&viewed);
                 ordered_results.push(get_array_terminal(viewed.clone()));
                 viewed.clear();
                 break;
@@ -200,7 +197,6 @@ fn annotate_array(result_chars: &mut std::str::Chars) -> serde_json::Value {
 fn get_array_terminal(viewed: String) -> Value {
     let viewed_lines = viewed_to_lines(viewed);
     let raw_label = make_raw_label((&viewed_lines[1]).to_string());
-    dbg!(&raw_label);
     json!(make_label(raw_label))
 }
 
@@ -296,14 +292,16 @@ fn label_identifier(ident_with_metadata: String) -> (String, String) {
 
 fn make_label(raw_label: String) -> String {
     match raw_label {
-        label if label.starts_with("numeric") => "Decimal",
-        label if label.starts_with("string") => "String",
-        label if label.starts_with("boolean") => "bool",
-        label if label.starts_with("hexadecimal") => "hexadecimal",
-        label if label.starts_with("INSUFFICIENT") => "INSUFFICIENT",
+        label if label.starts_with("numeric") => "Decimal".to_string(),
+        label if label.starts_with("string") => "String".to_string(),
+        label if label.starts_with("boolean") => "bool".to_string(),
+        label if label.starts_with("hexadecimal") => "hexadecimal".to_string(),
+        label if label.starts_with("INSUFFICIENT") => {
+            "INSUFFICIENT".to_string()
+        }
+        label if label.starts_with("enum") => label,
         label => panic!("Label '{}' is invalid", label),
     }
-    .to_string()
 }
 
 // ------------------- tests ----------------------------------------
