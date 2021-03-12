@@ -191,6 +191,7 @@ macro_rules! listtransactions {
     };
 }
 
+/*
 macro_rules! submitblock {
     ($result_data:expr) => {
         $result_data.replace(r#"duplicate" - node already has valid copy of block
@@ -206,14 +207,13 @@ r#"duplicate": (boolean) node already has valid copy of block
 "rejected": (boolean) block was rejected as invalid"#)
     }
 }
+*/
 
-/*
 macro_rules! submitblock {
     ($result_data:expr) => {
-        r#"{"enum": ["duplicate, duplicate-invalid, duplicate-inconclusive, inconclusive, rejected"]}"#.to_string()
+        r#""(enum: duplicate, duplicate-invalid, duplicate-inconclusive, inconclusive, rejected)""#.to_string()
     };
 }
-*/
 macro_rules! getblocktemplate {
     ($result_data:expr) => {
         r#""do_not_use_this": (INSUFFICIENT)"#.to_string()
