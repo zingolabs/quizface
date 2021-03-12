@@ -10,15 +10,8 @@ fn main() {
             .expect("Invalid raw_command_help, error!");
         log_raw_output(&command, raw_command_help.to_string());
         //select just for blessed results.
-<<<<<<< Updated upstream
-        if blessed_tome.contains(&command) {
-            //dbg!(&command);
-            produce_interpretation(raw_command_help);
-        }
-=======
         dbg!(&command);
         produce_interpretation(raw_command_help);
->>>>>>> Stashed changes
     }
     println!("main() complete!");
 }
