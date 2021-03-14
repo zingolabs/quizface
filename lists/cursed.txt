@@ -1,0 +1,7 @@
+getrawtransaction
+listbanned
+z_validatepaymentdisclosure
+ping
+getblock
+zcsamplejoinsplit
+z_setmigration
