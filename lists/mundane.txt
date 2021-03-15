@@ -14,7 +14,6 @@ generate
 importprivkey
 z_getmigrationstatus
 importwallet
-getrawmempool
 setlogfilter
 zcrawjoinsplit
 z_listunspent
@@ -25,11 +24,9 @@ stop
 setban
 keypoolrefill
 gettxoutproof
-getaddressutxos
 verifytxoutproof
 estimatefee
 z_importwallet
-getblockheader
 listunspent
 clearbanned
 setaccount

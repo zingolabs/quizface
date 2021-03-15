@@ -1,3 +1,6 @@
+getblockheader
+getaddressutxos
+getrawmempool
 getrawtransaction
 listbanned
 z_validatepaymentdisclosure
