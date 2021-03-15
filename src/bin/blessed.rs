@@ -3,6 +3,7 @@ fn main() {
     // a 'masterhelp' txt file as well as logging blessed commands
     let commands = quizface::ingest_commands();
     let mut blessed: Vec<String> = Vec::new();
+    let mut not_blessed: Vec<String> = Vec::new();
     for command in commands {
         let command_help_output = quizface::get_command_help(&command);
         quizface::check_success(&command_help_output.status);
@@ -12,22 +13,22 @@ fn main() {
             // (is true)
             blessed.push(command);
         } else {
-            continue;
+            not_blessed.push(command);
         }
     }
-    println!("{:?}", &blessed);
+    println!("Number of not_blessed commands: {}", &not_blessed.len());
+    println!("{:?}", &not_blessed);
     println!("Number of blessed commands: {}", &blessed.len());
+    println!("{:?}", &blessed);
     quizface::utils::logging::log_blessed_output(blessed);
 }
 
-// TODO cover possibility of multiple `Result:` and `Examples:`
-// instead of != 1 --> == 2 would be more strict
 fn blessed_check(raw_command_help: &str, command: &String) -> bool {
     let delimiter_test_1: Vec<&str> =
         raw_command_help.split("Result:\n").collect();
     let delimiter_test_2: Vec<&str> =
         raw_command_help.split("Examples:\n").collect();
-    if delimiter_test_1.len() != 1 && delimiter_test_2.len() != 1 {
+    if delimiter_test_1.len() == 2 && delimiter_test_2.len() != 1 {
         let split_command_help =
             raw_command_help.split("Result:\n").collect::<Vec<&str>>()[1]
                 .split("Examples:\n")
