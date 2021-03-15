@@ -2,7 +2,7 @@ fn main() {
     use quizface::{
         check_success, get_command_help, ingest_commands,
         produce_interpretation, utils::logging::create_version_name,
-        utils::logging::log_raw_output,
+        utils::logging::log_raw_output, utils::prescrubbing::prescrub,
     };
     use std::io::BufRead;
 
@@ -40,11 +40,17 @@ fn main() {
         check_success(&command_help_output.status);
         let raw_command_help = std::str::from_utf8(&command_help_output.stdout).expect("Invalid raw_command_help, error!");
         log_raw_output(&command, raw_command_help.to_string());
+        //raw_command_help is &str
 
         //select just for blessed and mundane results.
-        if blessed_tome.contains(&command) || mundane_tome.contains(&command) {
+        if blessed_tome.contains(&command) {
             //dbg!(&command);
             produce_interpretation(raw_command_help);
+        } else if mundane_tome.contains(&command) {
+            let prescrubbed_mundane_help: String = prescrub(&command, raw_command_help);
+            produce_interpretation(prescrubbed_mundane_help.as_str());
+        } else {
+            // cursed
         }
     }
     println!("main() complete!");
