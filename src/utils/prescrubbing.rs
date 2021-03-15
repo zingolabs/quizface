@@ -9,9 +9,8 @@ pub fn prescrub(command: &str, raw_command_help: &str) -> String {
         "help" => {
             raw_command_help.replace("The help text", "The help text \n Examples:")
         } 
-        //TODO why is this not blessed/this is a scrub.
-        "estimatepriority" => {
-            raw_command_help.replace("n :", r#""n :""#)       
+        "estimatepriority" | "estimatefee" => {
+            raw_command_help.replace("Example:", "Examples:")       
         }
         "getunconfirmedbalance" => {
             raw_command_help.replace("unconfirmed balance", r#"unconfirmed balance
@@ -65,10 +64,6 @@ Examples:
             raw_command_help.replace(r#"proof is invalid"#, r#"proof is invalid
         Examples:
         "#)       
-        } 
-        //TODO why is this not blessed? same as estimatepriority
-        "estimatefee" => {
-            raw_command_help.replace("", "")       
         } 
         "zcbenchmark" => {
             raw_command_help.replace(r#"Output: [
