@@ -4,17 +4,19 @@ pub fn prescrub(command: &str, raw_command_help: &str) -> String {
             raw_command_help.replace("Examples:", "Result: \nExamples:")
         }
         "settxfee" | "getgenerate" | "generate" => { 
-            raw_command_help.replace("Result","Result:")
+            raw_command_help.replace("Result", "Result:")
         } 
         "help" => {
-            raw_command_help.replace("The help text","The help text \n Examples:")
+            raw_command_help.replace("The help text", "The help text \n Examples:")
         } 
         //TODO why is this not blessed/this is a scrub.
         "estimatepriority" => {
             raw_command_help.replace("n :", r#""n :""#)       
         }
         "getunconfirmedbalance" => {
-            raw_command_help.replace("unconfirmed balance", r#"unconfirmed balance \n Result: "numberic""#)       
+            raw_command_help.replace("unconfirmed balance", r#"unconfirmed balance
+                                     Result:
+                                     "#)       
         } 
         "createrawtransaction" => {
             raw_command_help.replace("Examples", "Examples:")       
@@ -69,7 +71,25 @@ Examples:
             raw_command_help.replace("", "")       
         } 
         "zcbenchmark" => {
-            raw_command_help.replace("", "")       
+            raw_command_help.replace(r#"Output: [
+  {
+    "runningtime": runningtime
+  },
+  {
+    "runningtime": runningtime
+  }
+  ...
+]"#, r#"Result: [
+  {
+    "runningtime": runningtime
+  },
+  {
+    "runningtime": runningtime
+  }
+  ...
+]
+Examples:
+"#)       
         } 
         _ => {
             panic!("unexpected mundane command");
