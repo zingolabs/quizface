@@ -9,3 +9,4 @@ default-run="quizface"
 
 [dependencies]
 serde_json = "*"
+regex = "*"

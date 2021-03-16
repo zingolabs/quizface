@@ -75,17 +75,17 @@ pub fn produce_interpretation(raw_command_help: &str) {
     record_interpretation(cmd_name, interpretation)
 }
 
-fn extract_name_and_result(raw_command_help: &str) -> (String, String) {
-    let result_sections =
+fn partition_help_text(raw_command_help: &str) -> (String, String) {
+    let help_sections =
         raw_command_help.split("Result:\n").collect::<Vec<&str>>();
     // TODO? instead of panicking, failed check break to next command
     // related to `blessed` commands, defined slightly differently,
     // these checks could be folded into or serve to augment blessed.
-    assert_eq!(result_sections.len(), 2, "Wrong number of Results!");
-    let cmd_name = result_sections[0]
+    assert_eq!(help_sections.len(), 2, "Wrong number of Results!");
+    let cmd_name = help_sections[0]
         .split_ascii_whitespace()
         .collect::<Vec<&str>>()[0];
-    let end_section = result_sections[1];
+    let end_section = help_sections[1];
     let example_sections =
         end_section.split("Examples:\n").collect::<Vec<&str>>();
     // TODO same as last comment.
@@ -97,7 +97,7 @@ fn extract_name_and_result(raw_command_help: &str) -> (String, String) {
 fn interpret_help_message(
     raw_command_help: &str,
 ) -> (String, serde_json::Value) {
-    let (cmd_name, result_data) = extract_name_and_result(raw_command_help);
+    let (cmd_name, result_data) = partition_help_text(raw_command_help);
     let scrubbed_result = scrub(cmd_name.clone(), result_data);
     (cmd_name, annotate_result(&mut scrubbed_result.chars()))
 }
@@ -313,11 +313,11 @@ mod unit {
     use crate::utils::test;
     use serde_json::json;
 
-    // ------------------ extract_name_and_result --------
+    // ------------------ partition_help_text --------
     #[test]
-    fn extract_name_and_result_getblockchaininfo_enforce_fragment() {
+    fn partition_help_text_getblockchaininfo_enforce_fragment() {
         let expected_data = test::GETBLOCKCHAININFO_ENFORCE_FRAGMENT;
-        let (cmd_name, result) = extract_name_and_result(expected_data);
+        let (cmd_name, result) = partition_help_text(expected_data);
         let expected_result = test::GETBLOCKCHAININFO_ENFORCE_FRAGMENT_RESULT;
         //let bound = bind_idents_labels(fake_ident_label, cmd_name, None);
         assert_eq!(cmd_name, "getblockchaininfo".to_string());
@@ -440,8 +440,7 @@ mod unit {
     #[test]
     fn annotate_result_from_getinfo() {
         let expected_testdata_annotated = test::valid_getinfo_annotation();
-        let (cmd_name, section_data) =
-            extract_name_and_result(test::HELP_GETINFO);
+        let (cmd_name, section_data) = partition_help_text(test::HELP_GETINFO);
         let data_stream = &mut section_data.chars();
         let annotated = annotate_result(data_stream);
         assert_eq!(annotated, expected_testdata_annotated);
