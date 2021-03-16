@@ -626,7 +626,7 @@ mod unit {
         let simple_unnested_full = test::SIMPLE_UNNESTED_FULL;
         let interpreted = interpret_help_message(simple_unnested_full);
         let expected_result = json!({"outer_id":"String"});
-        assert_eq!(interpreted[1].1, expected_result);
+        assert_eq!(interpreted[0].1, expected_result);
     }
 
     #[test]
@@ -635,7 +635,7 @@ mod unit {
         let simple_nested_full = test::SIMPLE_NESTED_FULL;
         let interpreted = interpret_help_message(simple_nested_full);
         let expected_result = json!({"outer_id":{"inner_id":"String"}});
-        assert_eq!(interpreted[1].1, expected_result);
+        assert_eq!(interpreted[0].1, expected_result);
     }
 
     #[test]
@@ -643,7 +643,7 @@ mod unit {
     fn interpret_help_message_extrabrackets_within_input_lines() {
         let valid_help_in =
             interpret_help_message(test::EXTRABRACKETS3_HELP_GETINFO);
-        assert_eq!(valid_help_in[1].1, test::valid_getinfo_annotation());
+        assert_eq!(valid_help_in[0].1, test::valid_getinfo_annotation());
     }
 
     #[test]
@@ -651,42 +651,42 @@ mod unit {
     fn interpret_help_message_more_than_one_set_of_brackets_input() {
         let valid_help_in =
             interpret_help_message(test::MORE_BRACKET_PAIRS_HELP_GETINFO);
-        assert_eq!(valid_help_in[1].1, test::valid_getinfo_annotation());
+        assert_eq!(valid_help_in[0].1, test::valid_getinfo_annotation());
     }
     #[test]
     #[should_panic]
     fn interpret_help_message_two_starting_brackets_input() {
         let valid_help_in =
             interpret_help_message(test::EXTRA_START_BRACKET_HELP_GETINFO);
-        assert_eq!(valid_help_in[1].1, test::valid_getinfo_annotation());
+        assert_eq!(valid_help_in[0].1, test::valid_getinfo_annotation());
     }
     #[test]
     #[should_panic]
     fn interpret_help_message_two_ending_brackets_input() {
         let valid_help_in =
             interpret_help_message(test::EXTRA_END_BRACKET_HELP_GETINFO);
-        assert_eq!(valid_help_in[1].1, test::valid_getinfo_annotation());
+        assert_eq!(valid_help_in[0].1, test::valid_getinfo_annotation());
     }
     #[test]
     #[should_panic]
     fn interpret_help_message_no_results_input() {
         let valid_help_in =
             interpret_help_message(test::NO_RESULT_HELP_GETINFO);
-        assert_eq!(valid_help_in[1].1, test::valid_getinfo_annotation());
+        assert_eq!(valid_help_in[0].1, test::valid_getinfo_annotation());
     }
     #[test]
     #[should_panic]
     fn interpret_help_message_no_end_bracket_input() {
         let valid_help_in =
             interpret_help_message(test::NO_END_BRACKET_HELP_GETINFO);
-        assert_eq!(valid_help_in[1].1, test::valid_getinfo_annotation());
+        assert_eq!(valid_help_in[0].1, test::valid_getinfo_annotation());
     }
     #[test]
     #[should_panic]
     fn interpret_help_message_no_start_bracket_input() {
         let valid_help_in =
             interpret_help_message(test::NO_START_BRACKET_HELP_GETINFO);
-        assert_eq!(valid_help_in[1].1, test::valid_getinfo_annotation());
+        assert_eq!(valid_help_in[0].1, test::valid_getinfo_annotation());
     }
 
     #[ignore]
@@ -700,35 +700,35 @@ mod unit {
     #[test]
     fn interpret_help_message_expected_input_valid() {
         let valid_help_in = interpret_help_message(test::HELP_GETINFO);
-        assert_eq!(valid_help_in[1].1, test::valid_getinfo_annotation());
+        assert_eq!(valid_help_in[0].1, test::valid_getinfo_annotation());
     }
 
     #[test]
     fn interpret_help_message_early_lbracket_input() {
         let valid_help_in =
             interpret_help_message(test::LBRACKETY_HELP_GETINFO);
-        assert_eq!(valid_help_in[1].1, test::valid_getinfo_annotation());
+        assert_eq!(valid_help_in[0].1, test::valid_getinfo_annotation());
     }
 
     #[test]
     fn interpret_help_message_early_rbracket_input() {
         let valid_help_in =
             interpret_help_message(test::RBRACKETY_HELP_GETINFO);
-        assert_eq!(valid_help_in[1].1, test::valid_getinfo_annotation());
+        assert_eq!(valid_help_in[0].1, test::valid_getinfo_annotation());
     }
 
     #[test]
     fn interpret_help_message_early_extrabrackets_input() {
         let valid_help_in =
             interpret_help_message(test::EXTRABRACKETS1_HELP_GETINFO);
-        assert_eq!(valid_help_in[1].1, test::valid_getinfo_annotation());
+        assert_eq!(valid_help_in[0].1, test::valid_getinfo_annotation());
     }
 
     #[test]
     fn interpret_help_message_late_extrabrackets_input() {
         let valid_help_in =
             interpret_help_message(test::EXTRABRACKETS2_HELP_GETINFO);
-        assert_eq!(valid_help_in[1].1, test::valid_getinfo_annotation());
+        assert_eq!(valid_help_in[0].1, test::valid_getinfo_annotation());
     }
 
     #[test]
@@ -736,7 +736,7 @@ mod unit {
         let expected_incoming = test::GETBLOCKCHAININFO_SOFTFORK_FRAGMENT;
         let expected_result = serde_json::json!({"softforks":[{"enforce":{"found":"Decimal","required":"Decimal","status":"bool","window":"Decimal"},"id":"String","reject":{"found":"Decimal","required":"Decimal","status":"bool","window":"Decimal"},"version":"Decimal"}]});
         assert_eq!(
-            interpret_help_message(expected_incoming)[1].1,
+            interpret_help_message(expected_incoming)[0].1,
             expected_result
         );
     }
@@ -756,7 +756,7 @@ mod unit {
                                                             "window":"Decimal"},
                                                   "version":"Decimal"});
         let interpreted = interpret_help_message(expected_incoming);
-        assert_eq!(interpreted[1].1, expected_results);
+        assert_eq!(interpreted[0].1, expected_results);
     }
 
     #[ignore]
@@ -800,7 +800,7 @@ mod unit {
         let expected = getblockchaininfo_interpretation();
         assert_eq!(
             expected,
-            interpret_help_message(test::HELP_GETBLOCKCHAININFO_COMPLETE)[1].1
+            interpret_help_message(test::HELP_GETBLOCKCHAININFO_COMPLETE)[0].1
         );
     }
 
@@ -810,7 +810,7 @@ mod unit {
     fn serde_json_value_help_getinfo() {
         let getinfo_serde_json_value = test::getinfo_export();
         let help_getinfo = interpret_help_message(test::HELP_GETINFO);
-        assert_eq!(getinfo_serde_json_value, help_getinfo[1].1);
+        assert_eq!(getinfo_serde_json_value, help_getinfo[0].1);
     }
 
     #[test]
