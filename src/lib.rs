@@ -62,6 +62,7 @@ fn record_interpretation(cmd_name: String, interpretation: serde_json::Value) {
         utils::logging::create_version_name(),
         cmd_name
     );
+    dbg!(&interpretation);
     let output = std::path::Path::new(&location);
     if !output.parent().unwrap().is_dir() {
         std::fs::create_dir_all(output.parent().unwrap()).unwrap();
