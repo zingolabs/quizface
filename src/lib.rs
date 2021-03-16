@@ -76,6 +76,14 @@ pub fn produce_interpretation(raw_command_help: &str) {
 }
 
 fn partition_help_text(raw_command_help: &str) -> (String, String) {
+    let response_delimiters =
+        regex::Regex::new(r"(?s)Result[:\s].*?Examples[:\s]")
+            .expect("Invalid regex");
+    let response_section_match = response_delimiters
+        .find(&raw_command_help)
+        .expect("No response_section_match found!");
+    let response_section = &raw_command_help
+        [response_section_match.start()..(response_section_match.end() - 9)];
     let help_sections =
         raw_command_help.split("Result:\n").collect::<Vec<&str>>();
     // TODO? instead of panicking, failed check break to next command
@@ -116,7 +124,10 @@ fn annotate_result(result_chars: &mut std::str::Chars) -> serde_json::Value {
             //dbg!("annotate lone");
             annotate_lonetype(result_chars.as_str().to_string())
         }
-        _ => todo!(),
+        x => {
+            dbg!(x);
+            todo!()
+        }
     }
 }
 
