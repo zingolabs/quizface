@@ -12,19 +12,12 @@ fn process_command(command: &str) {
 
     log_raw_output(command, raw_command_help.to_string());
     //select just for blessed results.
-    produce_interpretation(raw_command_help);
     dbg!(command);
+    produce_interpretation(raw_command_help);
 }
 fn main() {
-    let args = &std::env::args().collect::<Vec<String>>()[1..];
-    if args.len() == 0 {
-        for command in ingest_commands() {
-            process_command(&command);
-        }
-    } else {
-        for command in args {
-            process_command(&command);
-        }
-    };
-    println!("main() complete!");
+    for command in &std::env::args().collect::<Vec<String>>()[1..] {
+        process_command(&command);
+    }
+    dbg!("SUCCESS!");
 }
