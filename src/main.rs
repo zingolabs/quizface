@@ -25,7 +25,7 @@ fn main() {
         .map(|l| l.expect("Could not make line."))
         .collect();
 
-    let mundane_location = "./lists/mundate.txt";
+    let mundane_location = "./lists/mundane.txt";
     let mundane_path = std::path::Path::new(&mundane_location);
     let mundane_reader = std::io::BufReader::new(
         std::fs::File::open(mundane_path).expect("No mundane text!"),
