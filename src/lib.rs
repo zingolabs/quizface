@@ -62,7 +62,6 @@ fn record_interpretation(cmd_name: String, interpretation: serde_json::Value) {
         utils::logging::create_version_name(),
         cmd_name
     );
-    dbg!(&interpretation);
     let output = std::path::Path::new(&location);
     if !output.parent().unwrap().is_dir() {
         std::fs::create_dir_all(output.parent().unwrap()).unwrap();
@@ -84,6 +83,7 @@ fn partition_help_text(raw_command_help: &str) -> (String, String) {
         .expect("No response_section_match found!");
     let response_section = &raw_command_help
         [response_section_match.start()..(response_section_match.end() - 9)];
+    dbg!(&response_section);
     let help_sections =
         raw_command_help.split("Result:\n").collect::<Vec<&str>>();
     // TODO? instead of panicking, failed check break to next command
@@ -112,18 +112,9 @@ fn interpret_help_message(
 
 fn annotate_result(result_chars: &mut std::str::Chars) -> serde_json::Value {
     match result_chars.next().unwrap() {
-        '{' => {
-            //dbg!("annotate {");
-            annotate_object(result_chars)
-        }
-        '[' => {
-            //dbg!("annotate [");
-            annotate_array(result_chars)
-        }
-        '"' => {
-            //dbg!("annotate lone");
-            annotate_lonetype(result_chars.as_str().to_string())
-        }
+        '{' => annotate_object(result_chars),
+        '[' => annotate_array(result_chars),
+        '"' => annotate_lonetype(result_chars.as_str().to_string()),
         x => {
             dbg!(x);
             todo!()
