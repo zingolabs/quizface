@@ -3,6 +3,7 @@ use crate::logging::create_log_dirs;
 use crate::logging::log_masterhelp_output;
 use crate::utils::scrubbing::scrub;
 use serde_json::{json, map::Map, Value};
+use std::collections::HashMap;
 use std::path::Path;
 use utils::logging;
 
@@ -74,7 +75,8 @@ pub fn produce_interpretation(raw_command_help: &str) {
     record_interpretation(cmd_name, interpretation)
 }
 
-fn partition_help_text(raw_command_help: &str) -> (String, String) {
+fn partition_help_text(raw_command_help: &str) -> HashMap<String, String> {
+    let mut sections = HashMap::new();
     let response_delimiters =
         regex::Regex::new(r"(?s)Result[:\s].*?Examples[:\s]")
             .expect("Invalid regex");
@@ -99,7 +101,12 @@ fn partition_help_text(raw_command_help: &str) -> (String, String) {
     // TODO same as last comment.
     assert_eq!(example_sections.len(), 2, "Wrong number of Examples!");
     // TODO cmd_name still present here, remove and elsewhere
-    (cmd_name.to_string(), example_sections[0].trim().to_string())
+    sections.insert("rpc_name".to_string(), cmd_name.to_string());
+    sections.insert(
+        "reponse".to_string(),
+        example_sections[0].trim().to_string(),
+    );
+    sections
 }
 
 fn interpret_help_message(
@@ -451,7 +458,6 @@ mod unit {
 
     #[test]
     fn annotate_result_enforce_as_input() {
-        use std::collections::HashMap;
         let testmap = json!(test::BINDING_ENFORCE
             .iter()
             .map(|(a, b)| (a.to_string(), json!(b.to_string())))
