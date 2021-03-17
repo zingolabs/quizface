@@ -1,6 +1,6 @@
 use quizface::{
-    check_success, get_command_help, ingest_commands, produce_interpretation,
-    utils::logging::create_version_name, utils::logging::log_raw_output,
+    check_success, get_command_help, produce_interpretation,
+    utils::logging::log_raw_output,
 };
 fn process_command(command: &str) {
     let command_help_output = get_command_help(command);

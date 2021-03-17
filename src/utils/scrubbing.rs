@@ -242,54 +242,50 @@ macro_rules! dotdotdot {
     };
 }
 
-const ALPHABET: &str = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-
 pub(crate) fn scrub(cmd_name: String, result_data: String) -> String {
-    let mut intermediate_result_data =
-        if cmd_name == "getaddressdeltas".to_string() {
-            getaddressdeltas!(result_data)
-        } else if cmd_name == "getaddressmempool".to_string() {
-            getaddressmempool!(result_data)
-        } else if cmd_name == "getchaintips".to_string() {
-            getchaintips!(result_data)
-        } else if cmd_name == "getblockchaininfo".to_string() {
-            getblockchaininfo!(result_data)
-        } else if cmd_name == "getblockdeltas".to_string() {
-            getblockdeltas!(result_data)
-        } else if cmd_name == "getblockhashes".to_string() {
-            getblockhashes!(result_data)
-        } else if cmd_name == "getdeprecationinfo".to_string() {
-            getdeprecationinfo!(result_data)
-        } else if cmd_name == "getnetworkinfo".to_string() {
-            getnetworkinfo!(result_data)
-        } else if cmd_name == "getpeerinfo".to_string() {
-            getpeerinfo!(result_data)
-        } else if cmd_name == "getspentinfo".to_string() {
-            getspentinfo!(result_data)
-        } else if cmd_name == "gettransaction".to_string() {
-            gettransaction!(result_data)
-        } else if cmd_name == "listaccounts".to_string() {
-            listaccounts!(result_data)
-        } else if cmd_name == "listreceivedbyaccount".to_string() {
-            listreceivedbyaccount!(result_data)
-        } else if cmd_name == "listreceivedbyaddress".to_string() {
-            listreceivedbyaddress!(result_data)
-        } else if cmd_name == "listtransactions".to_string() {
-            listtransactions!(result_data)
-        } else if cmd_name == "submitblock".to_string() {
-            submitblock!(result_data)
-        } else if cmd_name == "z_getoperationresult".to_string() {
-            z_getoperationresult!(result_data)
-        } else if cmd_name == "z_getoperationstatus".to_string() {
-            z_getoperationstatus!(result_data)
-        } else if cmd_name == "z_listreceivedbyaddress".to_string() {
-            z_listreceivedbyaddress!(result_data)
-        } else if cmd_name == "z_validateaddress".to_string() {
-            z_validateaddress!(result_data)
-        } else if cmd_name == "getblocktemplate".to_string() {
-            getblocktemplate!(result_data)
-        } else {
-            dotdotdot!(result_data)
-        };
-    intermediate_result_data
+    if cmd_name == "getaddressdeltas".to_string() {
+        getaddressdeltas!(result_data)
+    } else if cmd_name == "getaddressmempool".to_string() {
+        getaddressmempool!(result_data)
+    } else if cmd_name == "getchaintips".to_string() {
+        getchaintips!(result_data)
+    } else if cmd_name == "getblockchaininfo".to_string() {
+        getblockchaininfo!(result_data)
+    } else if cmd_name == "getblockdeltas".to_string() {
+        getblockdeltas!(result_data)
+    } else if cmd_name == "getblockhashes".to_string() {
+        getblockhashes!(result_data)
+    } else if cmd_name == "getdeprecationinfo".to_string() {
+        getdeprecationinfo!(result_data)
+    } else if cmd_name == "getnetworkinfo".to_string() {
+        getnetworkinfo!(result_data)
+    } else if cmd_name == "getpeerinfo".to_string() {
+        getpeerinfo!(result_data)
+    } else if cmd_name == "getspentinfo".to_string() {
+        getspentinfo!(result_data)
+    } else if cmd_name == "gettransaction".to_string() {
+        gettransaction!(result_data)
+    } else if cmd_name == "listaccounts".to_string() {
+        listaccounts!(result_data)
+    } else if cmd_name == "listreceivedbyaccount".to_string() {
+        listreceivedbyaccount!(result_data)
+    } else if cmd_name == "listreceivedbyaddress".to_string() {
+        listreceivedbyaddress!(result_data)
+    } else if cmd_name == "listtransactions".to_string() {
+        listtransactions!(result_data)
+    } else if cmd_name == "submitblock".to_string() {
+        submitblock!(result_data)
+    } else if cmd_name == "z_getoperationresult".to_string() {
+        z_getoperationresult!(result_data)
+    } else if cmd_name == "z_getoperationstatus".to_string() {
+        z_getoperationstatus!(result_data)
+    } else if cmd_name == "z_listreceivedbyaddress".to_string() {
+        z_listreceivedbyaddress!(result_data)
+    } else if cmd_name == "z_validateaddress".to_string() {
+        z_validateaddress!(result_data)
+    } else if cmd_name == "getblocktemplate".to_string() {
+        getblocktemplate!(result_data)
+    } else {
+        dotdotdot!(result_data)
+    }
 }

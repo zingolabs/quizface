@@ -113,7 +113,7 @@ fn split_response_into_results(response_section: String) -> Vec<String> {
         .map(|x| x.trim().to_string())
         .collect();
     r.remove(0);
-    dbg!(r)
+    r
 }
 fn interpret_help_message(
     raw_command_help: &str,
