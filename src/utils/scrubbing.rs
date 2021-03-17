@@ -233,6 +233,52 @@ macro_rules! z_validateaddress {
     };
 }
 
+macro_rules! getrawmempool {
+    ($result_data:expr) => {
+        $result_data
+            .replace(r#"Result: (for verbose = false):
+[                     (json array of string)
+  "transactionid"     (string) The transaction id
+  ,...
+]
+
+Result: (for verbose = true):
+{                           (json object)
+  "transactionid" : {       (json object)
+    "size" : n,             (numeric) transaction size in bytes
+    "fee" : n,              (numeric) transaction fee in ZEC
+    "time" : n,             (numeric) local time transaction entered pool in seconds since 1 Jan 1970 GMT
+    "height" : n,           (numeric) block height when transaction entered pool
+    "startingpriority" : n, (numeric) priority when transaction entered pool
+    "currentpriority" : n,  (numeric) transaction priority now
+    "depends" : [           (array) unconfirmed transactions used as inputs for this transaction
+        "transactionid",    (string) parent transaction id
+       ... ]
+  }, ...
+}"#,
+
+r#"Result:
+[                     
+  "transactionid"     (string) The transaction id
+]
+
+Result:
+{
+  "transactionid" : {
+    "size" : n,             (numeric) transaction size in bytes
+    "fee" : n,              (numeric) transaction fee in ZEC
+    "time" : n,             (numeric) local time transaction entered pool in seconds since 1 Jan 1970 GMT
+    "height" : n,           (numeric) block height when transaction entered pool
+    "startingpriority" : n, (numeric) priority when transaction entered pool
+    "currentpriority" : n,  (numeric) transaction priority now
+    "depends" : [
+        "transactionid",    (string) parent transaction id
+        ]
+  }
+}"#)
+    };
+}
+
 //TODO turn into individual scrubbers
 macro_rules! dotdotdot {
     ($result_data:expr) => {
@@ -245,6 +291,8 @@ macro_rules! dotdotdot {
 pub(crate) fn scrub(cmd_name: String, result_data: String) -> String {
     if cmd_name == "getaddressdeltas".to_string() {
         getaddressdeltas!(result_data)
+    } else if cmd_name == "getrawmempool".to_string() {
+        getrawmempool!(result_data)
     } else if cmd_name == "getaddressmempool".to_string() {
         getaddressmempool!(result_data)
     } else if cmd_name == "getchaintips".to_string() {
