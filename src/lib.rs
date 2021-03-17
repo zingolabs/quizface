@@ -140,9 +140,9 @@ fn interpret_help_message(
     let sections = partition_help_text(raw_command_help);
     let cmd_name = sections.get("rpc_name").unwrap();
     let response_data = sections.get("response").unwrap();
-    dbg!(&response_data);
+    println!("{}", &response_data);
     let scrubbed_response = scrub(cmd_name.clone(), response_data.clone());
-    dbg!(&scrubbed_response);
+    println!("{}", &scrubbed_response);
     let results = split_response_into_results(scrubbed_response);
     let mut v = vec![];
     for result in results {
