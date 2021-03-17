@@ -343,6 +343,7 @@ mod unit {
     fn partition_help_text_getblockchaininfo_enforce_fragment() {
         let expected_data = test::GETBLOCKCHAININFO_ENFORCE_FRAGMENT;
         let help_sections = partition_help_text(expected_data);
+        dbg!(&help_sections);
         let cmd_name = help_sections.get("rpc_name").unwrap().clone();
         let result = help_sections.get("response").unwrap().clone();
         let expected_result = test::GETBLOCKCHAININFO_ENFORCE_FRAGMENT_RESULT;
