@@ -82,9 +82,7 @@ fn partition_help_text(raw_command_help: &str) -> HashMap<String, String> {
     let mut sections = HashMap::new();
 
     //rpc_name
-    let cmd_name = &raw_command_help
-        .split_ascii_whitespace()
-        .collect::<Vec<&str>>()[0];
+    let cmd_name = &raw_command_help.split_ascii_whitespace().next().unwrap();
     sections.insert("rpc_name".to_string(), cmd_name.to_string());
 
     //response
@@ -154,7 +152,9 @@ fn annotate_result(result_chars: &mut std::str::Chars) -> serde_json::Value {
     match result_chars.next().unwrap() {
         '{' => annotate_object(result_chars),
         '[' => annotate_array(result_chars),
-        '"' => annotate_lonetype(result_chars.as_str().to_string()),
+        i if i.is_alphabetic() || i == '"' => {
+            annotate_lonetype(result_chars.as_str().to_string())
+        }
         x => {
             dbg!(x);
             todo!()
