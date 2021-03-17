@@ -97,7 +97,7 @@ fn partition_help_text(raw_command_help: &str) -> HashMap<String, String> {
         [response_section_match.start()..(response_section_match.end() - 9)];
     sections.insert("response".to_string(), response_section.to_string());
 
-    //description
+    //description and arguments
     let description_delimiters =
         Regex::new(r"(?s).*?Arguments[:\s]").expect("Invalid regex!!");
     let description_section;
