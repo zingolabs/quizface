@@ -82,7 +82,10 @@ fn partition_help_text(raw_command_help: &str) -> HashMap<String, String> {
     let mut sections = HashMap::new();
 
     //rpc_name
-    let cmd_name = &raw_command_help.split_ascii_whitespace().next().unwrap();
+    let cmd_name = &raw_command_help
+        .split_ascii_whitespace()
+        .next()
+        .expect("Command name not first token!!");
     sections.insert("rpc_name".to_string(), cmd_name.to_string());
 
     //response
