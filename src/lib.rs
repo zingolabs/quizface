@@ -78,32 +78,42 @@ pub fn produce_interpretation(raw_command_help: &str) {
 }
 
 fn partition_help_text(raw_command_help: &str) -> HashMap<String, String> {
+    use regex::Regex;
     let mut sections = HashMap::new();
+
+    //rpc_name
+    let cmd_name = &raw_command_help
+        .split_ascii_whitespace()
+        .collect::<Vec<&str>>()[0];
+    sections.insert("rpc_name".to_string(), cmd_name.to_string());
+
+    //response
     let response_delimiters =
-        regex::Regex::new(r"(?s)Result[:\s].*?Examples[:\s]")
-            .expect("Invalid regex");
+        Regex::new(r"(?s)Result[:\s].*?Examples[:\s]").expect("Invalid regex");
     let response_section_match = response_delimiters
         .find(&raw_command_help)
         .expect("No response_section_match found!");
     let response_section = &raw_command_help
         [response_section_match.start()..(response_section_match.end() - 9)];
-    let help_sections =
-        raw_command_help.split("Result:\n").collect::<Vec<&str>>();
-    // TODO? instead of panicking, failed check break to next command
-    // related to `blessed` commands, defined slightly differently,
-    // these checks could be folded into or serve to augment blessed.
-    assert_eq!(help_sections.len(), 2, "Wrong number of Results!");
-    let cmd_name = help_sections[0]
-        .split_ascii_whitespace()
-        .collect::<Vec<&str>>()[0];
-    let end_section = help_sections[1];
-    let example_sections =
-        end_section.split("Examples:\n").collect::<Vec<&str>>();
-    // TODO same as last comment.
-    assert_eq!(example_sections.len(), 2, "Wrong number of Examples!");
-    // TODO cmd_name still present here, remove and elsewhere
-    sections.insert("rpc_name".to_string(), cmd_name.to_string());
     sections.insert("response".to_string(), response_section.to_string());
+
+    //description
+    let description_delimiters =
+        Regex::new(r"(?s).*?Arguments[:\s]").expect("Invalid regex!!");
+    if let Some(description_section_match) =
+        description_delimiters.find(&raw_command_help)
+    {
+        let description_section = &raw_command_help[description_section_match
+            .start()
+            ..(description_section_match.end() - "Arguments:".len())];
+        sections
+            .insert("description".to_string(), description_section.to_string());
+    }
+
+    //examples
+    let examples_section =
+        &raw_command_help[(response_section_match.end() - "Examples:".len())..];
+    sections.insert("examples".to_string(), examples_section.to_string());
     sections
 }
 
@@ -294,7 +304,6 @@ fn viewed_to_lines(viewed: String) -> Vec<String> {
 }
 
 fn raw_to_ident_and_metadata(ident_with_metadata: String) -> (String, String) {
-    dbg!(&ident_with_metadata);
     let trimmed = ident_with_metadata.trim().to_string();
     let mut split = trimmed.splitn(3, '"').collect::<Vec<&str>>();
     if split[0].is_empty() {
