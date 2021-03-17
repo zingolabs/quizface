@@ -237,8 +237,8 @@ macro_rules! z_validateaddress {
 macro_rules! dotdotdot {
     ($result_data:expr) => {
         $result_data
-            .replace(r#", ..."#, r#""#)
-            .replace(r#",..."#, r#""#)
+            .replace(", ...\n", r#""#)
+            .replace(",...\n", r#""#)
     };
 }
 
