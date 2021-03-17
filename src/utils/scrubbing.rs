@@ -292,11 +292,11 @@ pub(crate) fn scrub(cmd_name: String, result_data: String) -> String {
             dotdotdot!(result_data)
         };
 
-    if ALPHABET.contains(intermediate_result_data.chars().next().unwrap()) {
-        //dbg!("first char alphanumeric!");
+    /*if ALPHABET.contains(intermediate_result_data.chars().next().unwrap()) {
+        dbg!("first char alphanumeric!");
         intermediate_result_data.insert(0, '"');
         intermediate_result_data.insert(result_data.len() - 1, '"');
-    }
+    }*/
 
     intermediate_result_data
 }

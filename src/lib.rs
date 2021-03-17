@@ -103,27 +103,28 @@ fn partition_help_text(raw_command_help: &str) -> HashMap<String, String> {
     assert_eq!(example_sections.len(), 2, "Wrong number of Examples!");
     // TODO cmd_name still present here, remove and elsewhere
     sections.insert("rpc_name".to_string(), cmd_name.to_string());
-    sections.insert(
-        "response".to_string(),
-        example_sections[0].trim().to_string(),
-    );
+    sections.insert("response".to_string(), response_section.to_string());
     sections
 }
 
-fn split_reponse_into_results(response_section: String) -> Vec<String> {
-    response_section
+fn split_response_into_results(response_section: String) -> Vec<String> {
+    let mut r: Vec<String> = response_section
         .split("Result:")
-        .map(|x| x.to_string())
-        .collect()
+        .map(|x| x.trim().to_string())
+        .collect();
+    r.remove(0);
+    dbg!(r)
 }
 fn interpret_help_message(
     raw_command_help: &str,
 ) -> Vec<(String, serde_json::Value)> {
-    let sections = dbg!(partition_help_text(raw_command_help));
+    let sections = partition_help_text(raw_command_help);
     let cmd_name = sections.get("rpc_name").unwrap();
     let response_data = sections.get("response").unwrap();
+    dbg!(&response_data);
     let scrubbed_response = scrub(cmd_name.clone(), response_data.clone());
-    let results = split_reponse_into_results(scrubbed_response);
+    dbg!(&scrubbed_response);
+    let results = split_response_into_results(scrubbed_response);
     let mut v = vec![];
     for result in results {
         v.push((cmd_name.clone(), annotate_result(&mut result.chars())));
@@ -293,6 +294,7 @@ fn viewed_to_lines(viewed: String) -> Vec<String> {
 }
 
 fn raw_to_ident_and_metadata(ident_with_metadata: String) -> (String, String) {
+    dbg!(&ident_with_metadata);
     let trimmed = ident_with_metadata.trim().to_string();
     let mut split = trimmed.splitn(3, '"').collect::<Vec<&str>>();
     if split[0].is_empty() {
@@ -465,10 +467,11 @@ mod unit {
     #[test]
     fn annotate_result_from_getinfo() {
         let expected_testdata_annotated = test::valid_getinfo_annotation();
-        let help_sections = dbg!(partition_help_text(test::HELP_GETINFO));
+        let help_sections = partition_help_text(test::HELP_GETINFO);
         let cmd_name = help_sections.get("rpc_name").unwrap().clone();
         let response = help_sections.get("response").unwrap().clone();
-        let data_stream = &mut response.chars();
+        let responses = dbg!(split_response_into_results(response));
+        let data_stream = &mut responses[0].chars();
         let annotated = annotate_result(data_stream);
         assert_eq!(annotated, expected_testdata_annotated);
         assert_eq!(cmd_name, "getinfo");
@@ -721,6 +724,7 @@ mod unit {
     fn interpret_help_message_early_extrabrackets_input() {
         let valid_help_in =
             interpret_help_message(test::EXTRABRACKETS1_HELP_GETINFO);
+        dbg!(&valid_help_in);
         assert_eq!(valid_help_in[0].1, test::valid_getinfo_annotation());
     }
 
