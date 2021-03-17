@@ -12,7 +12,6 @@ fn process_command(command: &str) {
 
     log_raw_output(command, raw_command_help.to_string());
     //select just for blessed results.
-    dbg!(command);
     produce_interpretation(raw_command_help);
 }
 fn main() {

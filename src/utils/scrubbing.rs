@@ -1,23 +1,8 @@
 macro_rules! getaddressdeltas {
     ($result_data:expr) => {
         $result_data
-            .split(r#"(or, if chainInfo is true):"#)
-            .collect::<Vec<&str>>()[1]
-            .trim()
-            .to_string()
-            .replace(r#""deltas":"#, r#""alsoStandalone<deltas>":"#)
-            .replace(
-                r#"        "satoshis"    (number) The difference of zatoshis
-        "txid"        (string) The related txid
-        "index"       (number) The related input or output index
-        "height"      (number) The block height
-        "address"     (string)  The address base58check encoded"#,
-                r#"        "satoshis":   (numeric) The difference of zatoshis
-        "txid":       (string) The related txid
-        "index":      (numeric) The related input or output index
-        "height":     (numeric) The block height
-        "address":    (string)  The address base58check encoded"#,
-            )
+            .replace(r#"(or, if chainInfo is true):"#, "Result:")
+            .replace("number", "numeric")
             .replace(", ...", "")
             .replace(
                 r#"  "start":
@@ -199,21 +184,27 @@ macro_rules! submitblock {
     };
 }
 
+const INSUFFICIENT: &str = r#"INSUFFICIENT_INFORMATION
+Result:
+"do_not_use_this": (INSUFFICIENT)
+
+Examples:
+None"#;
 macro_rules! getblocktemplate {
     ($result_data:expr) => {
-        r#""do_not_use_this": (INSUFFICIENT)"#.to_string()
+        INSUFFICIENT.to_string()
     };
 }
 
 macro_rules! z_getoperationresult {
     ($result_data:expr) => {
-        r#""do_not_use_this": (INSUFFICIENT)"#.to_string()
+        INSUFFICIENT.to_string()
     };
 }
 
 macro_rules! z_getoperationstatus {
     ($result_data:expr) => {
-        r#""do_not_use_this": (INSUFFICIENT)"#.to_string()
+        INSUFFICIENT.to_string()
     };
 }
 

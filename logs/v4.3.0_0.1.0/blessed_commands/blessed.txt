@@ -25,7 +25,6 @@ getlocalsolps
 getmininginfo
 getnetworkhashps
 getnetworksolps
-submitblock
 getaddednodeinfo
 getconnectioncount
 getdeprecationinfo

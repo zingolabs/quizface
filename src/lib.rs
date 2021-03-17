@@ -57,24 +57,30 @@ pub fn check_success(output: &std::process::ExitStatus) {
     }
 }
 
-fn record_interpretation(cmd_name: String, interpretation: serde_json::Value) {
-    let location = format!(
+fn record_interpretation(cmd_name: String, interpretation: String) {
+    let rawlocation = &format!(
         "./output/{}/{}.json",
         utils::logging::create_version_name(),
         cmd_name
     );
-    let output = std::path::Path::new(&location);
-    if !output.parent().unwrap().is_dir() {
-        std::fs::create_dir_all(output.parent().unwrap()).unwrap();
-    }
-    std::fs::write(output, interpretation.to_string()).unwrap();
+    let location = std::path::Path::new(rawlocation);
+    std::fs::create_dir_all(location.parent().unwrap()).unwrap();
+    use std::io::Write as _;
+    let mut file = std::fs::File::create(location)
+        .expect("Couldn't create append interface to output file.");
+    file.write_all(interpretation.as_bytes()).unwrap();
 }
 
 pub fn produce_interpretation(raw_command_help: &str) {
     let interpretations = interpret_help_message(raw_command_help);
-    for interp in interpretations {
-        record_interpretation(interp.0, interp.1);
-    }
+    let full_interp = &interpretations
+        .iter()
+        .map(|x| format!("{}\n", x.1.to_string()))
+        .collect::<String>();
+    record_interpretation(
+        interpretations[0].0.clone(),
+        full_interp.to_string(),
+    );
 }
 
 fn partition_help_text(raw_command_help: &str) -> HashMap<String, String> {
@@ -140,9 +146,7 @@ fn interpret_help_message(
     let sections = partition_help_text(raw_command_help);
     let cmd_name = sections.get("rpc_name").unwrap();
     let response_data = sections.get("response").unwrap();
-    println!("{}", &response_data);
     let scrubbed_response = scrub(cmd_name.clone(), response_data.clone());
-    println!("{}", &scrubbed_response);
     let results = split_response_into_results(scrubbed_response);
     let mut v = vec![];
     for result in results {
@@ -363,7 +367,6 @@ mod unit {
     fn partition_help_text_getblockchaininfo_enforce_fragment() {
         let expected_data = test::GETBLOCKCHAININFO_ENFORCE_FRAGMENT;
         let help_sections = partition_help_text(expected_data);
-        dbg!(&help_sections);
         let cmd_name = help_sections.get("rpc_name").unwrap().clone();
         let result = help_sections.get("response").unwrap().clone();
         let expected_result = test::GETBLOCKCHAININFO_ENFORCE_FRAGMENT_RESULT;
@@ -491,7 +494,7 @@ mod unit {
         let help_sections = partition_help_text(test::HELP_GETINFO);
         let cmd_name = help_sections.get("rpc_name").unwrap().clone();
         let response = help_sections.get("response").unwrap().clone();
-        let responses = dbg!(split_response_into_results(response));
+        let responses = split_response_into_results(response);
         let data_stream = &mut responses[0].chars();
         let annotated = annotate_result(data_stream);
         assert_eq!(annotated, expected_testdata_annotated);
@@ -745,7 +748,6 @@ mod unit {
     fn interpret_help_message_early_extrabrackets_input() {
         let valid_help_in =
             interpret_help_message(test::EXTRABRACKETS1_HELP_GETINFO);
-        dbg!(&valid_help_in);
         assert_eq!(valid_help_in[0].1, test::valid_getinfo_annotation());
     }
 
@@ -851,7 +853,7 @@ mod unit {
         let output = std::path::Path::new(&location);
         record_interpretation(
             test_cmd_name.to_string(),
-            getblockchaininfo_interpretation(),
+            getblockchaininfo_interpretation().to_string(),
         );
 
         //Now let's examine the results!
@@ -861,5 +863,6 @@ mod unit {
         let read_in: serde_json::Value =
             serde_json::from_reader(reader).unwrap();
         assert_eq!(read_in, getblockchaininfo_interpretation());
+        std::fs::remove_file(output).unwrap();
     }
 }
