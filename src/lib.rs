@@ -100,15 +100,23 @@ fn partition_help_text(raw_command_help: &str) -> HashMap<String, String> {
     //description
     let description_delimiters =
         Regex::new(r"(?s).*?Arguments[:\s]").expect("Invalid regex!!");
+    let description_section;
+    let argument_section;
     if let Some(description_section_match) =
         description_delimiters.find(&raw_command_help)
     {
-        let description_section = &raw_command_help[description_section_match
+        description_section = &raw_command_help[description_section_match
             .start()
             ..(description_section_match.end() - "Arguments:".len())];
-        sections
-            .insert("description".to_string(), description_section.to_string());
-    }
+        argument_section = &raw_command_help
+            [description_section_match.end()..response_section_match.start()];
+    } else {
+        description_section =
+            &raw_command_help[..response_section_match.start()];
+        argument_section = "";
+    };
+    sections.insert("description".to_string(), description_section.to_string());
+    sections.insert("arguments".to_string(), argument_section.to_string());
 
     //examples
     let examples_section =
