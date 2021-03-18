@@ -6,7 +6,9 @@ fn main() {
     let mut not_blessed: Vec<String> = Vec::new();
     for command in commands {
         let command_help_output = quizface::get_command_help(&command);
-        quizface::check_success(&command_help_output.status);
+        if !&command_help_output.status.success() {
+            panic!()
+        };
         let raw_command_help = std::str::from_utf8(&command_help_output.stdout)
             .expect("Invalid raw_command_help.");
         if blessed_check(&raw_command_help, &command) {

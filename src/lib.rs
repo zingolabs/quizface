@@ -10,7 +10,6 @@ use utils::logging;
 pub fn ingest_commands() -> Vec<String> {
     create_log_dirs();
     let cli_help_output = get_command_help("");
-    check_success(&cli_help_output.status);
     let raw_help = std::string::String::from_utf8(cli_help_output.stdout)
         .expect("Invalid, not UTF-8. Error!");
     log_masterhelp_output(&raw_help);
@@ -43,18 +42,6 @@ pub fn get_command_help(cmd_name: &str) -> std::process::Output {
         .output()
         .expect("failed to execute command help");
     command_help
-}
-
-pub fn check_success(output: &std::process::ExitStatus) {
-    // simple boolean that output succeeded by spawning
-    // and monitoring child process, if false: panic
-    assert!(output.success());
-    // then match output exit code
-    match output.code() {
-        Some(0) => (),
-        Some(_) => panic!("exit code not 0"),
-        None => panic!("error! no exit code"),
-    }
 }
 
 fn record_interpretation(cmd_name: String, interpretation: String) {

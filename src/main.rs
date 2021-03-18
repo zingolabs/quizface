@@ -1,11 +1,12 @@
 use quizface::{
-    check_success, get_command_help, produce_interpretation,
+    get_command_help, produce_interpretation,
     utils::logging::{create_log_dirs, log_raw_output},
 };
 fn process_command(command: &str) {
     let command_help_output = get_command_help(command);
-
-    check_success(&command_help_output.status);
+    if !&command_help_output.status.success() {
+        panic!()
+    };
 
     let raw_command_help = std::str::from_utf8(&command_help_output.stdout)
         .expect("Invalid raw_command_help, error!");
