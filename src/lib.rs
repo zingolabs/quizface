@@ -75,8 +75,8 @@ pub fn produce_interpretation(raw_command_help: &str) {
     let interpretations = interpret_help_message(raw_command_help);
     let full_interp = &interpretations
         .iter()
-        .map(|x| format!("{}\n", x.1.to_string()))
-        .collect::<String>();
+        .map(|x| x.1.clone())
+        .collect::<Value>();
     record_interpretation(
         interpretations[0].0.clone(),
         full_interp.to_string(),
