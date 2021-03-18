@@ -1,6 +1,6 @@
 use quizface::{
     check_success, get_command_help, produce_interpretation,
-    utils::logging::log_raw_output,
+    utils::logging::{create_log_dirs, log_raw_output},
 };
 fn process_command(command: &str) {
     let command_help_output = get_command_help(command);
@@ -15,6 +15,7 @@ fn process_command(command: &str) {
     produce_interpretation(raw_command_help);
 }
 fn main() {
+    create_log_dirs();
     for command in &std::env::args().collect::<Vec<String>>()[1..] {
         process_command(&command);
     }

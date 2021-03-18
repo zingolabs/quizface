@@ -270,6 +270,47 @@ Result:
     };
 }
 
+macro_rules! getblockheader {
+    ($result_data:expr) => {
+        $result_data.replace(r#"Result (for verbose = true):
+{
+  "hash" : "hash",     (string) the block hash (same as provided)
+  "confirmations" : n,   (numeric) The number of confirmations, or -1 if the block is not on the main chain
+  "height" : n,          (numeric) The block height or index
+  "version" : n,         (numeric) The block version
+  "merkleroot" : "xxxx", (string) The merkle root
+  "finalsaplingroot" : "xxxx", (string) The root of the Sapling commitment tree after applying this block
+  "time" : ttt,          (numeric) The block time in seconds since epoch (Jan 1 1970 GMT)
+  "nonce" : n,           (numeric) The nonce
+  "bits" : "1d00ffff", (string) The bits
+  "difficulty" : x.xxx,  (numeric) The difficulty
+  "previousblockhash" : "hash",  (string) The hash of the previous block
+  "nextblockhash" : "hash"       (string) The hash of the next block
+}
+
+Result (for verbose=false):
+"data"             (string) A string that is serialized, hex-encoded data for block 'hash'."#,
+r#"Result:
+"data"             (string) A string that is serialized, hex-encoded data for block 'hash'.
+
+"Result:
+{
+  "hash" : "hash",     (string) the block hash (same as provided)
+  "confirmations" : n,   (numeric) The number of confirmations, or -1 if the block is not on the main chain
+  "height" : n,          (numeric) The block height or index
+  "version" : n,         (numeric) The block version
+  "merkleroot" : "xxxx", (string) The merkle root
+  "finalsaplingroot" : "xxxx", (string) The root of the Sapling commitment tree after applying this block
+  "time" : ttt,          (numeric) The block time in seconds since epoch (Jan 1 1970 GMT)
+  "nonce" : n,           (numeric) The nonce
+  "bits" : "1d00ffff", (string) The bits
+  "difficulty" : x.xxx,  (numeric) The difficulty
+  "previousblockhash" : "hash",  (string) The hash of the previous block
+  "nextblockhash" : "hash"       (string) The hash of the next block
+}"#)
+    };
+}
+
 //TODO turn into individual scrubbers
 macro_rules! dotdotdot {
     ($result_data:expr) => {
@@ -282,6 +323,8 @@ macro_rules! dotdotdot {
 pub(crate) fn scrub(cmd_name: String, result_data: String) -> String {
     if cmd_name == "getaddressdeltas".to_string() {
         getaddressdeltas!(result_data)
+    } else if cmd_name == "getblockheader".to_string() {
+        getblockheader!(result_data)
     } else if cmd_name == "getrawmempool".to_string() {
         getrawmempool!(result_data)
     } else if cmd_name == "getaddressmempool".to_string() {
