@@ -134,8 +134,9 @@ fn partition_help_text(raw_command_help: &str) -> HashMap<String, String> {
 }
 
 fn split_response_into_results(response_section: String) -> Vec<String> {
-    let mut r: Vec<String> = response_section
-        .split("Result:")
+    let resreg = regex::Regex::new(r"Result[:\s]").expect("invalid regex");
+    let mut r: Vec<String> = resreg
+        .split(&response_section)
         .map(|x| x.trim().to_string())
         .collect();
     r.remove(0);
