@@ -79,7 +79,8 @@ pub fn produce_interpretation(raw_command_help: &str) {
         .collect::<Value>();
     record_interpretation(
         interpretations[0].0.clone(),
-        full_interp.to_string(),
+        serde_json::ser::to_string_pretty(full_interp)
+            .expect("Couldn't serialize prettily!"),
     );
 }
 
