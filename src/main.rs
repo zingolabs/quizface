@@ -13,7 +13,9 @@ fn process_command(command: &str) {
 
     log_raw_output(command, raw_command_help.to_string());
     //select just for blessed results.
-    produce_interpretation(raw_command_help);
+    let ps_command_help =
+        quizface::utils::prescrubbing::prescrub(command, raw_command_help);
+    produce_interpretation(&ps_command_help);
 }
 fn main() {
     create_log_dirs();
