@@ -150,9 +150,11 @@ fn annotate_result(result_chars: &mut std::str::Chars) -> serde_json::Value {
     match result_chars.next().unwrap() {
         '{' => annotate_object(result_chars),
         '[' => annotate_array(result_chars),
-        i if i.is_alphabetic() || i == '"' => {
-            annotate_lonetype(result_chars.as_str().to_string())
-        }
+        i if i.is_alphabetic() || i == '"' => annotate_lonetype(format!(
+            "{}{}",
+            i,
+            result_chars.as_str().to_string()
+        )),
         x => {
             dbg!(x);
             todo!()
