@@ -1,8 +1,5 @@
-disconnectnode
-encryptwallet
 generate
 getunconfirmedbalance
-importaddress
 importprivkey
 importpubkey
 importwallet

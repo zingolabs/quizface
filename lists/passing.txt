@@ -6,8 +6,10 @@ createmultisig
 createrawtransaction
 decoderawtransaction
 decodescript
+disconnectnode
 dumpprivkey
 dumpwallet
+encryptwallet
 estimatefee
 estimatepriority
 fundrawtransaction
@@ -57,6 +59,7 @@ gettxoutproof
 gettxoutsetinfo
 getwalletinfo
 help
+importaddress
 listaccounts
 listaddressgroupings
 listlockunspent
