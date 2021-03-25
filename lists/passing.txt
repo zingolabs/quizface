@@ -1,6 +1,7 @@
 addmultisigaddress
 addnode
 backupwallet
+clearbanned
 createmultisig
 createrawtransaction
 decoderawtransaction
