@@ -1,10 +1,9 @@
-getblockheader
 getaddressutxos
-getrawmempool
 getrawtransaction
 listbanned
 z_validatepaymentdisclosure
 ping
 getblock
+submitblock
 zcsamplejoinsplit
 z_setmigration
