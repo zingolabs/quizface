@@ -4,7 +4,7 @@ pub fn prescrub(command: &str, raw_command_help: &str) -> String {
         | "disconnectnode" | "importprivkey" | "importwallet"
         | "setlogfilter" | "setban" | "keypoolrefill" | "z_importwallet"
         | "clearbanned" | "setaccount" | "setgenerate" => {
-            raw_command_help.replace("Examples:", "Result: \nExamples:")
+            raw_command_help.replace("Examples:", "Result:\nExamples:")
         }
         "settxfee" | "getgenerate" | "generate" => {
             raw_command_help.replace("Result", "Result:")
