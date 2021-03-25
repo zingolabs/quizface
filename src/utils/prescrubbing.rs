@@ -1,4 +1,5 @@
 pub fn prescrub(command: &str, raw_command_help: &str) -> String {
+    use regex::Regex;
     match command {
         "importaddress" | "importpubkey" | "encryptwallet" | "addnode"
         | "disconnectnode" | "importprivkey" | "importwallet"
@@ -6,11 +7,19 @@ pub fn prescrub(command: &str, raw_command_help: &str) -> String {
         | "clearbanned" | "setaccount" | "setgenerate" => {
             raw_command_help.replace("Examples:", "Result:\nExamples:")
         }
-        "getblock" => {
-            use regex::Regex;
-            let r = Regex::new(r"Result \(for verbosity = [012]\):").unwrap();
-            r.replace_all(raw_command_help, "Result:").to_string()
+        "getrawtransaction" => {
+            let x = Regex::new(r"Result \(if verbose.*\):")
+                .unwrap()
+                .replace_all(raw_command_help, "Result:")
+                .to_string();
+            println!("{}", x);
+            x
         }
+
+        "getblock" => Regex::new(r"Result \(for verbosity = [012]\):")
+            .unwrap()
+            .replace_all(raw_command_help, "Result:")
+            .to_string(),
         "settxfee" | "getgenerate" | "generate" => {
             raw_command_help.replace("Result", "Result:")
         }
