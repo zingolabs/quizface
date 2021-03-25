@@ -6,6 +6,11 @@ pub fn prescrub(command: &str, raw_command_help: &str) -> String {
         | "clearbanned" | "setaccount" | "setgenerate" => {
             raw_command_help.replace("Examples:", "Result:\nExamples:")
         }
+        "getblock" => {
+            use regex::Regex;
+            let r = Regex::new(r"Result \(for verbosity = [012]\):").unwrap();
+            r.replace_all(raw_command_help, "Result:").to_string()
+        }
         "settxfee" | "getgenerate" | "generate" => {
             raw_command_help.replace("Result", "Result:")
         }
