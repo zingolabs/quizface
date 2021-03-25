@@ -1,12 +1,7 @@
 generate
 getunconfirmedbalance
-keypoolrefill
 listunspent
 prioritisetransaction
-setaccount
-setban
-setgenerate
-setlogfilter
 stop
 verifytxoutproof
 zcbenchmark

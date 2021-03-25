@@ -63,6 +63,7 @@ importaddress
 importprivkey
 importpubkey
 importwallet
+keypoolrefill
 listaccounts
 listaddressgroupings
 listlockunspent
@@ -76,6 +77,10 @@ sendfrom
 sendmany
 sendrawtransaction
 sendtoaddress
+setaccount
+setban
+setgenerate
+setlogfilter
 settxfee
 signmessage
 signrawtransaction
