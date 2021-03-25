@@ -21,6 +21,7 @@ getaddressdeltas
 getaddressesbyaccount
 getaddressmempool
 getaddresstxids
+getaddressutxos
 getbalance
 getbestblockhash
 getblockchaininfo

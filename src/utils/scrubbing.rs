@@ -31,6 +31,15 @@ macro_rules! getaddressdeltas {
     };
 }
 
+macro_rules! getaddressutxos {
+    ($result_data:expr) => {
+        $result_data
+            .replace(r#"(or, if chainInfo is true):"#, "Result:")
+            .replace("number", "numeric")
+            .replace(", ...", "")
+    };
+}
+
 macro_rules! getaddressmempool {
     ($result_data:expr) => {
         $result_data.replace(r#"number"#, r#"numeric"#)
@@ -323,6 +332,8 @@ macro_rules! dotdotdot {
 pub(crate) fn scrub(cmd_name: String, result_data: String) -> String {
     if cmd_name == "getaddressdeltas".to_string() {
         getaddressdeltas!(result_data)
+    } else if cmd_name == "getaddressutxos".to_string() {
+        getaddressutxos!(result_data)
     } else if cmd_name == "getblockheader".to_string() {
         getblockheader!(result_data)
     } else if cmd_name == "getrawmempool".to_string() {
