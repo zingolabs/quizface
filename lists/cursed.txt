@@ -1,9 +1,9 @@
 getaddressutxos
+getblock
 getrawtransaction
 listbanned
-z_validatepaymentdisclosure
 ping
-getblock
 submitblock
 zcsamplejoinsplit
 z_setmigration
+z_validatepaymentdisclosure
