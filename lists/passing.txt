@@ -84,6 +84,7 @@ setlogfilter
 settxfee
 signmessage
 signrawtransaction
+stop
 validateaddress
 verifychain
 verifymessage
@@ -100,6 +101,7 @@ z_gettotalbalance
 z_gettreestate
 z_importkey
 z_importviewingkey
+z_importwallet
 z_listaddresses
 z_listoperationids
 z_listreceivedbyaddress

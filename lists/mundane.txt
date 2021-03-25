@@ -2,12 +2,10 @@ generate
 getunconfirmedbalance
 listunspent
 prioritisetransaction
-stop
 verifytxoutproof
 zcbenchmark
 zcrawjoinsplit
 zcrawkeygen
 zcrawreceive
 z_getmigrationstatus
-z_importwallet
 z_listunspent
