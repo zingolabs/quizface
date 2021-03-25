@@ -40,6 +40,16 @@ macro_rules! getaddressutxos {
     };
 }
 
+macro_rules! getblock {
+    ($result_data:expr) => {
+        $result_data
+            .replace(r#"(array of Objects) The transactions in the format of the getrawtransaction RPC. Different from verbosity = 1 "tx" result."#, "")
+            .replace(r#""transactionid"     (string) The transaction id
+     ,..."#, r#""transactionid""#)
+			.replace(r#"(array of string) The transaction ids"#, "")
+    };
+}
+
 macro_rules! getaddressmempool {
     ($result_data:expr) => {
         $result_data.replace(r#"number"#, r#"numeric"#)
@@ -334,6 +344,10 @@ pub(crate) fn scrub(cmd_name: String, result_data: String) -> String {
         getaddressdeltas!(result_data)
     } else if cmd_name == "getaddressutxos".to_string() {
         getaddressutxos!(result_data)
+    } else if cmd_name == "getblock".to_string() {
+        let x = getblock!(result_data);
+        println!("{}", x);
+        x
     } else if cmd_name == "getblockheader".to_string() {
         getblockheader!(result_data)
     } else if cmd_name == "getrawmempool".to_string() {
