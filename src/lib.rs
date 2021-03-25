@@ -136,10 +136,14 @@ fn interpret_help_message(
     let scrubbed_response = scrub(cmd_name.clone(), response_data.clone());
     let results = split_response_into_results(scrubbed_response);
     let mut v = vec![];
-    for result in results {
-        v.push(annotate_result(&mut result.chars()));
+    if &results.len() == &1usize && &results[0] == "" {
+        (cmd_name, v)
+    } else {
+        for result in results {
+            v.push(annotate_result(&mut result.chars()));
+        }
+        (cmd_name, v)
     }
-    (cmd_name, v)
 }
 
 fn annotate_result(result_chars: &mut std::str::Chars) -> serde_json::Value {
