@@ -60,6 +60,9 @@ gettxoutsetinfo
 getwalletinfo
 help
 importaddress
+importprivkey
+importpubkey
+importwallet
 listaccounts
 listaddressgroupings
 listlockunspent

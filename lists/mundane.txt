@@ -1,8 +1,5 @@
 generate
 getunconfirmedbalance
-importprivkey
-importpubkey
-importwallet
 keypoolrefill
 listunspent
 prioritisetransaction
