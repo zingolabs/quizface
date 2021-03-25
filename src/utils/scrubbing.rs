@@ -126,11 +126,6 @@ macro_rules! getrawtransaction {
 macro_rules! getblock {
     ($result_data:expr) => {
         $result_data
-            .replace(
-				r#""transactionid"     (string) The transaction id
-     ,..."#,
-				r#""transactionid""#
-			)
 			.replace(r#"(array of string) The transaction ids"#, "")
             .replace(
 				"(array of Objects) The transactions in the format of the getrawtransaction RPC. Different from verbosity = 1 \"tx\" result.\n         ,...",
