@@ -24,6 +24,7 @@ getaddresstxids
 getaddressutxos
 getbalance
 getbestblockhash
+getblock
 getblockchaininfo
 getblockcount
 getblockdeltas

@@ -448,9 +448,7 @@ pub(crate) fn scrub(cmd_name: String, result_data: String) -> String {
     } else if cmd_name == "getaddressutxos".to_string() {
         getaddressutxos!(result_data)
     } else if cmd_name == "getblock".to_string() {
-        let x = getblock!(result_data);
-        println!("{}", x);
-        x
+        getblock!(result_data)
     } else if cmd_name == "getrawtransaction".to_string() {
         getrawtransaction!(result_data)
     } else if cmd_name == "getblockheader".to_string() {
