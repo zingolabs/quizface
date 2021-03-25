@@ -1,12 +1,9 @@
 importaddress
-help
 importpubkey
-estimatepriority
 encryptwallet
 getunconfirmedbalance
 addnode
 disconnectnode
-createrawtransaction
 prioritisetransaction
 generate
 importprivkey
@@ -20,9 +17,7 @@ zcrawkeygen
 stop
 setban
 keypoolrefill
-gettxoutproof
 verifytxoutproof
-estimatefee
 z_importwallet
 listunspent
 clearbanned

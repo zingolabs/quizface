@@ -35,7 +35,12 @@ getdeprecationinfo
 getnettotals
 getnetworkinfo
 getpeerinfo
+gettxoutproof
+help
+createrawtransaction
 decoderawtransaction
+estimatepriority
+estimatefee
 decodescript
 fundrawtransaction
 sendrawtransaction
