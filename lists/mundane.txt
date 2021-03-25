@@ -1,6 +1,4 @@
 importaddress
-settxfee
-getgenerate
 help
 importpubkey
 estimatepriority
@@ -18,7 +16,6 @@ setlogfilter
 zcrawjoinsplit
 z_listunspent
 zcrawreceive
-getbestblockhash
 zcrawkeygen
 stop
 setban

@@ -2,14 +2,18 @@ getaddressbalance
 getaddressdeltas
 getaddressmempool
 getaddresstxids
+getbestblockhash
 getblockchaininfo
 getblockcount
 getblockdeltas
 getblockhash
 getblockhashes
+getblockheader
 getchaintips
 getdifficulty
+getgenerate
 getmempoolinfo
+getrawmempool
 getspentinfo
 gettxout
 gettxoutsetinfo
@@ -66,6 +70,7 @@ move
 sendfrom
 sendmany
 sendtoaddress
+settxfee
 signmessage
 z_exportkey
 z_exportviewingkey
