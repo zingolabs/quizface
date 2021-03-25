@@ -50,6 +50,19 @@ macro_rules! getblock {
     };
 }
 
+macro_rules! getrawtransaction {
+    ($result_data:expr) => {
+        $result_data
+            .replace(",...", "")
+            .replace("bool", "boolean")
+            .replace("(array of json objects, only for version >= 2)", "")
+            .replace("(array of json objects)", "")
+            .replace("(json array of string)", "")
+            .replace("(json object) The script", "")
+            .replace("(json object)", "")
+    };
+}
+
 macro_rules! getaddressmempool {
     ($result_data:expr) => {
         $result_data.replace(r#"number"#, r#"numeric"#)
@@ -346,8 +359,9 @@ pub(crate) fn scrub(cmd_name: String, result_data: String) -> String {
         getaddressutxos!(result_data)
     } else if cmd_name == "getblock".to_string() {
         let x = getblock!(result_data);
-        println!("{}", x);
         x
+    } else if cmd_name == "getrawtransaction".to_string() {
+        getrawtransaction!(result_data)
     } else if cmd_name == "getblockheader".to_string() {
         getblockheader!(result_data)
     } else if cmd_name == "getrawmempool".to_string() {

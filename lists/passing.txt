@@ -51,6 +51,7 @@ getnewaddress
 getpeerinfo
 getrawchangeaddress
 getrawmempool
+getrawtransaction
 getreceivedbyaccount
 getreceivedbyaddress
 getspentinfo

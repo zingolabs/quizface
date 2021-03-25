@@ -1,5 +1,4 @@
 getblock
-getrawtransaction
 listbanned
 ping
 submitblock

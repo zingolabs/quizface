@@ -7,14 +7,10 @@ pub fn prescrub(command: &str, raw_command_help: &str) -> String {
         | "clearbanned" | "setaccount" | "setgenerate" => {
             raw_command_help.replace("Examples:", "Result:\nExamples:")
         }
-        "getrawtransaction" => {
-            let x = Regex::new(r"Result \(if verbose.*\):")
-                .unwrap()
-                .replace_all(raw_command_help, "Result:")
-                .to_string();
-            println!("{}", x);
-            x
-        }
+        "getrawtransaction" => Regex::new(r"Result \(if verbose.*\):")
+            .unwrap()
+            .replace_all(raw_command_help, "Result:")
+            .to_string(),
 
         "getblock" => Regex::new(r"Result \(for verbosity = [012]\):")
             .unwrap()
