@@ -451,9 +451,20 @@ macro_rules! dotdotdot {
     };
 }
 
+macro_rules! verifytxoutproof {
+    ($result_data:expr) => {
+        $result_data
+            .replace(
+                r#"["txid"]      (array, strings) The txid(s) which the proof commits to, or empty array if the proof is invalid"#,
+                "[\n\"txid\"   (string) The txid(s) which the proof commits to, or empty array if the proof is invalid\n]")
+    };
+}
+
 pub(crate) fn scrub(cmd_name: String, result_data: String) -> String {
     if cmd_name == "getaddressdeltas".to_string() {
         getaddressdeltas!(result_data)
+    } else if cmd_name == "verifytxoutproof".to_string() {
+        verifytxoutproof!(result_data)
     } else if cmd_name == "getaddressutxos".to_string() {
         getaddressutxos!(result_data)
     } else if cmd_name == "listunspent".to_string() {

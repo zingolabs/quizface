@@ -1,4 +1,3 @@
-verifytxoutproof
 zcbenchmark
 zcrawjoinsplit
 zcrawkeygen
