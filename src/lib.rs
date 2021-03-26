@@ -142,6 +142,8 @@ fn interpret_help_message(
     if &results.len() == &1usize && &results[0] == "" {
         (cmd_name, v)
     } else {
+        dbg!(&cmd_name);
+        dbg!(&results);
         for result in results {
             v.push(annotate_result(&mut result.chars()));
         }
@@ -214,9 +216,7 @@ fn annotate_array(result_chars: &mut std::str::Chars) -> serde_json::Value {
                 if viewed.trim().is_empty() {
                     break;
                 }
-                ordered_results.push(get_array_terminal(
-                    viewed.trim().to_string().clone(),
-                ));
+                ordered_results.push(get_array_terminal(viewed.clone()));
                 viewed.clear();
                 break;
             }
