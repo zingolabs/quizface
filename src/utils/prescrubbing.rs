@@ -124,9 +124,9 @@ Examples:
             r.push_str("\nArguments:\nResult:\nExamples:\n");
             r
         }
-        "getunconfirmedbalance" => dbg!(raw_command_help.replace(
+        "getunconfirmedbalance" => raw_command_help.replace(
             "Returns the server's total unconfirmed balance",
-            "\nResult:\n\"balance\"  (numeric) the server's total unconfirmed balance\n\nExamples:")),
+            "\nResult:\n\"balance\"  (numeric) the server's total unconfirmed balance\n\nExamples:"),
         _ => raw_command_help.to_string(),
     }
 }

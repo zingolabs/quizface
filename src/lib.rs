@@ -300,7 +300,6 @@ fn bind_idents_labels(
 }
 
 fn make_raw_label(meta_data: String) -> String {
-    dbg!(&meta_data);
     meta_data
         .split(|c| c == '(' || c == ')')
         .collect::<Vec<&str>>()[1]
