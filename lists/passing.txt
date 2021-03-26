@@ -77,6 +77,7 @@ listreceivedbyaccount
 listreceivedbyaddress
 listsinceblock
 listtransactions
+listunspent
 lockunspent
 move
 ping

@@ -1,4 +1,3 @@
-listunspent
 prioritisetransaction
 verifytxoutproof
 zcbenchmark
