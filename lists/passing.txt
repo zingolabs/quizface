@@ -114,6 +114,7 @@ z_listoperationids
 z_listreceivedbyaddress
 z_mergetoaddress
 z_sendmany
+z_setmigration
 z_shieldcoinbase
 z_validateaddress
 z_validatepaymentdisclosure
