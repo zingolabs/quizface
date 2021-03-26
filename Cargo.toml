@@ -1,6 +1,6 @@
 [package]
 name = "quizface"
-version = "0.1.1"
+version = "0.2.0"
 authors = ["zingolabs"]
 edition = "2018"
 default-run="quizface"

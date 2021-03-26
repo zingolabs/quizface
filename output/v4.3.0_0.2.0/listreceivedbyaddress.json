@@ -1,0 +1,12 @@
+[
+  [
+    {
+      "account": "String",
+      "address": "String",
+      "amount": "Decimal",
+      "amountZat": "Decimal",
+      "confirmations": "Decimal",
+      "involvesWatchonly": "bool"
+    }
+  ]
+]

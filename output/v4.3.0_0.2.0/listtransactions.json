@@ -1,0 +1,23 @@
+[
+  [
+    {
+      "account": "String",
+      "address": "String",
+      "amount": "Decimal",
+      "amountZat": "Decimal",
+      "blockhash": "String",
+      "blockindex": "Decimal",
+      "category": "String",
+      "comment": "String",
+      "confirmations": "Decimal",
+      "fee": "Decimal",
+      "otheraccount": "String",
+      "size": "Decimal",
+      "status": "String",
+      "time": "Decimal",
+      "timereceived": "Decimal",
+      "txid": "String",
+      "vout": "Decimal"
+    }
+  ]
+]

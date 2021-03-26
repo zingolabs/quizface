@@ -1,0 +1,14 @@
+[
+  [
+    {
+      "addednode": "String",
+      "addresses": [
+        {
+          "address": "String",
+          "connected": "String"
+        }
+      ],
+      "connected": "bool"
+    }
+  ]
+]
