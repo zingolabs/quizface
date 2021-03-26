@@ -214,7 +214,9 @@ fn annotate_array(result_chars: &mut std::str::Chars) -> serde_json::Value {
                 if viewed.trim().is_empty() {
                     break;
                 }
-                ordered_results.push(get_array_terminal(viewed.clone()));
+                ordered_results.push(get_array_terminal(
+                    viewed.trim().to_string().clone(),
+                ));
                 viewed.clear();
                 break;
             }
