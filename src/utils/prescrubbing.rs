@@ -70,9 +70,9 @@ Examples:
         "zcrawkeygen" => {
             let intermediate_command_help =
                 raw_command_help.replace("Output:", "Result:")
-                .replace("zcaddr", "(string) zcaddr")
-                .replace("zcsecretkey", "(string) zcsecretkey")
-                .replace("zcviewingkey", "(string) zcviewingkey");
+                .replace("zcaddr,", "(string) zcaddr,")
+                .replace("zcsecretkey,", "(string) zcsecretkey,")
+                .replace("zcviewingkey,", "(string) zcviewingkey,");
             intermediate_command_help.as_str().replace(
                 "}",
                 r#"}

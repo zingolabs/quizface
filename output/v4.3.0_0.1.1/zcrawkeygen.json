@@ -1,7 +1,7 @@
 [
   {
-    "(string) zcaddress": "String",
-    "(string) zcsecretkey": "String",
-    "(string) zcviewingkey": "String"
+    "zcaddress": "String",
+    "zcsecretkey": "String",
+    "zcviewingkey": "String"
   }
 ]
