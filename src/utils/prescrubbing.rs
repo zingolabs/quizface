@@ -1,10 +1,23 @@
 pub fn prescrub(command: &str, raw_command_help: &str) -> String {
     use regex::Regex;
     match command {
-        "importaddress" | "importpubkey" | "encryptwallet" | "addnode"
-        | "disconnectnode" | "importprivkey" | "importwallet"
-        | "setlogfilter" | "setban" | "keypoolrefill" | "z_importwallet"
-        | "clearbanned" | "setaccount" | "setgenerate" => {
+        "importaddress"
+        | "importpubkey"
+        | "encryptwallet"
+        | "addnode"
+        | "disconnectnode"
+        | "importprivkey"
+        | "importwallet"
+        | "setlogfilter"
+        | "setban"
+        | "keypoolrefill"
+        | "z_importwallet"
+        | "clearbanned"
+        | "setaccount"
+        | "setgenerate"
+        | "listbanned"
+        | "ping"
+        | "z_validatepaymentdisclosure" => {
             raw_command_help.replace("Examples:", "Result:\nExamples:")
         }
         "getrawtransaction" => Regex::new(r"Result \(if verbose.*\):")
