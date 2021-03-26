@@ -56,13 +56,6 @@ pub fn prescrub(command: &str, raw_command_help: &str) -> String {
 Examples:
 "#,
         ),
-        "z_listunspent" | "getbestblockhash" => {
-            let intermediate_command_help =
-                raw_command_help.replace("Result", "Result:");
-            intermediate_command_help
-                .as_str()
-                .replace("Examples", "Examples:")
-        }
         "zcrawkeygen" => {
             let intermediate_command_help =
                 raw_command_help.replace("Output:", "Result:");
