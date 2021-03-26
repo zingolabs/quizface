@@ -99,6 +99,7 @@ validateaddress
 verifychain
 verifymessage
 verifytxoutproof
+zcbenchmark
 zcsamplejoinsplit
 z_exportkey
 z_exportviewingkey

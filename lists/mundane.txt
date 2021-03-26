@@ -1,4 +1,3 @@
-zcbenchmark
 zcrawjoinsplit
 zcrawkeygen
 zcrawreceive

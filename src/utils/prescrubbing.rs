@@ -97,12 +97,8 @@ Examples:
 ]"#,
             r#"Result: [
   {
-    "runningtime": runningtime
-  },
-  {
-    "runningtime": runningtime
+    "runningtime": (numeric)
   }
-  ...
 ]
 Examples:
 "#,
