@@ -142,8 +142,6 @@ fn interpret_help_message(
     if &results.len() == &1usize && &results[0] == "" {
         (cmd_name, v)
     } else {
-        dbg!(&cmd_name);
-        dbg!(&results);
         for result in results {
             v.push(annotate_result(&mut result.chars()));
         }
