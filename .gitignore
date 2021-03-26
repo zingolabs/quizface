@@ -1,3 +1,5 @@
 /target
 Cargo.lock
 /logs
+/output/v4.2*
+/output/v4.3.0_0.1.0/*
