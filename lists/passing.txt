@@ -13,6 +13,7 @@ encryptwallet
 estimatefee
 estimatepriority
 fundrawtransaction
+generate
 getaccount
 getaccountaddress
 getaddednodeinfo

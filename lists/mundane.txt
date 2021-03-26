@@ -1,4 +1,3 @@
-generate
 getunconfirmedbalance
 listunspent
 prioritisetransaction
