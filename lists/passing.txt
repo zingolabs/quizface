@@ -100,6 +100,7 @@ verifychain
 verifymessage
 verifytxoutproof
 zcbenchmark
+zcrawjoinsplit
 zcsamplejoinsplit
 z_exportkey
 z_exportviewingkey

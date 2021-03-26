@@ -49,10 +49,13 @@ pub fn prescrub(command: &str, raw_command_help: &str) -> String {
   "encryptednote2": enc2,
   "rawtxn": rawtxout
 }"#,
-            r#"Result: {
-  "encryptednote1": enc1,
-  "encryptednote2": enc2,
-  "rawtxn": rawtxout
+            r#"Result: 
+{
+  "encryptednote1": (string) enc1,
+  "encryptednote2": (string) enc2,
+  "rawtxn": (string) rawtxout
+}
+
 Examples:
 "#,
         ),

@@ -1,4 +1,3 @@
-zcrawjoinsplit
 zcrawkeygen
 zcrawreceive
 z_getmigrationstatus
