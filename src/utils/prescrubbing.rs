@@ -125,6 +125,7 @@ Examples:
 Examples:
 "#,
         ),
+        "zcsamplejoinsplit" => raw_command_help.replace(r#"Perform a joinsplit and return the JSDescription."#, "Perform a joinsplit and return the JSDescription.\nArguments:\nResult:\nExamples:\n"),
         _ => raw_command_help.to_string(),
     }
 }

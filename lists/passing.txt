@@ -94,6 +94,7 @@ submitblock
 validateaddress
 verifychain
 verifymessage
+zcsamplejoinsplit
 z_exportkey
 z_exportviewingkey
 z_exportwallet
