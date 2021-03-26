@@ -61,7 +61,7 @@ true"#,
 Examples:
 "#,
         ),
-        "z_listunspent" | "getbestblockhash" | "listunspent" => {
+        "z_listunspent" | "getbestblockhash" => {
             let intermediate_command_help =
                 raw_command_help.replace("Result", "Result:");
             intermediate_command_help
