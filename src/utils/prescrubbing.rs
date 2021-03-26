@@ -42,6 +42,7 @@ pub fn prescrub(command: &str, raw_command_help: &str) -> String {
         }
         "z_getmigrationstatus" => {
             raw_command_help.replace("}", "}\nExamples:\n")
+                .replace(r#""migration_txids": [txids]                (json array of strings) An array of all migration txids involving this wallet"#, "\"migration_txids\": [\n \"txids\"  (string) An array of all migration txids involving this wallet\n]")
         }
         "zcrawreceive" => {
             raw_command_help.replace("}", "}\nExamples:\n")
