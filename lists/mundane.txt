@@ -1,4 +1,2 @@
-zcrawkeygen
-zcrawreceive
 z_getmigrationstatus
 z_listunspent

@@ -40,8 +40,15 @@ pub fn prescrub(command: &str, raw_command_help: &str) -> String {
         "createrawtransaction" => {
             raw_command_help.replace("Examples", "Examples:")
         }
-        "z_getmigrationstatus" | "zcrawreceive" => {
+        "z_getmigrationstatus" => {
             raw_command_help.replace("}", "}\nExamples:\n")
+        }
+        "zcrawreceive" => {
+            raw_command_help.replace("}", "}\nExamples:\n")
+                .replace(r#"Output: {"#, "Result:\n{")
+                .replace(r#""amount": value"#, r#""amount": (numeric) value"#)
+                .replace(r#""note": noteplaintext"#, r#""note": (string) noteplaintext"#)
+                .replace(r#""exists": exists"#, r#""exists": (boolean) exists"#)
         }
         "zcrawjoinsplit" => raw_command_help.replace(
             r#"Output: {
@@ -61,7 +68,10 @@ Examples:
         ),
         "zcrawkeygen" => {
             let intermediate_command_help =
-                raw_command_help.replace("Output:", "Result:");
+                raw_command_help.replace("Output:", "Result:")
+                .replace("zcaddr", "(string) zcaddr")
+                .replace("zcsecretkey", "(string) zcsecretkey")
+                .replace("zcviewingkey", "(string) zcviewingkey");
             intermediate_command_help.as_str().replace(
                 "}",
                 r#"}

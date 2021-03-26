@@ -101,6 +101,8 @@ verifymessage
 verifytxoutproof
 zcbenchmark
 zcrawjoinsplit
+zcrawkeygen
+zcrawreceive
 zcsamplejoinsplit
 z_exportkey
 z_exportviewingkey
