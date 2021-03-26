@@ -125,8 +125,11 @@ Examples:
 Examples:
 "#,
         ),
-        "zcsamplejoinsplit" => raw_command_help.replace(r#"Perform a joinsplit and return the JSDescription."#, "Perform a joinsplit and return the JSDescription.\nArguments:\nResult:\nExamples:\n"),
-        "z_setmigration" => raw_command_help.replace(r#"1. enabled  (boolean, required) 'true' or 'false' to enable or disable respectively."#, "1. enabled  (boolean, required) 'true' or 'false' to enable or disable respectively.\nResult:\nExamples:\n"),
+        "zcsamplejoinsplit" | "z_setmigration" => {
+            let mut r = raw_command_help.to_string();
+            r.push_str("\nArguments:\nResult:\nExamples:\n");
+            r
+        }
         _ => raw_command_help.to_string(),
     }
 }
