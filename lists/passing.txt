@@ -61,6 +61,7 @@ gettransaction
 gettxout
 gettxoutproof
 gettxoutsetinfo
+getunconfirmedbalance
 getwalletinfo
 help
 importaddress

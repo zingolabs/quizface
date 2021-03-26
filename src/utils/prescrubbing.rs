@@ -37,12 +37,6 @@ pub fn prescrub(command: &str, raw_command_help: &str) -> String {
         "estimatepriority" | "estimatefee" => {
             raw_command_help.replace("Example:", "Examples:")
         }
-        "getunconfirmedbalance" => raw_command_help.replace(
-            "unconfirmed balance",
-            r#"unconfirmed balance
-                                     Result:
-                                     "#,
-        ),
         "createrawtransaction" => {
             raw_command_help.replace("Examples", "Examples:")
         }
@@ -130,6 +124,9 @@ Examples:
             r.push_str("\nArguments:\nResult:\nExamples:\n");
             r
         }
+        "getunconfirmedbalance" => dbg!(raw_command_help.replace(
+            "Returns the server's total unconfirmed balance",
+            "\nResult:\n\"balance\"  (numeric) the server's total unconfirmed balance\n\nExamples:")),
         _ => raw_command_help.to_string(),
     }
 }
