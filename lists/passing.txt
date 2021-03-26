@@ -81,6 +81,7 @@ listunspent
 lockunspent
 move
 ping
+prioritisetransaction
 sendfrom
 sendmany
 sendrawtransaction

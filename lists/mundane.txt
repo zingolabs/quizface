@@ -1,4 +1,3 @@
-prioritisetransaction
 verifytxoutproof
 zcbenchmark
 zcrawjoinsplit

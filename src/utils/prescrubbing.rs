@@ -40,11 +40,6 @@ pub fn prescrub(command: &str, raw_command_help: &str) -> String {
         "createrawtransaction" => {
             raw_command_help.replace("Examples", "Examples:")
         }
-        "prioritisetransaction" => raw_command_help.replace(
-            r#"Result
-true"#,
-            r#"Result: \n "true""#,
-        ),
         "z_getmigrationstatus" | "zcrawreceive" => {
             raw_command_help.replace("}", "}\nExamples:\n")
         }
