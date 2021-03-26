@@ -1,6 +1,3 @@
-listbanned
-ping
 submitblock
 zcsamplejoinsplit
 z_setmigration
-z_validatepaymentdisclosure
