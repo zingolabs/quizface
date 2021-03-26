@@ -1,0 +1,18 @@
+[
+  {
+    "bestblock": "String",
+    "coinbase": "bool",
+    "confirmations": "Decimal",
+    "scriptPubKey": {
+      "addresses": [
+        "String"
+      ],
+      "asm": "String",
+      "hex": "String",
+      "reqSigs": "Decimal",
+      "type": "String"
+    },
+    "value": "Decimal",
+    "version": "Decimal"
+  }
+]

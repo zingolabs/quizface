@@ -222,19 +222,20 @@ Result:
            "status": xx,       (boolean) true if threshold reached
            "found": xx,        (numeric) number of blocks with the new version found
            "required": xx,     (numeric) number of blocks required to trigger
-           "window": xx,       (numeric) maximum size of examined window of recent blocks
-        }
+           "window": xx,       (numeric) maximum size of examined window of recent blocks}
 
 Examples:
 > zcash-cli getblockchaininfo XXX
 "##;
 
-pub const GETBLOCKCHAININFO_ENFORCE_FRAGMENT_RESULT: &str = r##""enforce": {           (object) progress toward enforcing the softfork rules for new-version blocks
+pub const GETBLOCKCHAININFO_ENFORCE_FRAGMENT_RESULT: &str = r#"Result:
+"enforce": {           (object) progress toward enforcing the softfork rules for new-version blocks
            "status": xx,       (boolean) true if threshold reached
            "found": xx,        (numeric) number of blocks with the new version found
            "required": xx,     (numeric) number of blocks required to trigger
-           "window": xx,       (numeric) maximum size of examined window of recent blocks
-        }"##;
+           "window": xx,       (numeric) maximum size of examined window of recent blocks}
+
+"#;
 
 pub const HELP_GETINFO: &str = r#"
 getinfo

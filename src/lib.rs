@@ -3,13 +3,13 @@ use crate::logging::create_log_dirs;
 use crate::logging::log_masterhelp_output;
 use crate::utils::scrubbing::scrub;
 use serde_json::{json, map::Map, Value};
+use std::collections::HashMap;
 use std::path::Path;
 use utils::logging;
 
 pub fn ingest_commands() -> Vec<String> {
     create_log_dirs();
     let cli_help_output = get_command_help("");
-    check_success(&cli_help_output.status);
     let raw_help = std::string::String::from_utf8(cli_help_output.stdout)
         .expect("Invalid, not UTF-8. Error!");
     log_masterhelp_output(&raw_help);
@@ -44,79 +44,124 @@ pub fn get_command_help(cmd_name: &str) -> std::process::Output {
     command_help
 }
 
-pub fn check_success(output: &std::process::ExitStatus) {
-    // simple boolean that output succeeded by spawning
-    // and monitoring child process, if false: panic
-    assert!(output.success());
-    // then match output exit code
-    match output.code() {
-        Some(0) => (),
-        Some(_) => panic!("exit code not 0"),
-        None => panic!("error! no exit code"),
-    }
-}
-
-fn record_interpretation(cmd_name: String, interpretation: serde_json::Value) {
-    let location = format!(
+fn record_interpretation(cmd_name: String, interpretation: String) {
+    let rawlocation = &format!(
         "./output/{}/{}.json",
         utils::logging::create_version_name(),
         cmd_name
     );
-    dbg!(&interpretation);
-    let output = std::path::Path::new(&location);
-    if !output.parent().unwrap().is_dir() {
-        std::fs::create_dir_all(output.parent().unwrap()).unwrap();
-    }
-    std::fs::write(output, interpretation.to_string()).unwrap();
+    let location = std::path::Path::new(rawlocation);
+    std::fs::create_dir_all(location.parent().unwrap()).unwrap();
+    use std::io::Write as _;
+    let mut file = std::fs::File::create(location)
+        .expect("Couldn't create append interface to output file.");
+    file.write_all(interpretation.as_bytes()).unwrap();
 }
 
 pub fn produce_interpretation(raw_command_help: &str) {
-    let (cmd_name, interpretation) = interpret_help_message(raw_command_help);
-    record_interpretation(cmd_name, interpretation)
+    let (cmd_name, interpretations) = interpret_help_message(raw_command_help);
+    let full_interp =
+        &interpretations.iter().map(|x| x.clone()).collect::<Value>();
+    record_interpretation(
+        cmd_name,
+        serde_json::ser::to_string_pretty(full_interp)
+            .expect("Couldn't serialize prettily!"),
+    );
 }
 
-fn extract_name_and_result(raw_command_help: &str) -> (String, String) {
-    let result_sections =
-        raw_command_help.split("Result:\n").collect::<Vec<&str>>();
-    // TODO? instead of panicking, failed check break to next command
-    // related to `blessed` commands, defined slightly differently,
-    // these checks could be folded into or serve to augment blessed.
-    assert_eq!(result_sections.len(), 2, "Wrong number of Results!");
-    let cmd_name = result_sections[0]
+fn partition_help_text(raw_command_help: &str) -> HashMap<String, String> {
+    use regex::Regex;
+    let mut sections = HashMap::new();
+
+    //rpc_name
+    let cmd_name = &raw_command_help
         .split_ascii_whitespace()
-        .collect::<Vec<&str>>()[0];
-    let end_section = result_sections[1];
-    let example_sections =
-        end_section.split("Examples:\n").collect::<Vec<&str>>();
-    // TODO same as last comment.
-    assert_eq!(example_sections.len(), 2, "Wrong number of Examples!");
-    // TODO cmd_name still present here, remove and elsewhere
-    (cmd_name.to_string(), example_sections[0].trim().to_string())
+        .next()
+        .expect("Command name not first token!!");
+    sections.insert("rpc_name".to_string(), cmd_name.to_string());
+
+    //response
+    let response_delimiters =
+        Regex::new(r"(?s)Result[:\s].*?Examples[:\s]").expect("Invalid regex");
+    let response_section_match = response_delimiters
+        .find(&raw_command_help)
+        .expect("No response_section_match found!");
+    let response_section = &raw_command_help
+        [response_section_match.start()..(response_section_match.end() - 9)];
+    sections.insert("response".to_string(), response_section.to_string());
+
+    //description and arguments
+    let description_delimiters =
+        Regex::new(r"(?s).*?Arguments[:\s]").expect("Invalid regex!!");
+    let description_section;
+    let argument_section;
+    if let Some(description_section_match) =
+        description_delimiters.find(&raw_command_help)
+    {
+        description_section = &raw_command_help[description_section_match
+            .start()
+            ..(description_section_match.end() - "Arguments:".len())];
+        argument_section = &raw_command_help
+            [description_section_match.end()..response_section_match.start()];
+    } else {
+        description_section =
+            &raw_command_help[..response_section_match.start()];
+        argument_section = "";
+    };
+    sections.insert("description".to_string(), description_section.to_string());
+    sections.insert("arguments".to_string(), argument_section.to_string());
+
+    //examples
+    let examples_section =
+        &raw_command_help[(response_section_match.end() - "Examples:".len())..];
+    sections.insert("examples".to_string(), examples_section.to_string());
+    sections
 }
 
+fn split_response_into_results(response_section: String) -> Vec<String> {
+    let resreg = regex::Regex::new(r"Result[:\s]").expect("invalid regex");
+    let mut r: Vec<String> = resreg
+        .split(&response_section)
+        .map(|x| x.trim().to_string())
+        .collect();
+    r.remove(0);
+    r
+}
 fn interpret_help_message(
     raw_command_help: &str,
-) -> (String, serde_json::Value) {
-    let (cmd_name, result_data) = extract_name_and_result(raw_command_help);
-    let scrubbed_result = scrub(cmd_name.clone(), result_data);
-    (cmd_name, annotate_result(&mut scrubbed_result.chars()))
+) -> (String, Vec<serde_json::Value>) {
+    let sections = partition_help_text(raw_command_help);
+    let cmd_name = sections.get("rpc_name").unwrap().to_string();
+    if cmd_name == "submitblock" {
+        return (cmd_name, vec![json!("ENUM: duplicate, duplicate-invalid, duplicate-inconclusive, inconclusive, rejected")]);
+    }
+    let response_data = sections.get("response").unwrap();
+    let scrubbed_response = scrub(cmd_name.clone(), response_data.clone());
+    let results = split_response_into_results(scrubbed_response);
+    let mut v = vec![];
+    if &results.len() == &1usize && &results[0] == "" {
+        (cmd_name, v)
+    } else {
+        for result in results {
+            v.push(annotate_result(&mut result.chars()));
+        }
+        (cmd_name, v)
+    }
 }
 
 fn annotate_result(result_chars: &mut std::str::Chars) -> serde_json::Value {
     match result_chars.next().unwrap() {
-        '{' => {
-            //dbg!("annotate {");
-            annotate_object(result_chars)
+        '{' => annotate_object(result_chars),
+        '[' => annotate_array(result_chars),
+        i if i.is_alphabetic() || i == '"' => annotate_lonetype(format!(
+            "{}{}",
+            i,
+            result_chars.as_str().to_string()
+        )),
+        x => {
+            dbg!(x);
+            todo!()
         }
-        '[' => {
-            //dbg!("annotate [");
-            annotate_array(result_chars)
-        }
-        '"' => {
-            //dbg!("annotate lone");
-            annotate_lonetype(result_chars.as_str().to_string())
-        }
-        _ => todo!(),
     }
 }
 
@@ -313,11 +358,13 @@ mod unit {
     use crate::utils::test;
     use serde_json::json;
 
-    // ------------------ extract_name_and_result --------
+    // ------------------ partition_help_text --------
     #[test]
-    fn extract_name_and_result_getblockchaininfo_enforce_fragment() {
+    fn partition_help_text_getblockchaininfo_enforce_fragment() {
         let expected_data = test::GETBLOCKCHAININFO_ENFORCE_FRAGMENT;
-        let (cmd_name, result) = extract_name_and_result(expected_data);
+        let help_sections = partition_help_text(expected_data);
+        let cmd_name = help_sections.get("rpc_name").unwrap().clone();
+        let result = help_sections.get("response").unwrap().clone();
         let expected_result = test::GETBLOCKCHAININFO_ENFORCE_FRAGMENT_RESULT;
         //let bound = bind_idents_labels(fake_ident_label, cmd_name, None);
         assert_eq!(cmd_name, "getblockchaininfo".to_string());
@@ -440,9 +487,11 @@ mod unit {
     #[test]
     fn annotate_result_from_getinfo() {
         let expected_testdata_annotated = test::valid_getinfo_annotation();
-        let (cmd_name, section_data) =
-            extract_name_and_result(test::HELP_GETINFO);
-        let data_stream = &mut section_data.chars();
+        let help_sections = partition_help_text(test::HELP_GETINFO);
+        let cmd_name = help_sections.get("rpc_name").unwrap().clone();
+        let response = help_sections.get("response").unwrap().clone();
+        let responses = split_response_into_results(response);
+        let data_stream = &mut responses[0].chars();
         let annotated = annotate_result(data_stream);
         assert_eq!(annotated, expected_testdata_annotated);
         assert_eq!(cmd_name, "getinfo");
@@ -450,7 +499,6 @@ mod unit {
 
     #[test]
     fn annotate_result_enforce_as_input() {
-        use std::collections::HashMap;
         let testmap = json!(test::BINDING_ENFORCE
             .iter()
             .map(|(a, b)| (a.to_string(), json!(b.to_string())))
@@ -601,7 +649,7 @@ mod unit {
         let simple_unnested_full = test::SIMPLE_UNNESTED_FULL;
         let interpreted = interpret_help_message(simple_unnested_full);
         let expected_result = json!({"outer_id":"String"});
-        assert_eq!(interpreted.1, expected_result);
+        assert_eq!(interpreted.1[0], expected_result);
     }
 
     #[test]
@@ -610,7 +658,7 @@ mod unit {
         let simple_nested_full = test::SIMPLE_NESTED_FULL;
         let interpreted = interpret_help_message(simple_nested_full);
         let expected_result = json!({"outer_id":{"inner_id":"String"}});
-        assert_eq!(interpreted.1, expected_result);
+        assert_eq!(interpreted.1[0], expected_result);
     }
 
     #[test]
@@ -618,7 +666,7 @@ mod unit {
     fn interpret_help_message_extrabrackets_within_input_lines() {
         let valid_help_in =
             interpret_help_message(test::EXTRABRACKETS3_HELP_GETINFO);
-        assert_eq!(valid_help_in.1, test::valid_getinfo_annotation());
+        assert_eq!(valid_help_in.1[0], test::valid_getinfo_annotation());
     }
 
     #[test]
@@ -626,42 +674,42 @@ mod unit {
     fn interpret_help_message_more_than_one_set_of_brackets_input() {
         let valid_help_in =
             interpret_help_message(test::MORE_BRACKET_PAIRS_HELP_GETINFO);
-        assert_eq!(valid_help_in.1, test::valid_getinfo_annotation());
+        assert_eq!(valid_help_in.1[0], test::valid_getinfo_annotation());
     }
     #[test]
     #[should_panic]
     fn interpret_help_message_two_starting_brackets_input() {
         let valid_help_in =
             interpret_help_message(test::EXTRA_START_BRACKET_HELP_GETINFO);
-        assert_eq!(valid_help_in.1, test::valid_getinfo_annotation());
+        assert_eq!(valid_help_in.1[0], test::valid_getinfo_annotation());
     }
     #[test]
     #[should_panic]
     fn interpret_help_message_two_ending_brackets_input() {
         let valid_help_in =
             interpret_help_message(test::EXTRA_END_BRACKET_HELP_GETINFO);
-        assert_eq!(valid_help_in.1, test::valid_getinfo_annotation());
+        assert_eq!(valid_help_in.1[0], test::valid_getinfo_annotation());
     }
     #[test]
     #[should_panic]
     fn interpret_help_message_no_results_input() {
         let valid_help_in =
             interpret_help_message(test::NO_RESULT_HELP_GETINFO);
-        assert_eq!(valid_help_in.1, test::valid_getinfo_annotation());
+        assert_eq!(valid_help_in.1[0], test::valid_getinfo_annotation());
     }
     #[test]
     #[should_panic]
     fn interpret_help_message_no_end_bracket_input() {
         let valid_help_in =
             interpret_help_message(test::NO_END_BRACKET_HELP_GETINFO);
-        assert_eq!(valid_help_in.1, test::valid_getinfo_annotation());
+        assert_eq!(valid_help_in.1[0], test::valid_getinfo_annotation());
     }
     #[test]
     #[should_panic]
     fn interpret_help_message_no_start_bracket_input() {
         let valid_help_in =
             interpret_help_message(test::NO_START_BRACKET_HELP_GETINFO);
-        assert_eq!(valid_help_in.1, test::valid_getinfo_annotation());
+        assert_eq!(valid_help_in.1[0], test::valid_getinfo_annotation());
     }
 
     #[ignore]
@@ -675,35 +723,35 @@ mod unit {
     #[test]
     fn interpret_help_message_expected_input_valid() {
         let valid_help_in = interpret_help_message(test::HELP_GETINFO);
-        assert_eq!(valid_help_in.1, test::valid_getinfo_annotation());
+        assert_eq!(valid_help_in.1[0], test::valid_getinfo_annotation());
     }
 
     #[test]
     fn interpret_help_message_early_lbracket_input() {
         let valid_help_in =
             interpret_help_message(test::LBRACKETY_HELP_GETINFO);
-        assert_eq!(valid_help_in.1, test::valid_getinfo_annotation());
+        assert_eq!(valid_help_in.1[0], test::valid_getinfo_annotation());
     }
 
     #[test]
     fn interpret_help_message_early_rbracket_input() {
         let valid_help_in =
             interpret_help_message(test::RBRACKETY_HELP_GETINFO);
-        assert_eq!(valid_help_in.1, test::valid_getinfo_annotation());
+        assert_eq!(valid_help_in.1[0], test::valid_getinfo_annotation());
     }
 
     #[test]
     fn interpret_help_message_early_extrabrackets_input() {
         let valid_help_in =
             interpret_help_message(test::EXTRABRACKETS1_HELP_GETINFO);
-        assert_eq!(valid_help_in.1, test::valid_getinfo_annotation());
+        assert_eq!(valid_help_in.1[0], test::valid_getinfo_annotation());
     }
 
     #[test]
     fn interpret_help_message_late_extrabrackets_input() {
         let valid_help_in =
             interpret_help_message(test::EXTRABRACKETS2_HELP_GETINFO);
-        assert_eq!(valid_help_in.1, test::valid_getinfo_annotation());
+        assert_eq!(valid_help_in.1[0], test::valid_getinfo_annotation());
     }
 
     #[test]
@@ -711,7 +759,7 @@ mod unit {
         let expected_incoming = test::GETBLOCKCHAININFO_SOFTFORK_FRAGMENT;
         let expected_result = serde_json::json!({"softforks":[{"enforce":{"found":"Decimal","required":"Decimal","status":"bool","window":"Decimal"},"id":"String","reject":{"found":"Decimal","required":"Decimal","status":"bool","window":"Decimal"},"version":"Decimal"}]});
         assert_eq!(
-            interpret_help_message(expected_incoming).1,
+            interpret_help_message(expected_incoming).1[0],
             expected_result
         );
     }
@@ -731,7 +779,7 @@ mod unit {
                                                             "window":"Decimal"},
                                                   "version":"Decimal"});
         let interpreted = interpret_help_message(expected_incoming);
-        assert_eq!(interpreted.1, expected_results);
+        assert_eq!(interpreted.1[0], expected_results);
     }
 
     #[ignore]
@@ -775,7 +823,7 @@ mod unit {
         let expected = getblockchaininfo_interpretation();
         assert_eq!(
             expected,
-            interpret_help_message(test::HELP_GETBLOCKCHAININFO_COMPLETE).1
+            interpret_help_message(test::HELP_GETBLOCKCHAININFO_COMPLETE).1[0]
         );
     }
 
@@ -785,7 +833,7 @@ mod unit {
     fn serde_json_value_help_getinfo() {
         let getinfo_serde_json_value = test::getinfo_export();
         let help_getinfo = interpret_help_message(test::HELP_GETINFO);
-        assert_eq!(getinfo_serde_json_value, help_getinfo.1);
+        assert_eq!(getinfo_serde_json_value, help_getinfo.1[0]);
     }
 
     #[test]
@@ -801,7 +849,7 @@ mod unit {
         let output = std::path::Path::new(&location);
         record_interpretation(
             test_cmd_name.to_string(),
-            getblockchaininfo_interpretation(),
+            getblockchaininfo_interpretation().to_string(),
         );
 
         //Now let's examine the results!
@@ -811,5 +859,6 @@ mod unit {
         let read_in: serde_json::Value =
             serde_json::from_reader(reader).unwrap();
         assert_eq!(read_in, getblockchaininfo_interpretation());
+        std::fs::remove_file(output).unwrap();
     }
 }

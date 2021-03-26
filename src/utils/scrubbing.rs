@@ -1,23 +1,8 @@
 macro_rules! getaddressdeltas {
     ($result_data:expr) => {
         $result_data
-            .split(r#"(or, if chainInfo is true):"#)
-            .collect::<Vec<&str>>()[1]
-            .trim()
-            .to_string()
-            .replace(r#""deltas":"#, r#""alsoStandalone<deltas>":"#)
-            .replace(
-                r#"        "satoshis"    (number) The difference of zatoshis
-        "txid"        (string) The related txid
-        "index"       (number) The related input or output index
-        "height"      (number) The block height
-        "address"     (string)  The address base58check encoded"#,
-                r#"        "satoshis":   (numeric) The difference of zatoshis
-        "txid":       (string) The related txid
-        "index":      (numeric) The related input or output index
-        "height":     (numeric) The block height
-        "address":    (string)  The address base58check encoded"#,
-            )
+            .replace(r#"(or, if chainInfo is true):"#, "Result:")
+            .replace("number", "numeric")
             .replace(", ...", "")
             .replace(
                 r#"  "start":
@@ -46,9 +31,157 @@ macro_rules! getaddressdeltas {
     };
 }
 
+macro_rules! getaddressutxos {
+    ($result_data:expr) => {
+        $result_data
+            .replace(r#"(or, if chainInfo is true):"#, "Result:")
+            .replace("number", "numeric")
+            .replace(", ...", "")
+    };
+}
+
+const RAWTRANSACTION: &str = r#"{
+  "in_active_chain": b,   (bool) Whether specified block is in the active chain or not (only present with explicit "blockhash" argument)
+  "hex" : "data",       (string) The serialized, hex-encoded data for 'txid'
+  "txid" : "id",        (string) The transaction id (same as provided)
+  "size" : n,             (numeric) The transaction size
+  "version" : n,          (numeric) The version
+  "locktime" : ttt,       (numeric) The lock time
+  "expiryheight" : ttt,   (numeric, optional) The block height after which the transaction expires
+  "vin" : [               (array of json objects)
+     {
+       "txid": "id",    (string) The transaction id
+       "vout": n,         (numeric)
+       "scriptSig": {     (json object) The script
+         "asm": "asm",  (string) asm
+         "hex": "hex"   (string) hex
+       },
+       "sequence": n      (numeric) The script sequence number
+     }
+     ,...
+  ],
+  "vout" : [              (array of json objects)
+     {
+       "value" : x.xxx,            (numeric) The value in ZEC
+       "n" : n,                    (numeric) index
+       "scriptPubKey" : {          (json object)
+         "asm" : "asm",          (string) the asm
+         "hex" : "hex",          (string) the hex
+         "reqSigs" : n,            (numeric) The required sigs
+         "type" : "pubkeyhash",  (string) The type, eg 'pubkeyhash'
+         "addresses" : [           (json array of string)
+           "zcashaddress"          (string) Zcash address
+           ,...
+         ]
+       }
+     }
+     ,...
+  ],
+  "vjoinsplit" : [        (array of json objects, only for version >= 2)
+     {
+       "vpub_old" : x.xxx,         (numeric) public input value in ZEC
+       "vpub_new" : x.xxx,         (numeric) public output value in ZEC
+       "anchor" : "hex",         (string) the anchor
+       "nullifiers" : [            (json array of string)
+         "hex"                     (string) input note nullifier
+         ,...
+       ],
+       "commitments" : [           (json array of string)
+         "hex"                     (string) output note commitment
+         ,...
+       ],
+       "onetimePubKey" : "hex",  (string) the onetime public key used to encrypt the ciphertexts
+       "randomSeed" : "hex",     (string) the random seed
+       "macs" : [                  (json array of string)
+         "hex"                     (string) input note MAC
+         ,...
+       ],
+       "proof" : "hex",          (string) the zero-knowledge proof
+       "ciphertexts" : [           (json array of string)
+         "hex"                     (string) output note ciphertext
+         ,...
+       ]
+     }
+     ,...
+  ],
+  "blockhash" : "hash",   (string) the block hash
+  "confirmations" : n,      (numeric) The confirmations
+  "time" : ttt,             (numeric) The transaction time in seconds since epoch (Jan 1 1970 GMT)
+  "blocktime" : ttt         (numeric) The block time in seconds since epoch (Jan 1 1970 GMT)
+}"#;
+
+macro_rules! getrawtransaction {
+    ($result_data:expr) => {
+        $result_data
+            .replace(",...", "")
+            .replace("bool", "boolean")
+            .replace("(array of json objects, only for version >= 2)", "")
+            .replace("(array of json objects)", "")
+            .replace("(json array of string)", "")
+            .replace("(json object) The script", "")
+            .replace("(json object)", "")
+    };
+}
+
+macro_rules! getblock {
+    ($result_data:expr) => {
+        $result_data
+			.replace(r#"(array of string) The transaction ids"#, "")
+            .replace(
+				"(array of Objects) The transactions in the format of the getrawtransaction RPC. Different from verbosity = 1 \"tx\" result.\n         ,...",
+				&getrawtransaction!(RAWTRANSACTION)
+			)
+			.replace(
+                r#"...,                     Same output as verbosity = 1."#,
+                r#"  "hash" : "hash",       (string) the block hash (same as provided hash)
+  "confirmations" : n,   (numeric) The number of confirmations, or -1 if the block is not on the main chain
+  "size" : n,            (numeric) The block size
+  "height" : n,          (numeric) The block height or index (same as provided height)
+  "version" : n,         (numeric) The block version
+  "merkleroot" : "xxxx", (string) The merkle root
+  "finalsaplingroot" : "xxxx", (string) The root of the Sapling commitment tree after applying this block"#
+            )
+			.replace(
+				r#",...                     Same output as verbosity = 1."#,
+				r#""time" : ttt,          (numeric) The block time in seconds since epoch (Jan 1 1970 GMT)
+  "nonce" : n,           (numeric) The nonce
+  "bits" : "1d00ffff",   (string) The bits
+  "difficulty" : x.xxx,  (numeric) The difficulty
+  "previousblockhash" : "hash",  (string) The hash of the previous block
+  "nextblockhash" : "hash"       (string) The hash of the next block"#
+			)
+    };
+}
+
 macro_rules! getaddressmempool {
     ($result_data:expr) => {
         $result_data.replace(r#"number"#, r#"numeric"#)
+    };
+}
+
+macro_rules! listunspent {
+    ($result_data:expr) => {
+        $result_data
+            .replace(r#"(bool)"#, r#"(boolean)"#)
+            .replace(",...", "")
+    };
+}
+
+macro_rules! z_listunspent {
+    ($result_data:expr) => {
+        $result_data
+            .replace(",...", "")
+            .replace(" (sprout) : n,", ": <sprout> n,")
+            .replace(" (sapling) : n,", ": <sapling> n,")
+    };
+}
+
+macro_rules! generate {
+    ($result_data:expr) => {
+        $result_data.replace(
+            r#"[ blockhashes ]     (array) hashes of blocks generated"#,
+            "[\nblockhashes     (string) hashes of blocks generated\n]",
+        )
     };
 }
 
@@ -191,29 +324,27 @@ macro_rules! listtransactions {
     };
 }
 
-// TODO the submitblock macro returns an ad-hoc string rather
-// than following a suggested pattern for amending help output
-macro_rules! submitblock {
-    ($result_data:expr) => {
-        r#""(enum: duplicate, duplicate-invalid, duplicate-inconclusive, inconclusive, rejected)""#.to_string()
-    };
-}
+const INSUFFICIENT: &str = r#"INSUFFICIENT_INFORMATION
+Result:
+"do_not_use_this": (INSUFFICIENT)
 
+Examples:
+None"#;
 macro_rules! getblocktemplate {
     ($result_data:expr) => {
-        r#""do_not_use_this": (INSUFFICIENT)"#.to_string()
+        INSUFFICIENT.to_string()
     };
 }
 
 macro_rules! z_getoperationresult {
     ($result_data:expr) => {
-        r#""do_not_use_this": (INSUFFICIENT)"#.to_string()
+        INSUFFICIENT.to_string()
     };
 }
 
 macro_rules! z_getoperationstatus {
     ($result_data:expr) => {
-        r#""do_not_use_this": (INSUFFICIENT)"#.to_string()
+        INSUFFICIENT.to_string()
     };
 }
 
@@ -233,70 +364,171 @@ macro_rules! z_validateaddress {
     };
 }
 
+macro_rules! getrawmempool {
+    ($result_data:expr) => {
+        $result_data
+            .replace(r#"Result: (for verbose = false):
+[                     (json array of string)
+  "transactionid"     (string) The transaction id
+  ,...
+]
+
+Result: (for verbose = true):
+{                           (json object)
+  "transactionid" : {       (json object)
+    "size" : n,             (numeric) transaction size in bytes
+    "fee" : n,              (numeric) transaction fee in ZEC
+    "time" : n,             (numeric) local time transaction entered pool in seconds since 1 Jan 1970 GMT
+    "height" : n,           (numeric) block height when transaction entered pool
+    "startingpriority" : n, (numeric) priority when transaction entered pool
+    "currentpriority" : n,  (numeric) transaction priority now
+    "depends" : [           (array) unconfirmed transactions used as inputs for this transaction
+        "transactionid",    (string) parent transaction id
+       ... ]
+  }, ...
+}"#,
+
+r#"Result:
+[                     
+  "transactionid"     (string) The transaction id
+]
+
+Result:
+{
+  "transactionid" : {
+    "size" : n,             (numeric) transaction size in bytes
+    "fee" : n,              (numeric) transaction fee in ZEC
+    "time" : n,             (numeric) local time transaction entered pool in seconds since 1 Jan 1970 GMT
+    "height" : n,           (numeric) block height when transaction entered pool
+    "startingpriority" : n, (numeric) priority when transaction entered pool
+    "currentpriority" : n,  (numeric) transaction priority now
+    "depends" : [
+        "transactionid",    (string) parent transaction id
+        ]
+  }
+}"#)
+    };
+}
+
+macro_rules! getblockheader {
+    ($result_data:expr) => {
+        $result_data.replace(r#"Result (for verbose = true):
+{
+  "hash" : "hash",     (string) the block hash (same as provided)
+  "confirmations" : n,   (numeric) The number of confirmations, or -1 if the block is not on the main chain
+  "height" : n,          (numeric) The block height or index
+  "version" : n,         (numeric) The block version
+  "merkleroot" : "xxxx", (string) The merkle root
+  "finalsaplingroot" : "xxxx", (string) The root of the Sapling commitment tree after applying this block
+  "time" : ttt,          (numeric) The block time in seconds since epoch (Jan 1 1970 GMT)
+  "nonce" : n,           (numeric) The nonce
+  "bits" : "1d00ffff", (string) The bits
+  "difficulty" : x.xxx,  (numeric) The difficulty
+  "previousblockhash" : "hash",  (string) The hash of the previous block
+  "nextblockhash" : "hash"       (string) The hash of the next block
+}
+
+Result (for verbose=false):
+"data"             (string) A string that is serialized, hex-encoded data for block 'hash'."#,
+r#"Result:
+"data"             (string) A string that is serialized, hex-encoded data for block 'hash'.
+
+"Result:
+{
+  "hash" : "hash",     (string) the block hash (same as provided)
+  "confirmations" : n,   (numeric) The number of confirmations, or -1 if the block is not on the main chain
+  "height" : n,          (numeric) The block height or index
+  "version" : n,         (numeric) The block version
+  "merkleroot" : "xxxx", (string) The merkle root
+  "finalsaplingroot" : "xxxx", (string) The root of the Sapling commitment tree after applying this block
+  "time" : ttt,          (numeric) The block time in seconds since epoch (Jan 1 1970 GMT)
+  "nonce" : n,           (numeric) The nonce
+  "bits" : "1d00ffff", (string) The bits
+  "difficulty" : x.xxx,  (numeric) The difficulty
+  "previousblockhash" : "hash",  (string) The hash of the previous block
+  "nextblockhash" : "hash"       (string) The hash of the next block
+}"#)
+    };
+}
+
 //TODO turn into individual scrubbers
 macro_rules! dotdotdot {
     ($result_data:expr) => {
         $result_data
-            .replace(r#", ..."#, r#""#)
-            .replace(r#",..."#, r#""#)
+            .replace(", ...\n", r#""#)
+            .replace(",...\n", r#""#)
     };
 }
 
-const ALPHABET: &str = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+macro_rules! verifytxoutproof {
+    ($result_data:expr) => {
+        $result_data
+            .replace(
+                r#"["txid"]      (array, strings) The txid(s) which the proof commits to, or empty array if the proof is invalid"#,
+                "[\n\"txid\"   (string) The txid(s) which the proof commits to, or empty array if the proof is invalid\n]")
+    };
+}
 
 pub(crate) fn scrub(cmd_name: String, result_data: String) -> String {
-    let mut intermediate_result_data =
-        if cmd_name == "getaddressdeltas".to_string() {
-            getaddressdeltas!(result_data)
-        } else if cmd_name == "getaddressmempool".to_string() {
-            getaddressmempool!(result_data)
-        } else if cmd_name == "getchaintips".to_string() {
-            getchaintips!(result_data)
-        } else if cmd_name == "getblockchaininfo".to_string() {
-            getblockchaininfo!(result_data)
-        } else if cmd_name == "getblockdeltas".to_string() {
-            getblockdeltas!(result_data)
-        } else if cmd_name == "getblockhashes".to_string() {
-            getblockhashes!(result_data)
-        } else if cmd_name == "getdeprecationinfo".to_string() {
-            getdeprecationinfo!(result_data)
-        } else if cmd_name == "getnetworkinfo".to_string() {
-            getnetworkinfo!(result_data)
-        } else if cmd_name == "getpeerinfo".to_string() {
-            getpeerinfo!(result_data)
-        } else if cmd_name == "getspentinfo".to_string() {
-            getspentinfo!(result_data)
-        } else if cmd_name == "gettransaction".to_string() {
-            gettransaction!(result_data)
-        } else if cmd_name == "listaccounts".to_string() {
-            listaccounts!(result_data)
-        } else if cmd_name == "listreceivedbyaccount".to_string() {
-            listreceivedbyaccount!(result_data)
-        } else if cmd_name == "listreceivedbyaddress".to_string() {
-            listreceivedbyaddress!(result_data)
-        } else if cmd_name == "listtransactions".to_string() {
-            listtransactions!(result_data)
-        } else if cmd_name == "submitblock".to_string() {
-            submitblock!(result_data)
-        } else if cmd_name == "z_getoperationresult".to_string() {
-            z_getoperationresult!(result_data)
-        } else if cmd_name == "z_getoperationstatus".to_string() {
-            z_getoperationstatus!(result_data)
-        } else if cmd_name == "z_listreceivedbyaddress".to_string() {
-            z_listreceivedbyaddress!(result_data)
-        } else if cmd_name == "z_validateaddress".to_string() {
-            z_validateaddress!(result_data)
-        } else if cmd_name == "getblocktemplate".to_string() {
-            getblocktemplate!(result_data)
-        } else {
-            dotdotdot!(result_data)
-        };
-
-    if ALPHABET.contains(intermediate_result_data.chars().next().unwrap()) {
-        //dbg!("first char alphanumeric!");
-        intermediate_result_data.insert(0, '"');
-        intermediate_result_data.insert(result_data.len() - 1, '"');
+    if cmd_name == "getaddressdeltas".to_string() {
+        getaddressdeltas!(result_data)
+    } else if cmd_name == "verifytxoutproof".to_string() {
+        verifytxoutproof!(result_data)
+    } else if cmd_name == "getaddressutxos".to_string() {
+        getaddressutxos!(result_data)
+    } else if cmd_name == "listunspent".to_string() {
+        listunspent!(result_data)
+    } else if cmd_name == "z_listunspent".to_string() {
+        z_listunspent!(result_data)
+    } else if cmd_name == "generate".to_string() {
+        generate!(result_data)
+    } else if cmd_name == "getblock".to_string() {
+        getblock!(result_data)
+    } else if cmd_name == "getrawtransaction".to_string() {
+        getrawtransaction!(result_data)
+    } else if cmd_name == "getblockheader".to_string() {
+        getblockheader!(result_data)
+    } else if cmd_name == "getrawmempool".to_string() {
+        getrawmempool!(result_data)
+    } else if cmd_name == "getaddressmempool".to_string() {
+        getaddressmempool!(result_data)
+    } else if cmd_name == "getchaintips".to_string() {
+        getchaintips!(result_data)
+    } else if cmd_name == "getblockchaininfo".to_string() {
+        getblockchaininfo!(result_data)
+    } else if cmd_name == "getblockdeltas".to_string() {
+        getblockdeltas!(result_data)
+    } else if cmd_name == "getblockhashes".to_string() {
+        getblockhashes!(result_data)
+    } else if cmd_name == "getdeprecationinfo".to_string() {
+        getdeprecationinfo!(result_data)
+    } else if cmd_name == "getnetworkinfo".to_string() {
+        getnetworkinfo!(result_data)
+    } else if cmd_name == "getpeerinfo".to_string() {
+        getpeerinfo!(result_data)
+    } else if cmd_name == "getspentinfo".to_string() {
+        getspentinfo!(result_data)
+    } else if cmd_name == "gettransaction".to_string() {
+        gettransaction!(result_data)
+    } else if cmd_name == "listaccounts".to_string() {
+        listaccounts!(result_data)
+    } else if cmd_name == "listreceivedbyaccount".to_string() {
+        listreceivedbyaccount!(result_data)
+    } else if cmd_name == "listreceivedbyaddress".to_string() {
+        listreceivedbyaddress!(result_data)
+    } else if cmd_name == "listtransactions".to_string() {
+        listtransactions!(result_data)
+    } else if cmd_name == "z_getoperationresult".to_string() {
+        z_getoperationresult!(result_data)
+    } else if cmd_name == "z_getoperationstatus".to_string() {
+        z_getoperationstatus!(result_data)
+    } else if cmd_name == "z_listreceivedbyaddress".to_string() {
+        z_listreceivedbyaddress!(result_data)
+    } else if cmd_name == "z_validateaddress".to_string() {
+        z_validateaddress!(result_data)
+    } else if cmd_name == "getblocktemplate".to_string() {
+        getblocktemplate!(result_data)
+    } else {
+        dotdotdot!(result_data)
     }
-
-    intermediate_result_data
 }
