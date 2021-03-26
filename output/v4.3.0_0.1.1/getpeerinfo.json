@@ -1,0 +1,28 @@
+[
+  [
+    {
+      "addr": "String",
+      "addrlocal": "String",
+      "banscore": "Decimal",
+      "bytesrecv": "Decimal",
+      "bytessent": "Decimal",
+      "conntime": "Decimal",
+      "id": "Decimal",
+      "inbound": "bool",
+      "inflight": [
+        "Decimal"
+      ],
+      "lastrecv": "Decimal",
+      "lastsend": "Decimal",
+      "pingtime": "Decimal",
+      "pingwait": "Decimal",
+      "services": "String",
+      "startingheight": "Decimal",
+      "subver": "String",
+      "synced_blocks": "Decimal",
+      "synced_headers": "Decimal",
+      "timeoffset": "Decimal",
+      "version": "Decimal"
+    }
+  ]
+]
