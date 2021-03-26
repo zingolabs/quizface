@@ -90,6 +90,7 @@ settxfee
 signmessage
 signrawtransaction
 stop
+submitblock
 validateaddress
 verifychain
 verifymessage

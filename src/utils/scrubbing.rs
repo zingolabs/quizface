@@ -298,14 +298,6 @@ macro_rules! listtransactions {
     };
 }
 
-// TODO the submitblock macro returns an ad-hoc string rather
-// than following a suggested pattern for amending help output
-macro_rules! submitblock {
-    ($result_data:expr) => {
-        r#""(enum: duplicate, duplicate-invalid, duplicate-inconclusive, inconclusive, rejected)""#.to_string()
-    };
-}
-
 const INSUFFICIENT: &str = r#"INSUFFICIENT_INFORMATION
 Result:
 "do_not_use_this": (INSUFFICIENT)
@@ -483,8 +475,6 @@ pub(crate) fn scrub(cmd_name: String, result_data: String) -> String {
         listreceivedbyaddress!(result_data)
     } else if cmd_name == "listtransactions".to_string() {
         listtransactions!(result_data)
-    } else if cmd_name == "submitblock".to_string() {
-        submitblock!(result_data)
     } else if cmd_name == "z_getoperationresult".to_string() {
         z_getoperationresult!(result_data)
     } else if cmd_name == "z_getoperationstatus".to_string() {

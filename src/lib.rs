@@ -132,6 +132,9 @@ fn interpret_help_message(
 ) -> (String, Vec<serde_json::Value>) {
     let sections = partition_help_text(raw_command_help);
     let cmd_name = sections.get("rpc_name").unwrap().to_string();
+    if cmd_name == "submitblock" {
+        return (cmd_name, vec![json!("ENUM: duplicate, duplicate-invalid, duplicate-inconclusive, inconclusive, rejected")]);
+    }
     let response_data = sections.get("response").unwrap();
     let scrubbed_response = scrub(cmd_name.clone(), response_data.clone());
     let results = split_response_into_results(scrubbed_response);
