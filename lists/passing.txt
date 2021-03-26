@@ -122,6 +122,7 @@ z_importwallet
 z_listaddresses
 z_listoperationids
 z_listreceivedbyaddress
+z_listunspent
 z_mergetoaddress
 z_sendmany
 z_setmigration

@@ -1,0 +1,16 @@
+[
+  [
+    {
+      "address": "String",
+      "amount": "Decimal",
+      "change": "bool",
+      "confirmations": "Decimal",
+      "jsindex": "Decimal",
+      "jsoutindex": "Decimal",
+      "memo": "String",
+      "outindex": "Decimal",
+      "spendable": "bool",
+      "txid": "String"
+    }
+  ]
+]

@@ -167,6 +167,15 @@ macro_rules! listunspent {
     };
 }
 
+macro_rules! z_listunspent {
+    ($result_data:expr) => {
+        $result_data
+            .replace(",...", "")
+            .replace(" (sprout) : n,", ": <sprout> n,")
+            .replace(" (sapling) : n,", ": <sapling> n,")
+    };
+}
+
 macro_rules! generate {
     ($result_data:expr) => {
         $result_data.replace(
@@ -469,6 +478,8 @@ pub(crate) fn scrub(cmd_name: String, result_data: String) -> String {
         getaddressutxos!(result_data)
     } else if cmd_name == "listunspent".to_string() {
         listunspent!(result_data)
+    } else if cmd_name == "z_listunspent".to_string() {
+        z_listunspent!(result_data)
     } else if cmd_name == "generate".to_string() {
         generate!(result_data)
     } else if cmd_name == "getblock".to_string() {
