@@ -114,7 +114,6 @@ fn partition_help_text(raw_command_help: &str) -> HashMap<String, String> {
         .expect("No response_section_match found!");
     let response_section = &raw_command_help
         [response_section_match.start()..(response_section_match.end() - 9)];
-    dbg!(&response_section);
     sections.insert("response".to_string(), response_section.to_string());
 
     //description and arguments // TODO description still includes the cmd_name
@@ -158,7 +157,8 @@ fn split_response_into_results(response_section: String) -> Vec<String> {
 fn interpret_help_message(
     raw_command_help: &str,
 ) -> (String, Vec<serde_json::Value>, Vec<serde_json::Value>) {
-    //TODO i believe this is the thing I was picking on
+    //TODO sections could be passed in instead of produced,
+    // but would require re-wiring 20 tests
     let sections = partition_help_text(raw_command_help);
     let cmd_name = sections.get("rpc_name").unwrap().to_string();
     if cmd_name == "submitblock" {
@@ -184,7 +184,6 @@ fn interpret_help_message(
         // do not adjust argument_vec
     } else {
         //TODO add arg interpret
-        // ... etc TODO TODO TODO
     }
     (cmd_name, result_vec, argument_vec)
 }
@@ -364,6 +363,7 @@ fn raw_to_ident_and_metadata(ident_with_metadata: String) -> (String, String) {
     let metadata = split[1].trim_start_matches(":").trim().to_string();
     (ident, metadata)
 }
+
 // assumes well-formed `ident_with_metadata`
 fn label_identifier(ident_with_metadata: String) -> (String, String) {
     let (mut ident, meta_data) = raw_to_ident_and_metadata(ident_with_metadata);
