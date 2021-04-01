@@ -117,7 +117,8 @@ Examples:
 Examples:
 "#,
         ),
-        "zcsamplejoinsplit" | "z_setmigration" => {
+        "zcsamplejoinsplit"
+        | "z_setmigration" => {
             let mut r = raw_command_help.to_string();
             r.push_str("\nArguments:\nResult:\nExamples:\n");
             r

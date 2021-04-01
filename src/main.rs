@@ -12,10 +12,9 @@ fn process_command(command: &str) {
         .expect("Invalid raw_command_help, error!");
 
     log_raw_output(command, raw_command_help.to_string());
-    //select just for blessed results.
-    let ps_command_help =
+    let prescrubbed_command_help =
         quizface::utils::prescrubbing::prescrub(command, raw_command_help);
-    produce_interpretation(&ps_command_help);
+    produce_interpretation(&prescrubbed_command_help);
 }
 fn main() {
     create_log_dirs();

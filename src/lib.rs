@@ -44,27 +44,53 @@ pub fn get_command_help(cmd_name: &str) -> std::process::Output {
     command_help
 }
 
-fn record_interpretation(cmd_name: String, interpretation: String) {
-    let rawlocation = &format!(
-        "./output/{}/{}.json",
+fn record_interpretation(
+    cmd_name: String,
+    full_result_interpretation: String,
+    argument_interpretation: String,
+) {
+    let rawresultlocation = &format!(
+        "./output/{}/{}_result.json",
         utils::logging::create_version_name(),
         cmd_name
     );
-    let location = std::path::Path::new(rawlocation);
-    std::fs::create_dir_all(location.parent().unwrap()).unwrap();
+    let resultlocation = std::path::Path::new(rawresultlocation);
+    std::fs::create_dir_all(resultlocation.parent().unwrap()).unwrap();
     use std::io::Write as _;
-    let mut file = std::fs::File::create(location)
+    let mut resultfile = std::fs::File::create(resultlocation)
         .expect("Couldn't create append interface to output file.");
-    file.write_all(interpretation.as_bytes()).unwrap();
+    resultfile
+        .write_all(full_result_interpretation.as_bytes())
+        .unwrap();
+    let rawargumentslocation = &format!(
+        "./output/{}/{}_arguments.json",
+        utils::logging::create_version_name(),
+        cmd_name
+    );
+    let argumentslocation = std::path::Path::new(rawargumentslocation);
+    let mut argumentsfile = std::fs::File::create(argumentslocation)
+        .expect("Couldn't create append interface to output file.");
+    argumentsfile
+        .write_all(argument_interpretation.as_bytes())
+        .unwrap();
 }
 
 pub fn produce_interpretation(raw_command_help: &str) {
-    let (cmd_name, interpretations) = interpret_help_message(raw_command_help);
-    let full_interp =
-        &interpretations.iter().map(|x| x.clone()).collect::<Value>();
+    let (cmd_name, result_interpretations, argument_placeholder) =
+        interpret_help_message(raw_command_help);
+    let full_result_interp = &result_interpretations
+        .iter()
+        .map(|x| x.clone())
+        .collect::<Value>();
+    let full_arg_interp = &argument_placeholder
+        .iter()
+        .map(|x| x.clone())
+        .collect::<Value>();
     record_interpretation(
         cmd_name,
-        serde_json::ser::to_string_pretty(full_interp)
+        serde_json::ser::to_string_pretty(full_result_interp)
+            .expect("Couldn't serialize prettily!"),
+        serde_json::ser::to_string_pretty(full_arg_interp)
             .expect("Couldn't serialize prettily!"),
     );
 }
@@ -77,7 +103,7 @@ fn partition_help_text(raw_command_help: &str) -> HashMap<String, String> {
     let cmd_name = &raw_command_help
         .split_ascii_whitespace()
         .next()
-        .expect("Command name not first token!!");
+        .expect("cmd_name not found!");
     sections.insert("rpc_name".to_string(), cmd_name.to_string());
 
     //response
@@ -90,13 +116,13 @@ fn partition_help_text(raw_command_help: &str) -> HashMap<String, String> {
         [response_section_match.start()..(response_section_match.end() - 9)];
     sections.insert("response".to_string(), response_section.to_string());
 
-    //description and arguments
-    let description_delimiters =
+    //description and arguments // TODO description still includes the cmd_name
+    let arguments_delimiter =
         Regex::new(r"(?s).*?Arguments[:\s]").expect("Invalid regex!!");
     let description_section;
     let argument_section;
     if let Some(description_section_match) =
-        description_delimiters.find(&raw_command_help)
+        arguments_delimiter.find(&raw_command_help)
     {
         description_section = &raw_command_help[description_section_match
             .start()
@@ -108,6 +134,7 @@ fn partition_help_text(raw_command_help: &str) -> HashMap<String, String> {
             &raw_command_help[..response_section_match.start()];
         argument_section = "";
     };
+    dbg!(&argument_section);
     sections.insert("description".to_string(), description_section.to_string());
     sections.insert("arguments".to_string(), argument_section.to_string());
 
@@ -129,24 +156,36 @@ fn split_response_into_results(response_section: String) -> Vec<String> {
 }
 fn interpret_help_message(
     raw_command_help: &str,
-) -> (String, Vec<serde_json::Value>) {
+) -> (String, Vec<serde_json::Value>, Vec<serde_json::Value>) {
+    //TODO sections could be passed in instead of produced,
+    // but would require re-wiring 20 tests
     let sections = partition_help_text(raw_command_help);
     let cmd_name = sections.get("rpc_name").unwrap().to_string();
     if cmd_name == "submitblock" {
-        return (cmd_name, vec![json!("ENUM: duplicate, duplicate-invalid, duplicate-inconclusive, inconclusive, rejected")]);
+        //TODO special case, prescrub or scrub? TODO also, submitblock has arguments.
+        return (cmd_name, vec![json!("ENUM: duplicate, duplicate-invalid, duplicate-inconclusive, inconclusive, rejected")], vec![]);
     }
     let response_data = sections.get("response").unwrap();
     let scrubbed_response = scrub(cmd_name.clone(), response_data.clone());
     let results = split_response_into_results(scrubbed_response);
-    let mut v = vec![];
-    if &results.len() == &1usize && &results[0] == "" {
-        (cmd_name, v)
+    let mut result_vec = vec![];
+    if results.len() == 1usize && results[0] == "" {
+        // do not adjust result_vec
     } else {
         for result in results {
-            v.push(annotate_result(&mut result.chars()));
+            result_vec.push(annotate_result(&mut result.chars()));
         }
-        (cmd_name, v)
     }
+    let argument_data = sections.get("arguments").unwrap();
+    // TODO possible scrubbing for args?
+    // TODO possible splitting?
+    let mut argument_vec = vec![];
+    if argument_data == "" {
+        // do not adjust argument_vec
+    } else {
+        //TODO add arg interpret
+    }
+    (cmd_name, result_vec, argument_vec)
 }
 
 fn annotate_result(result_chars: &mut std::str::Chars) -> serde_json::Value {
@@ -324,6 +363,7 @@ fn raw_to_ident_and_metadata(ident_with_metadata: String) -> (String, String) {
     let metadata = split[1].trim_start_matches(":").trim().to_string();
     (ident, metadata)
 }
+
 // assumes well-formed `ident_with_metadata`
 fn label_identifier(ident_with_metadata: String) -> (String, String) {
     let (mut ident, meta_data) = raw_to_ident_and_metadata(ident_with_metadata);
@@ -842,7 +882,7 @@ mod unit {
         //! destroy any input.
         let test_cmd_name = "TEST_record_interpretation_getblockchaininfo";
         let location = format!(
-            "./output/{}/{}.json",
+            "./output/{}/{}_result.json",
             utils::logging::create_version_name(),
             test_cmd_name
         );
@@ -850,6 +890,7 @@ mod unit {
         record_interpretation(
             test_cmd_name.to_string(),
             getblockchaininfo_interpretation().to_string(),
+            "".to_string(),
         );
 
         //Now let's examine the results!
