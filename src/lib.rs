@@ -46,7 +46,7 @@ pub fn get_command_help(cmd_name: &str) -> std::process::Output {
 
 fn record_interpretation(cmd_name: String, interpretation: String) {
     let rawlocation = &format!(
-        "./output/{}/{}.json",
+        "./output/{}/{}_result.json",
         utils::logging::create_version_name(),
         cmd_name
     );
@@ -77,7 +77,7 @@ fn partition_help_text(raw_command_help: &str) -> HashMap<String, String> {
     let cmd_name = &raw_command_help
         .split_ascii_whitespace()
         .next()
-        .expect("Command name not first token!!");
+        .expect("cmd_name not found!");
     sections.insert("rpc_name".to_string(), cmd_name.to_string());
 
     //response
@@ -88,15 +88,16 @@ fn partition_help_text(raw_command_help: &str) -> HashMap<String, String> {
         .expect("No response_section_match found!");
     let response_section = &raw_command_help
         [response_section_match.start()..(response_section_match.end() - 9)];
+    dbg!(&response_section);
     sections.insert("response".to_string(), response_section.to_string());
 
-    //description and arguments
-    let description_delimiters =
+    //description and arguments // TODO description still includes the cmd_name
+    let arguments_delimiter =
         Regex::new(r"(?s).*?Arguments[:\s]").expect("Invalid regex!!");
     let description_section;
     let argument_section;
     if let Some(description_section_match) =
-        description_delimiters.find(&raw_command_help)
+        arguments_delimiter.find(&raw_command_help)
     {
         description_section = &raw_command_help[description_section_match
             .start()
@@ -108,6 +109,7 @@ fn partition_help_text(raw_command_help: &str) -> HashMap<String, String> {
             &raw_command_help[..response_section_match.start()];
         argument_section = "";
     };
+    dbg!(&argument_section);
     sections.insert("description".to_string(), description_section.to_string());
     sections.insert("arguments".to_string(), argument_section.to_string());
 
@@ -133,13 +135,14 @@ fn interpret_help_message(
     let sections = partition_help_text(raw_command_help);
     let cmd_name = sections.get("rpc_name").unwrap().to_string();
     if cmd_name == "submitblock" {
+        //TODO special case, prescrub or scrub?
         return (cmd_name, vec![json!("ENUM: duplicate, duplicate-invalid, duplicate-inconclusive, inconclusive, rejected")]);
     }
     let response_data = sections.get("response").unwrap();
     let scrubbed_response = scrub(cmd_name.clone(), response_data.clone());
     let results = split_response_into_results(scrubbed_response);
     let mut v = vec![];
-    if &results.len() == &1usize && &results[0] == "" {
+    if results.len() == 1usize && results[0] == "" {
         (cmd_name, v)
     } else {
         for result in results {
@@ -842,7 +845,7 @@ mod unit {
         //! destroy any input.
         let test_cmd_name = "TEST_record_interpretation_getblockchaininfo";
         let location = format!(
-            "./output/{}/{}.json",
+            "./output/{}/{}_result.json",
             utils::logging::create_version_name(),
             test_cmd_name
         );
