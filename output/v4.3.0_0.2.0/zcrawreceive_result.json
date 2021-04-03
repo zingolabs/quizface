@@ -1,7 +1,0 @@
-[
-  {
-    "amount": "Decimal",
-    "exists": "bool",
-    "note": "String"
-  }
-]
