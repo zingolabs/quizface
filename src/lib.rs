@@ -134,7 +134,7 @@ fn partition_help_text(raw_command_help: &str) -> HashMap<String, String> {
             &raw_command_help[..response_section_match.start()];
         argument_section = "";
     };
-    dbg!(&argument_section);
+    //dbg!(&argument_section);
     sections.insert("description".to_string(), description_section.to_string());
     sections.insert("arguments".to_string(), argument_section.to_string());
 
@@ -155,6 +155,17 @@ fn split_response_into_results(response_section: String) -> Vec<String> {
     r
 }
 
+fn split_arguments(arguments_section: &str) -> Vec<String> {
+    let argreg = regex::Regex::new(r"\n\d\.").expect("invalid regex");
+    let mut a: Vec<String> = argreg
+        .split(arguments_section)
+        .map(|x| x.trim().to_string())
+        .collect();
+    a.remove(0);
+    dbg!(&a);
+    a
+}
+
 fn interpret_help_message(
     raw_command_help: &str,
 ) -> (String, Vec<serde_json::Value>, Vec<serde_json::Value>) {
@@ -162,8 +173,8 @@ fn interpret_help_message(
     let cmd_name = sections.get("rpc_name").unwrap().to_string();
     dbg!(&cmd_name);
     if cmd_name == "submitblock" {
-        //TODO special case, prescrub or scrub? TODO also, submitblock has arguments.
-        return (cmd_name, vec![json!("ENUM: duplicate, duplicate-invalid, duplicate-inconclusive, inconclusive, rejected")], vec![]);
+        //TODO special case, scrub?
+        return (cmd_name, vec![json!("ENUM: duplicate, duplicate-invalid, duplicate-inconclusive, inconclusive, rejected")], vec![json!({"1.hexdata": "String", "2.Option<jsonparametersobject>": "String"})]);
     }
     let response_data = sections.get("response").unwrap();
     let scrubbed_response = scrub(cmd_name.clone(), response_data.clone());
@@ -176,14 +187,21 @@ fn interpret_help_message(
             result_vec.push(annotate_result(&mut result.chars()));
         }
     }
-    let argument_data = sections.get("arguments").unwrap();
-    // TODO possible scrubbing for args?
-    // TODO possible splitting?
+    let arguments_data = sections.get("arguments").unwrap();
     let mut argument_vec = vec![];
-    if argument_data.trim() == "" {
+    if arguments_data.trim() == "" {
         // do not adjust argument_vec
     } else {
-        //TODO add arg interpret
+        // TODO handle '{' cases
+        // check for (or). if or, split by (or) then pass remaining
+        // to '{' case interpreter
+        // also, handle 'getreceievedbyaddress'
+        let arguments = split_arguments(arguments_data);
+        for arg in arguments {
+            //argument_vec.push(annotate_argument(&mut argument.char()));
+            //interp args, including prepending key with n_
+            //returning serde_json Map
+        }
     }
     (cmd_name, result_vec, argument_vec)
 }
