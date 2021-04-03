@@ -10,7 +10,6 @@ pub fn prescrub(command: &str, raw_command_help: &str) -> String {
         | "importwallet"
         | "setlogfilter"
         | "setban"
-        | "keypoolrefill"
         | "z_importwallet"
         | "clearbanned"
         | "setaccount"
@@ -28,6 +27,10 @@ pub fn prescrub(command: &str, raw_command_help: &str) -> String {
             .unwrap()
             .replace_all(raw_command_help, "Result:")
             .to_string(),
+        "keypoolrefill" => {
+            raw_command_help.replace("Examples:", "Result:\nExamples:")
+                .replace("Arguments", "Arguments:")
+        }
         "submitblock" => { 
             raw_command_help.replace("Arguments", "Arguments:") 
         }
