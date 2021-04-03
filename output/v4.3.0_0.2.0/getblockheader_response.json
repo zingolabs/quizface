@@ -1,0 +1,17 @@
+[
+  "String",
+  {
+    "bits": "String",
+    "confirmations": "Decimal",
+    "difficulty": "Decimal",
+    "finalsaplingroot": "String",
+    "hash": "String",
+    "height": "Decimal",
+    "merkleroot": "String",
+    "nextblockhash": "String",
+    "nonce": "Decimal",
+    "previousblockhash": "String",
+    "time": "Decimal",
+    "version": "Decimal"
+  }
+]

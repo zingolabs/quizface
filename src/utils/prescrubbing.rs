@@ -24,11 +24,13 @@ pub fn prescrub(command: &str, raw_command_help: &str) -> String {
             .unwrap()
             .replace_all(raw_command_help, "Result:")
             .to_string(),
-
         "getblock" => Regex::new(r"Result \(for verbosity = [012]\):")
             .unwrap()
             .replace_all(raw_command_help, "Result:")
             .to_string(),
+        "submitblock" => { 
+            raw_command_help.replace("Arguments", "Arguments:") 
+        }
         "settxfee" | "getgenerate" | "generate" => {
             raw_command_help.replace("Result", "Result:")
         }

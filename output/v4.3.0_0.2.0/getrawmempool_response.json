@@ -1,0 +1,18 @@
+[
+  [
+    "String"
+  ],
+  {
+    "transactionid": {
+      "currentpriority": "Decimal",
+      "depends": [
+        "String"
+      ],
+      "fee": "Decimal",
+      "height": "Decimal",
+      "size": "Decimal",
+      "startingpriority": "Decimal",
+      "time": "Decimal"
+    }
+  }
+]

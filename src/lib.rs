@@ -46,31 +46,31 @@ pub fn get_command_help(cmd_name: &str) -> std::process::Output {
 
 fn record_interpretation(
     cmd_name: String,
-    full_result_interpretation: String,
+    full_response_interpretation: String,
     argument_interpretation: String,
 ) {
-    let rawresultlocation = &format!(
-        "./output/{}/{}_result.json",
+    let raw_response_location = &format!(
+        "./output/{}/{}_response.json",
         utils::logging::create_version_name(),
         cmd_name
     );
-    let resultlocation = std::path::Path::new(rawresultlocation);
-    std::fs::create_dir_all(resultlocation.parent().unwrap()).unwrap();
+    let response_location = std::path::Path::new(raw_response_location);
+    std::fs::create_dir_all(response_location.parent().unwrap()).unwrap();
     use std::io::Write as _;
-    let mut resultfile = std::fs::File::create(resultlocation)
+    let mut response_file = std::fs::File::create(response_location)
         .expect("Couldn't create append interface to output file.");
-    resultfile
-        .write_all(full_result_interpretation.as_bytes())
+    response_file
+        .write_all(full_response_interpretation.as_bytes())
         .unwrap();
-    let rawargumentslocation = &format!(
+    let raw_arguments_location = &format!(
         "./output/{}/{}_arguments.json",
         utils::logging::create_version_name(),
         cmd_name
     );
-    let argumentslocation = std::path::Path::new(rawargumentslocation);
-    let mut argumentsfile = std::fs::File::create(argumentslocation)
+    let arguments_location = std::path::Path::new(raw_arguments_location);
+    let mut arguments_file = std::fs::File::create(arguments_location)
         .expect("Couldn't create append interface to output file.");
-    argumentsfile
+    arguments_file
         .write_all(argument_interpretation.as_bytes())
         .unwrap();
 }
@@ -78,7 +78,7 @@ fn record_interpretation(
 pub fn produce_interpretation(raw_command_help: &str) {
     let (cmd_name, result_interpretations, argument_placeholder) =
         interpret_help_message(raw_command_help);
-    let full_result_interp = &result_interpretations
+    let full_response_interp = &result_interpretations
         .iter()
         .map(|x| x.clone())
         .collect::<Value>();
@@ -88,7 +88,7 @@ pub fn produce_interpretation(raw_command_help: &str) {
         .collect::<Value>();
     record_interpretation(
         cmd_name,
-        serde_json::ser::to_string_pretty(full_result_interp)
+        serde_json::ser::to_string_pretty(full_response_interp)
             .expect("Couldn't serialize prettily!"),
         serde_json::ser::to_string_pretty(full_arg_interp)
             .expect("Couldn't serialize prettily!"),
@@ -154,13 +154,13 @@ fn split_response_into_results(response_section: String) -> Vec<String> {
     r.remove(0);
     r
 }
+
 fn interpret_help_message(
     raw_command_help: &str,
 ) -> (String, Vec<serde_json::Value>, Vec<serde_json::Value>) {
-    //TODO sections could be passed in instead of produced,
-    // but would require re-wiring 20 tests
     let sections = partition_help_text(raw_command_help);
     let cmd_name = sections.get("rpc_name").unwrap().to_string();
+    dbg!(&cmd_name);
     if cmd_name == "submitblock" {
         //TODO special case, prescrub or scrub? TODO also, submitblock has arguments.
         return (cmd_name, vec![json!("ENUM: duplicate, duplicate-invalid, duplicate-inconclusive, inconclusive, rejected")], vec![]);
@@ -180,7 +180,7 @@ fn interpret_help_message(
     // TODO possible scrubbing for args?
     // TODO possible splitting?
     let mut argument_vec = vec![];
-    if argument_data == "" {
+    if argument_data.trim() == "" {
         // do not adjust argument_vec
     } else {
         //TODO add arg interpret
@@ -370,6 +370,7 @@ fn label_identifier(ident_with_metadata: String) -> (String, String) {
     let mut raw_label = make_raw_label(meta_data);
     if raw_label.contains(", optional") {
         ident = format!("Option<{}>", ident);
+        dbg!("option!!!");
         raw_label = raw_label.replace(", optional", "");
     };
     let annotation: String = make_label(raw_label);
@@ -882,7 +883,7 @@ mod unit {
         //! destroy any input.
         let test_cmd_name = "TEST_record_interpretation_getblockchaininfo";
         let location = format!(
-            "./output/{}/{}_result.json",
+            "./output/{}/{}_response.json",
             utils::logging::create_version_name(),
             test_cmd_name
         );

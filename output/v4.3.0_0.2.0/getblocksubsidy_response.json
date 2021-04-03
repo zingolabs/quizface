@@ -1,0 +1,15 @@
+[
+  {
+    "founders": "Decimal",
+    "fundingstreams": [
+      {
+        "address": "String",
+        "recipient": "String",
+        "specification": "String",
+        "value": "Decimal",
+        "valueZat": "Decimal"
+      }
+    ],
+    "miner": "Decimal"
+  }
+]

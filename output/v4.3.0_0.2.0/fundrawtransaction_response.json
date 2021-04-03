@@ -1,0 +1,7 @@
+[
+  {
+    "changepos": "Decimal",
+    "fee": "Decimal",
+    "hex": "String"
+  }
+]

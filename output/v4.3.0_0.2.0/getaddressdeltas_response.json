@@ -1,0 +1,30 @@
+[
+  [
+    {
+      "address": "String",
+      "height": "Decimal",
+      "index": "Decimal",
+      "satoshis": "Decimal",
+      "txid": "String"
+    }
+  ],
+  {
+    "deltas": [
+      {
+        "address": "String",
+        "height": "Decimal",
+        "index": "Decimal",
+        "satoshis": "Decimal",
+        "txid": "String"
+      }
+    ],
+    "end": {
+      "hash": "String",
+      "height": "Decimal"
+    },
+    "start": {
+      "hash": "String",
+      "height": "Decimal"
+    }
+  }
+]
