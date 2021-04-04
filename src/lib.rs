@@ -186,8 +186,7 @@ fn interpret_help_message(
         }
     }
     let arguments_data = sections.get("arguments").unwrap();
-    let scrubbed_arguments =
-        scrub_arguments(cmd_name.clone(), arguments_data.clone());
+    let scrubbed_arguments = scrub_arguments(&cmd_name, arguments_data.clone());
     let mut arguments_vec = vec![];
     if scrubbed_arguments.trim() == "" {
         // do not adjust argument_vec

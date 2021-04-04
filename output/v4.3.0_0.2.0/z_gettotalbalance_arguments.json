@@ -1,1 +1,6 @@
-[]
+[
+  {
+    "Option<1_minconf>": "Decimal",
+    "Option<2_includeWatchonly>": "bool"
+  }
+]

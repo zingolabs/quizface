@@ -1,1 +1,8 @@
-[]
+[
+  {
+    "1_fromaddress": "String",
+    "2_amounts": "String",
+    "Option<3_minconf>": "Decimal",
+    "Option<4_fee>": "Decimal"
+  }
+]

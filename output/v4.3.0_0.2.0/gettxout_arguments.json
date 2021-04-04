@@ -1,1 +1,7 @@
-[]
+[
+  {
+    "1_txid": "String",
+    "2_n": "Decimal",
+    "Option<3_includemempool>": "bool"
+  }
+]

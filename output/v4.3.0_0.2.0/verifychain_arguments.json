@@ -1,1 +1,6 @@
-[]
+[
+  {
+    "Option<1_checklevel>": "Decimal",
+    "Option<2_numblocks>": "Decimal"
+  }
+]

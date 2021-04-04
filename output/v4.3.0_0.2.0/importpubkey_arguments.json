@@ -1,1 +1,7 @@
-[]
+[
+  {
+    "1_pubkey": "String",
+    "Option<2_label>": "String",
+    "Option<3_rescan>": "bool"
+  }
+]

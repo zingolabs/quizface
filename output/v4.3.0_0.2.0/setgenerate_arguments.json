@@ -1,1 +1,6 @@
-[]
+[
+  {
+    "1_generate": "bool",
+    "Option<2_genproclimit>": "Decimal"
+  }
+]

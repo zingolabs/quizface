@@ -469,20 +469,54 @@ macro_rules! verifytxoutproof {
     };
 }
 
-macro_rules! getbalance {
+macro_rules! args_bool {
     ($arguments_data:expr) => {
         $arguments_data.replace(r#"bool"#, r#"boolean"#)
     };
 }
 
+macro_rules! setban {
+    ($arguments_data:expr) => {
+        $arguments_data.replace(r#"(/netmask)"#, r#"/Option<netmask>"#)
+    };
+}
+
+macro_rules! args_array {
+    ($arguments_data:expr) => {
+        $arguments_data.replace(r#"array"#, r#"string"#)
+    };
+}
+
 pub(crate) fn scrub_arguments(
-    cmd_name: String,
+    cmd_name: &str,
     arguments_data: String,
 ) -> String {
-    if cmd_name == "getbalance".to_string() {
-        getbalance!(arguments_data)
-    } else {
-        arguments_data
+    match cmd_name {
+        "getbalance"
+        | "getreceivedbyaccount"
+        | "getreceivedbyaddress"
+        | "gettransaction"
+        | "listaccounts"
+        | "listreceivedbyaccount"
+        | "listreceivedbyaddress"
+        | "listsinceblock"
+        | "listtransactions"
+        | "z_getbalance"
+        | "z_gettotalbalance"
+        | "z_listaddresses"
+        | "z_listunspent" => {
+            args_bool!(arguments_data)
+        }
+        "z_getoperationresult"
+        | "z_getoperationstatus"
+        | "z_mergetoaddress"
+        | "z_sendmany" => {
+            args_array!(arguments_data)
+        }
+        "setban" => {
+            setban!(arguments_data)
+        }
+        _ => arguments_data,
     }
 }
 

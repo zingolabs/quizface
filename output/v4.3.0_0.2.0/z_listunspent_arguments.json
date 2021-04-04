@@ -1,1 +1,8 @@
-[]
+[
+  {
+    "4_addresses": "String",
+    "Option<1_minconf>": "Decimal",
+    "Option<2_maxconf>": "Decimal",
+    "Option<3_includeWatchonly>": "bool"
+  }
+]

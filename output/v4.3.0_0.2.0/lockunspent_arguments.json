@@ -1,1 +1,6 @@
-[]
+[
+  {
+    "1_unlock": "bool",
+    "2_transactions": "String"
+  }
+]
