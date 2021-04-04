@@ -199,32 +199,28 @@ fn interpret_help_message(
         let arguments = split_arguments(arguments_data);
         dbg!(&cmd_name);
         arguments_vec.push(json!(annotate_arguments(arguments)));
-        dbg!(&argument_vec);
+        dbg!(&arguments_vec);
     }
     (cmd_name, result_vec, arguments_vec)
 }
 
-fn annotate_arguments(arguments: Vec<String>) -> serde_json::Value::Object {
-    let arg_map = serde_json::map::Map::new();
+fn annotate_arguments(arguments: Vec<String>) -> serde_json::Value {
+    let mut arg_map = serde_json::map::Map::new();
     let arg_regex = regex::Regex::new(r#"[^"]"#).expect("invalid regex");
     //let argvaluereg = regex::Regex::new(r#"[()]"#).expect("invalid regex");
     let mut argument_count = 1;
     for arg in arguments {
         //dbg!(arg);
-        let proto_ident = Some(arg.split_whitespace().next());
-        let ident = format!(
-            "{}_{}",
-            argument_count,
-            arg_regex.capture(proto_ident).unwrap().as_str()
-        );
+        let proto_ident = arg.split_whitespace().next();
+        let naked_ident = &arg_regex.captures(proto_ident.unwrap()).unwrap()[0];
+        let mut ident = format!("{}_{}", argument_count, &naked_ident);
         let raw_label = make_raw_label(arg);
         // TODO this repeats existing code, create helper function
         if raw_label.contains(", optional") {
             ident = format!("Option<{}>", ident);
-            dbg!("option!!!");
             //raw_label = raw_label.replace(", optional", "");
         };
-        arg_map.insert(ident, make_label(raw_label));
+        arg_map.insert(ident, serde_json::Value::String(make_label(raw_label)));
         argument_count += 1;
     }
     json!(arg_map)

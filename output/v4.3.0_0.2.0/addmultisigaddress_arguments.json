@@ -1,1 +1,7 @@
-[]
+[
+  {
+    "1_n": "Decimal",
+    "2_k": "String",
+    "Option<3_a>": "String"
+  }
+]
