@@ -1,7 +1,9 @@
 pub mod utils;
 use crate::logging::create_log_dirs;
 use crate::logging::log_masterhelp_output;
-use crate::utils::scrubbing::scrub;
+// TODO : evaluate need to split scrubbing into separate modules
+use crate::utils::scrubbing::scrub_arguments;
+use crate::utils::scrubbing::scrub_response;
 use serde_json::{json, map::Map, Value};
 use std::collections::HashMap;
 use std::path::Path;
@@ -172,7 +174,8 @@ fn interpret_help_message(
         return (cmd_name, vec![json!("ENUM: duplicate, duplicate-invalid, duplicate-inconclusive, inconclusive, rejected")], vec![json!({"1.hexdata": "String", "2.Option<jsonparametersobject>": "String"})]);
     }
     let response_data = sections.get("response").unwrap();
-    let scrubbed_response = scrub(cmd_name.clone(), response_data.clone());
+    let scrubbed_response =
+        scrub_response(cmd_name.clone(), response_data.clone());
     let results = split_response_into_results(scrubbed_response);
     let mut result_vec = vec![];
     if results.len() == 1usize && results[0] == "" {
@@ -183,16 +186,18 @@ fn interpret_help_message(
         }
     }
     let arguments_data = sections.get("arguments").unwrap();
+    let scrubbed_arguments =
+        scrub_arguments(cmd_name.clone(), arguments_data.clone());
     let mut arguments_vec = vec![];
-    if arguments_data.trim() == "" {
+    if scrubbed_arguments.trim() == "" {
         // do not adjust argument_vec
-    } else if arguments_data.trim().starts_with("{") {
+    } else if scrubbed_arguments.trim().starts_with("{") {
         arguments_vec.push(json!({"jsonobject": "String"}));
-        if arguments_data.contains("(or)") {
+        if scrubbed_arguments.contains("(or)") {
             arguments_vec.push(json!({"address": "String"}));
         }
     } else {
-        let arguments = split_arguments(arguments_data);
+        let arguments = split_arguments(&scrubbed_arguments);
         dbg!(&cmd_name);
         arguments_vec.push(json!(annotate_arguments(arguments)));
         dbg!(&arguments_vec);
@@ -203,7 +208,6 @@ fn interpret_help_message(
 fn annotate_arguments(arguments: Vec<String>) -> serde_json::Value {
     let mut arg_map = serde_json::map::Map::new();
     let arg_regex = regex::Regex::new(r#"[^"]{1,}"#).expect("invalid regex");
-    //let argvaluereg = regex::Regex::new(r#"[()]"#).expect("invalid regex");
     let mut argument_count = 1;
     for arg in arguments {
         //dbg!(arg);
@@ -215,7 +219,6 @@ fn annotate_arguments(arguments: Vec<String>) -> serde_json::Value {
         // TODO this repeats existing code, create helper function
         if raw_label.contains(", optional") {
             ident = format!("Option<{}>", ident);
-            //raw_label = raw_label.replace(", optional", "");
         };
         arg_map.insert(ident, serde_json::Value::String(make_label(raw_label)));
         argument_count += 1;
@@ -451,7 +454,7 @@ mod unit {
     #[test]
     fn scrub_result_getblockchaininfo_scrubbed() {
         let expected_result = test::HELP_GETBLOCKCHAININFO_RESULT_SCRUBBED;
-        let result = scrub(
+        let result = scrub_response(
             "getblockchaininfo".to_string(),
             test::HELP_GETBLOCKCHAININFO_RESULT.to_string(),
         );

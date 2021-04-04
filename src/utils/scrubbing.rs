@@ -469,7 +469,24 @@ macro_rules! verifytxoutproof {
     };
 }
 
-pub(crate) fn scrub(cmd_name: String, result_data: String) -> String {
+macro_rules! getbalance {
+    ($arguments_data:expr) => {
+        $arguments_data.replace(r#"bool"#, r#"boolean"#)
+    };
+}
+
+pub(crate) fn scrub_arguments(
+    cmd_name: String,
+    arguments_data: String,
+) -> String {
+    if cmd_name == "getbalance".to_string() {
+        getbalance!(arguments_data)
+    } else {
+        arguments_data
+    }
+}
+
+pub(crate) fn scrub_response(cmd_name: String, result_data: String) -> String {
     if cmd_name == "getaddressdeltas".to_string() {
         getaddressdeltas!(result_data)
     } else if cmd_name == "verifytxoutproof".to_string() {
