@@ -134,7 +134,6 @@ fn partition_help_text(raw_command_help: &str) -> HashMap<String, String> {
             &raw_command_help[..response_section_match.start()];
         argument_section = "";
     };
-    //dbg!(&argument_section);
     sections.insert("description".to_string(), description_section.to_string());
     sections.insert("arguments".to_string(), argument_section.to_string());
 
@@ -162,7 +161,6 @@ fn split_arguments(arguments_section: &str) -> Vec<String> {
         .map(|x| x.trim().to_string())
         .collect();
     a.remove(0);
-    dbg!(&a);
     a
 }
 
@@ -170,8 +168,9 @@ fn interpret_help_message(
     raw_command_help: &str,
 ) -> (String, Vec<serde_json::Value>, Vec<serde_json::Value>) {
     let sections = partition_help_text(raw_command_help);
+    //TODO rpc_name vs cmd_name ?
     let cmd_name = sections.get("rpc_name").unwrap().to_string();
-    dbg!(&cmd_name);
+    //dbg!(&cmd_name);
     if cmd_name == "submitblock" {
         //TODO special case, scrub?
         return (cmd_name, vec![json!("ENUM: duplicate, duplicate-invalid, duplicate-inconclusive, inconclusive, rejected")], vec![json!({"1.hexdata": "String", "2.Option<jsonparametersobject>": "String"})]);
@@ -188,22 +187,47 @@ fn interpret_help_message(
         }
     }
     let arguments_data = sections.get("arguments").unwrap();
-    let mut argument_vec = vec![];
+    let mut arguments_vec = vec![];
     if arguments_data.trim() == "" {
         // do not adjust argument_vec
-    } else {
-        // TODO handle '{' cases
-        // check for (or). if or, split by (or) then pass remaining
-        // to '{' case interpreter
-        // also, handle 'getreceievedbyaddress'
-        let arguments = split_arguments(arguments_data);
-        for arg in arguments {
-            //argument_vec.push(annotate_argument(&mut argument.char()));
-            //interp args, including prepending key with n_
-            //returning serde_json Map
+    } else if arguments_data.trim().starts_with("{") {
+        arguments_vec.push(json!({"jsonobject": "String"}));
+        if arguments_data.contains("(or)") {
+            arguments_vec.push(json!({"address": "String"}));
         }
+    } else {
+        let arguments = split_arguments(arguments_data);
+        dbg!(&cmd_name);
+        arguments_vec.push(json!(annotate_arguments(arguments)));
+        dbg!(&argument_vec);
     }
-    (cmd_name, result_vec, argument_vec)
+    (cmd_name, result_vec, arguments_vec)
+}
+
+fn annotate_arguments(arguments: Vec<String>) -> serde_json::Value::Object {
+    let arg_map = serde_json::map::Map::new();
+    let arg_regex = regex::Regex::new(r#"[^"]"#).expect("invalid regex");
+    //let argvaluereg = regex::Regex::new(r#"[()]"#).expect("invalid regex");
+    let mut argument_count = 1;
+    for arg in arguments {
+        //dbg!(arg);
+        let proto_ident = Some(arg.split_whitespace().next());
+        let ident = format!(
+            "{}_{}",
+            argument_count,
+            arg_regex.capture(proto_ident).unwrap().as_str()
+        );
+        let raw_label = make_raw_label(arg);
+        // TODO this repeats existing code, create helper function
+        if raw_label.contains(", optional") {
+            ident = format!("Option<{}>", ident);
+            dbg!("option!!!");
+            //raw_label = raw_label.replace(", optional", "");
+        };
+        arg_map.insert(ident, make_label(raw_label));
+        argument_count += 1;
+    }
+    json!(arg_map)
 }
 
 fn annotate_result(result_chars: &mut std::str::Chars) -> serde_json::Value {
