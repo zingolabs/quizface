@@ -76,13 +76,9 @@ fn record_interpretation(
 }
 
 pub fn produce_interpretation(raw_command_help: &str) {
-    let (cmd_name, result_interpretations, argument_placeholder) =
+    let (cmd_name, result_interpretations, arguments_interpretation) =
         interpret_help_message(raw_command_help);
     let full_response_interp = &result_interpretations
-        .iter()
-        .map(|x| x.clone())
-        .collect::<Value>();
-    let full_arg_interp = &argument_placeholder
         .iter()
         .map(|x| x.clone())
         .collect::<Value>();
@@ -90,7 +86,7 @@ pub fn produce_interpretation(raw_command_help: &str) {
         cmd_name,
         serde_json::ser::to_string_pretty(full_response_interp)
             .expect("Couldn't serialize prettily!"),
-        serde_json::ser::to_string_pretty(full_arg_interp)
+        serde_json::ser::to_string_pretty(&arguments_interpretation)
             .expect("Couldn't serialize prettily!"),
     );
 }
