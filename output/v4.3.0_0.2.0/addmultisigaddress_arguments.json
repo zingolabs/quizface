@@ -1,7 +1,7 @@
 [
   {
-    "1_n": "Decimal",
-    "2_k": "String",
-    "Option<3_a>": "String"
+    "1_nrequired": "Decimal",
+    "2_keysobject": "String",
+    "Option<3_account>": "String"
   }
 ]

@@ -1,6 +1,6 @@
 [
   {
-    "1_h": "String",
-    "Option<2_i>": "bool"
+    "1_hexstring": "String",
+    "Option<2_includeWatching>": "bool"
   }
 ]

@@ -1,8 +1,8 @@
 [
   {
-    "1_t": "String",
-    "2_a": "String",
-    "Option<3_l>": "Decimal",
-    "Option<4_e>": "Decimal"
+    "1_transactions": "String",
+    "2_addresses": "String",
+    "Option<3_locktime>": "Decimal",
+    "Option<4_expiryheight>": "Decimal"
   }
 ]

@@ -1,6 +1,6 @@
 [
   {
-    "1_n": "String",
-    "2_c": "String"
+    "1_node": "String",
+    "2_command": "String"
   }
 ]

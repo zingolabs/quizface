@@ -202,13 +202,14 @@ fn interpret_help_message(
 
 fn annotate_arguments(arguments: Vec<String>) -> serde_json::Value {
     let mut arg_map = serde_json::map::Map::new();
-    let arg_regex = regex::Regex::new(r#"[^"]"#).expect("invalid regex");
+    let arg_regex = regex::Regex::new(r#"[^"]{1,}"#).expect("invalid regex");
     //let argvaluereg = regex::Regex::new(r#"[()]"#).expect("invalid regex");
     let mut argument_count = 1;
     for arg in arguments {
         //dbg!(arg);
         let proto_ident = arg.split_whitespace().next();
         let naked_ident = &arg_regex.captures(proto_ident.unwrap()).unwrap()[0];
+        dbg!(naked_ident);
         let mut ident = format!("{}_{}", argument_count, &naked_ident);
         let raw_label = make_raw_label(arg);
         // TODO this repeats existing code, create helper function

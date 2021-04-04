@@ -1,6 +1,6 @@
 [
   {
-    "1_n": "Decimal",
-    "2_k": "String"
+    "1_nrequired": "Decimal",
+    "2_keys": "String"
   }
 ]
