@@ -1,7 +1,6 @@
 pub mod utils;
 use crate::logging::create_log_dirs;
 use crate::logging::log_masterhelp_output;
-// TODO : evaluate need to split scrubbing into separate modules
 use crate::utils::scrubbing::scrub_arguments;
 use crate::utils::scrubbing::scrub_response;
 use serde_json::{json, map::Map, Value};
@@ -166,9 +165,7 @@ fn interpret_help_message(
     raw_command_help: &str,
 ) -> (String, Vec<serde_json::Value>, Vec<serde_json::Value>) {
     let sections = partition_help_text(raw_command_help);
-    //TODO rpc_name vs cmd_name ?
     let cmd_name = sections.get("rpc_name").unwrap().to_string();
-    //dbg!(&cmd_name);
     if cmd_name == "submitblock" {
         //TODO special case, scrub?
         return (cmd_name, vec![json!("ENUM: duplicate, duplicate-invalid, duplicate-inconclusive, inconclusive, rejected")], vec![json!({"1.hexdata": "String", "2.Option<jsonparametersobject>": "String"})]);
@@ -197,9 +194,7 @@ fn interpret_help_message(
         }
     } else {
         let arguments = split_arguments(&scrubbed_arguments);
-        dbg!(&cmd_name);
         arguments_vec.push(json!(annotate_arguments(arguments)));
-        dbg!(&arguments_vec);
     }
     (cmd_name, result_vec, arguments_vec)
 }
@@ -209,10 +204,8 @@ fn annotate_arguments(arguments: Vec<String>) -> serde_json::Value {
     let arg_regex = regex::Regex::new(r#"[^"]{1,}"#).expect("invalid regex");
     let mut argument_count = 1;
     for arg in arguments {
-        //dbg!(arg);
         let proto_ident = arg.split_whitespace().next();
         let naked_ident = &arg_regex.captures(proto_ident.unwrap()).unwrap()[0];
-        dbg!(naked_ident);
         let mut ident = format!("{}_{}", argument_count, &naked_ident);
         let raw_label = make_raw_label(arg);
         // TODO this repeats existing code, create helper function
@@ -301,14 +294,10 @@ fn annotate_array(result_chars: &mut std::str::Chars) -> serde_json::Value {
                     annotate_object(result_chars)
                 };
                 viewed.clear();
-                // TODO maybe temporary: to allow detection of `, ...`
                 ordered_results.push(inner_value)
             }
             // TODO: Handle unbalanced braces? add test.
             x if x.is_ascii() => viewed.push(x),
-            // TODO add processing of non-Value members:
-            // in the case of z_listaddresses, stings
-            // must be accepted as array members.
             _ => panic!("character is UTF-8 but not ASCII!"),
         }
     }
@@ -407,7 +396,6 @@ fn label_identifier(ident_with_metadata: String) -> (String, String) {
     let mut raw_label = make_raw_label(meta_data);
     if raw_label.contains(", optional") {
         ident = format!("Option<{}>", ident);
-        dbg!("option!!!");
         raw_label = raw_label.replace(", optional", "");
     };
     let annotation: String = make_label(raw_label);
