@@ -206,13 +206,13 @@ fn annotate_arguments(arguments: Vec<String>) -> serde_json::Value {
     for arg in arguments {
         let proto_ident = arg.split_whitespace().next();
         let naked_ident = &arg_regex.captures(proto_ident.unwrap()).unwrap()[0];
-        let mut ident = format!("{}_{}", argument_count, &naked_ident);
-        let raw_label = make_raw_label(arg);
-        // TODO this repeats existing code, create helper function
-        if raw_label.contains(", optional") {
-            ident = format!("Option<{}>", ident);
-        };
-        arg_map.insert(ident, serde_json::Value::String(make_label(raw_label)));
+        let ident = format!("{}_{}", argument_count, &naked_ident);
+        let (raw_label, annotated_ident) =
+            label_identifier_optional(make_raw_label(arg), ident);
+        arg_map.insert(
+            annotated_ident,
+            serde_json::Value::String(make_label(raw_label)),
+        );
         argument_count += 1;
     }
     json!(arg_map)
@@ -390,16 +390,23 @@ fn raw_to_ident_and_metadata(ident_with_metadata: String) -> (String, String) {
     (ident, metadata)
 }
 
-// assumes well-formed `ident_with_metadata`
-fn label_identifier(ident_with_metadata: String) -> (String, String) {
-    let (mut ident, meta_data) = raw_to_ident_and_metadata(ident_with_metadata);
-    let mut raw_label = make_raw_label(meta_data);
+fn label_identifier_optional(
+    raw_label: String,
+    mut ident: String,
+) -> (String, String) {
     if raw_label.contains(", optional") {
         ident = format!("Option<{}>", ident);
-        raw_label = raw_label.replace(", optional", "");
     };
+    (raw_label, ident)
+}
+
+// assumes well-formed `ident_with_metadata`
+fn label_identifier(ident_with_metadata: String) -> (String, String) {
+    let (ident, meta_data) = raw_to_ident_and_metadata(ident_with_metadata);
+    let (raw_label, annotated_ident) =
+        label_identifier_optional(make_raw_label(meta_data), ident);
     let annotation: String = make_label(raw_label);
-    (ident.to_string(), annotation)
+    (annotated_ident.to_string(), annotation)
 }
 
 fn make_label(raw_label: String) -> String {
