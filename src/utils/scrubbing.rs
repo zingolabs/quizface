@@ -481,6 +481,20 @@ macro_rules! setban {
     };
 }
 
+macro_rules! getaddressbalance {
+    ($arguments_data:expr) => {
+        $arguments_data
+            .replace(r#",..."#, r#""#)
+            .replace(r#""addresses:""#, r#""addresses":"#)
+    };
+}
+
+macro_rules! getdotdotdot {
+    ($arguments_data:expr) => {
+        $arguments_data.replace(r#",..."#, r#""#)
+    };
+}
+
 macro_rules! args_array {
     ($arguments_data:expr) => {
         $arguments_data.replace(r#"array"#, r#"string"#)
@@ -507,6 +521,7 @@ pub(crate) fn scrub_arguments(
         | "z_listunspent" => {
             args_bool!(arguments_data)
         }
+        //TODO check examples of these commands versus others
         "z_getoperationresult"
         | "z_getoperationstatus"
         | "z_mergetoaddress"
@@ -515,6 +530,13 @@ pub(crate) fn scrub_arguments(
         }
         "setban" => {
             setban!(arguments_data)
+        }
+        "getaddressbalance" => {
+            getaddressbalance!(arguments_data)
+        }
+        "getaddressutxos" | "getaddresstxids" | "getaddressmempool"
+        | "getaddressdeltas" => {
+            getdotdotdot!(arguments_data)
         }
         _ => arguments_data,
     }
