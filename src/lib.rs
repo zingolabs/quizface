@@ -167,8 +167,8 @@ fn interpret_help_message(
     let sections = partition_help_text(raw_command_help);
     let rpc_name = sections.get("rpc_name").unwrap().to_string();
     if rpc_name == "submitblock" {
-        //TODO special case, scrub?
-        return (rpc_name, vec![json!("ENUM: duplicate, duplicate-invalid, duplicate-inconclusive, inconclusive, rejected")], vec![json!({"1.hexdata": "String", "2.Option<jsonparametersobject>": "String"})]);
+        //TODO special case, move to (pre)scrub
+        return (rpc_name, vec![json!("ENUM: duplicate, duplicate-invalid, duplicate-inconclusive, inconclusive, rejected")], vec![json!({"1_hexdata": "String", "2_Option<jsonparametersobject>": "String"})]);
     }
     let response_data = sections.get("response").unwrap();
     let scrubbed_response =
@@ -182,13 +182,19 @@ fn interpret_help_message(
             result_vec.push(annotate_result(&mut result.chars()));
         }
     }
+
     let arguments_data = sections.get("arguments").unwrap();
     let scrubbed_arguments = scrub_arguments(&rpc_name, arguments_data.clone());
     let mut arguments_vec = vec![];
     if scrubbed_arguments.trim() == "" {
         // do not adjust argument_vec
     } else if scrubbed_arguments.trim().starts_with("{") {
-        arguments_vec.push(json!({"jsonobject": "String"}));
+        dbg!(&rpc_name);
+        let arguments_obj = annotate_object(&mut scrubbed_arguments.chars());
+        //dbg!(&arguments_obj);
+        //must format with number
+        //arguments_vec.push(json!(arguments_obj));
+
         if scrubbed_arguments.contains("(or)") {
             arguments_vec.push(json!({"address": "String"}));
         }
@@ -198,6 +204,9 @@ fn interpret_help_message(
     }
     (rpc_name, result_vec, arguments_vec)
 }
+
+// TODO create ident args function?
+//fn identify_arguments(naked_ident: &str)
 
 fn annotate_arguments(arguments: Vec<String>) -> serde_json::Value {
     let mut arg_map = serde_json::map::Map::new();
@@ -245,6 +254,7 @@ fn annotate_object(result_chars: &mut std::str::Chars) -> serde_json::Value {
         match result_chars.next().unwrap() {
             '}' => {
                 if viewed.trim().is_empty() {
+                    dbg!("did");
                     break;
                 }
                 let mut partial_ident_label_bindings =
@@ -271,6 +281,7 @@ fn annotate_object(result_chars: &mut std::str::Chars) -> serde_json::Value {
             _ => panic!("character is UTF-8 but not ASCII!"),
         }
     }
+    dbg!(&ident_label_bindings);
     Value::Object(ident_label_bindings)
 }
 
@@ -301,13 +312,13 @@ fn annotate_array(result_chars: &mut std::str::Chars) -> serde_json::Value {
             _ => panic!("character is UTF-8 but not ASCII!"),
         }
     }
-
     Value::Array(ordered_results)
 }
 
 fn get_array_terminal(viewed: String) -> Value {
     let viewed_lines = viewed_to_lines(viewed);
     let raw_label = make_raw_label((&viewed_lines[1]).to_string());
+    dbg!(&raw_label);
     json!(make_label(raw_label))
 }
 
@@ -317,15 +328,15 @@ fn bind_idents_labels(
     viewed: String,
     inner_value: Option<Value>,
 ) -> Map<String, Value> {
+    dbg!("check");
     let mut viewed_lines = viewed_to_lines(viewed);
-    // ignoring the first line if it is only whitespace or
-    // does not contain a `:` char.
+    //viewed_lines is now a Vec of strings that were lines in viewed.
+    dbg!(&viewed_lines);
     if viewed_lines[0].trim().is_empty()
         || !viewed_lines[0].trim().contains(":")
     {
         viewed_lines.remove(0); //.trim();
     }
-    //viewed_lines is now a Vec of strings that were lines in viewed.
     if inner_value != None {
         // possible if/let
         let mut viewed_lines_mutable = viewed_lines.clone();
@@ -341,6 +352,7 @@ fn bind_idents_labels(
             .cloned()
             .map(|(a, b)| (a.to_string(), b))
             .collect::<Map<String, Value>>();
+        dbg!(&end_map);
         if viewed_lines_mutable.len() > 0 {
             viewed_lines_mutable
                 .iter()
@@ -351,6 +363,7 @@ fn bind_idents_labels(
                 .chain(end_map)
                 .collect::<Map<String, Value>>()
         } else {
+            dbg!("returning map");
             end_map
         }
     } else {
