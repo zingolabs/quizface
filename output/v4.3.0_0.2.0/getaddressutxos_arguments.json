@@ -1,8 +1,13 @@
 [
   {
-    "jsonobject": "String"
+    "1": {
+      "Option<chainInfo>": "bool",
+      "addresses": [
+        "String"
+      ]
+    }
   },
   {
-    "address": "String"
+    "1_address": "String"
   }
 ]

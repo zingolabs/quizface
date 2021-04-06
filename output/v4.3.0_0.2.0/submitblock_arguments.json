@@ -1,6 +1,6 @@
 [
   {
-    "1.hexdata": "String",
-    "2.Option<jsonparametersobject>": "String"
+    "1_hexdata": "String",
+    "2_Option<jsonparametersobject>": "String"
   }
 ]

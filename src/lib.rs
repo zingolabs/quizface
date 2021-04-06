@@ -198,7 +198,6 @@ fn interpret_help_message(
         match arg_chars.next().unwrap() {
             '{' => {
                 let annotated_object = annotate_object(&mut arg_chars);
-                //must format with number
                 arguments_vec.push(json!({ "1": annotated_object }));
             }
             _ => {
@@ -207,16 +206,12 @@ fn interpret_help_message(
         }
         let vec = vec![(split_arguments[1].to_string())];
         arguments_vec.push(json!(annotate_arguments(vec)));
-        dbg!(&arguments_vec);
     } else {
         let arguments = split_arguments(&scrubbed_arguments);
         arguments_vec.push(json!(annotate_arguments(arguments)));
     }
     (rpc_name, result_vec, arguments_vec)
 }
-
-// TODO create ident args function?
-//fn identify_arguments(naked_ident: &str)
 
 fn annotate_arguments(arguments: Vec<String>) -> serde_json::Value {
     let mut arg_map = serde_json::map::Map::new();
@@ -258,18 +253,14 @@ fn annotate_lonetype(lonetype_result: String) -> serde_json::Value {
 }
 
 fn annotate_object(result_chars: &mut std::str::Chars) -> serde_json::Value {
-    dbg!("annotate_object called");
     let mut viewed = String::new();
     let mut ident_label_bindings = Map::new();
     loop {
-        dbg!(result_chars.clone().next().unwrap());
         match result_chars.next().unwrap() {
             '}' => {
                 if viewed.trim().is_empty() {
-                    dbg!("viewed.trim.is_empty");
                     break;
                 }
-                dbg!("noooooooo");
                 let mut partial_ident_label_bindings =
                     bind_idents_labels(viewed.clone(), None);
                 viewed.clear();
@@ -279,16 +270,13 @@ fn annotate_object(result_chars: &mut std::str::Chars) -> serde_json::Value {
                 break;
             }
             last_viewed if last_viewed == '[' || last_viewed == '{' => {
-                dbg!(&last_viewed);
                 let inner_value = match last_viewed {
                     '[' => annotate_array(result_chars),
                     '{' => annotate_object(result_chars),
                     _ => unreachable!("last_viewed is either '[' or '{'"),
                 };
-                dbg!(&inner_value);
                 let mut partial_ident_label_bindings =
                     bind_idents_labels(viewed.clone(), Some(inner_value));
-                dbg!(&partial_ident_label_bindings);
                 viewed.clear();
                 ident_label_bindings.append(&mut partial_ident_label_bindings);
             }
@@ -297,7 +285,6 @@ fn annotate_object(result_chars: &mut std::str::Chars) -> serde_json::Value {
             _ => panic!("character is UTF-8 but not ASCII!"),
         }
     }
-    dbg!(&ident_label_bindings);
     Value::Object(ident_label_bindings)
 }
 
@@ -334,7 +321,6 @@ fn annotate_array(result_chars: &mut std::str::Chars) -> serde_json::Value {
 fn get_array_terminal(viewed: String) -> Value {
     let viewed_lines = viewed_to_lines(viewed);
     let raw_label = make_raw_label((&viewed_lines[1]).to_string());
-    dbg!(&raw_label);
     json!(make_label(raw_label))
 }
 
@@ -346,7 +332,6 @@ fn bind_idents_labels(
 ) -> Map<String, Value> {
     let mut viewed_lines = viewed_to_lines(viewed);
     //viewed_lines is now a Vec of strings that were lines in viewed.
-    dbg!(&viewed_lines);
     if viewed_lines[0].trim().is_empty()
         || !viewed_lines[0].trim().contains(":")
     {
@@ -367,7 +352,6 @@ fn bind_idents_labels(
             .cloned()
             .map(|(a, b)| (a.to_string(), b))
             .collect::<Map<String, Value>>();
-        dbg!(&end_map);
         if viewed_lines_mutable.len() > 0 {
             viewed_lines_mutable
                 .iter()
@@ -378,7 +362,6 @@ fn bind_idents_labels(
                 .chain(end_map)
                 .collect::<Map<String, Value>>()
         } else {
-            dbg!("returning map");
             end_map
         }
     } else {
