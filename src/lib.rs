@@ -188,23 +188,26 @@ fn interpret_help_message(
     let mut arguments_vec = vec![];
     if scrubbed_arguments.trim() == "" {
         // do not adjust arguments_vec
-    } else if scrubbed_arguments.trim().starts_with("{")
-        && scrubbed_arguments.contains("(or)")
-    {
+    } else if scrubbed_arguments.contains("(or)") {
         let split_arguments: Vec<&str> =
             scrubbed_arguments.split("(or)").collect();
         if !split_arguments.len() == 2 {
             panic!("not two arguments with '(or)'");
         }
-        dbg!(split_arguments[0]);
-        let first_argument_object =
-            annotate_object(&mut split_arguments[0].chars());
-        //must format with number
-        dbg!("got out");
-        arguments_vec.push(json!({ "1": first_argument_object }));
+        let mut arg_chars = split_arguments[0].trim().chars();
+        match arg_chars.next().unwrap() {
+            '{' => {
+                let annotated_object = annotate_object(&mut arg_chars);
+                //must format with number
+                arguments_vec.push(json!({ "1": annotated_object }));
+            }
+            _ => {
+                panic!("no support for other formats");
+            }
+        }
+        let vec = vec![(split_arguments[1].to_string())];
+        arguments_vec.push(json!(annotate_arguments(vec)));
         dbg!(&arguments_vec);
-        arguments_vec.push(json!({"address": "String"}));
-    // or slam into interpreter
     } else {
         let arguments = split_arguments(&scrubbed_arguments);
         arguments_vec.push(json!(annotate_arguments(arguments)));
