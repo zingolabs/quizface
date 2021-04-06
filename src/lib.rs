@@ -255,6 +255,7 @@ fn annotate_lonetype(lonetype_result: String) -> serde_json::Value {
 }
 
 fn annotate_object(result_chars: &mut std::str::Chars) -> serde_json::Value {
+    dbg!("annotate_object called");
     let mut viewed = String::new();
     let mut ident_label_bindings = Map::new();
     loop {
