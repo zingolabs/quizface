@@ -187,17 +187,24 @@ fn interpret_help_message(
     let scrubbed_arguments = scrub_arguments(&rpc_name, arguments_data.clone());
     let mut arguments_vec = vec![];
     if scrubbed_arguments.trim() == "" {
-        // do not adjust argument_vec
-    } else if scrubbed_arguments.trim().starts_with("{") {
-        dbg!(&rpc_name);
-        let arguments_obj = annotate_object(&mut scrubbed_arguments.chars());
-        //dbg!(&arguments_obj);
-        //must format with number
-        //arguments_vec.push(json!(arguments_obj));
-
-        if scrubbed_arguments.contains("(or)") {
-            arguments_vec.push(json!({"address": "String"}));
+        // do not adjust arguments_vec
+    } else if scrubbed_arguments.trim().starts_with("{")
+        && scrubbed_arguments.contains("(or)")
+    {
+        let split_arguments: Vec<&str> =
+            scrubbed_arguments.split("(or)").collect();
+        if !split_arguments.len() == 2 {
+            panic!("not two arguments with '(or)'");
         }
+        dbg!(split_arguments[0]);
+        let first_argument_object =
+            annotate_object(&mut split_arguments[0].chars());
+        //must format with number
+        dbg!("got out");
+        arguments_vec.push(json!({ "1": first_argument_object }));
+        dbg!(&arguments_vec);
+        arguments_vec.push(json!({"address": "String"}));
+    // or slam into interpreter
     } else {
         let arguments = split_arguments(&scrubbed_arguments);
         arguments_vec.push(json!(annotate_arguments(arguments)));
@@ -251,12 +258,14 @@ fn annotate_object(result_chars: &mut std::str::Chars) -> serde_json::Value {
     let mut viewed = String::new();
     let mut ident_label_bindings = Map::new();
     loop {
+        dbg!(result_chars.clone().next().unwrap());
         match result_chars.next().unwrap() {
             '}' => {
                 if viewed.trim().is_empty() {
-                    dbg!("did");
+                    dbg!("viewed.trim.is_empty");
                     break;
                 }
+                dbg!("noooooooo");
                 let mut partial_ident_label_bindings =
                     bind_idents_labels(viewed.clone(), None);
                 viewed.clear();
@@ -266,13 +275,16 @@ fn annotate_object(result_chars: &mut std::str::Chars) -> serde_json::Value {
                 break;
             }
             last_viewed if last_viewed == '[' || last_viewed == '{' => {
+                dbg!(&last_viewed);
                 let inner_value = match last_viewed {
                     '[' => annotate_array(result_chars),
                     '{' => annotate_object(result_chars),
                     _ => unreachable!("last_viewed is either '[' or '{'"),
                 };
+                dbg!(&inner_value);
                 let mut partial_ident_label_bindings =
                     bind_idents_labels(viewed.clone(), Some(inner_value));
+                dbg!(&partial_ident_label_bindings);
                 viewed.clear();
                 ident_label_bindings.append(&mut partial_ident_label_bindings);
             }
@@ -328,7 +340,6 @@ fn bind_idents_labels(
     viewed: String,
     inner_value: Option<Value>,
 ) -> Map<String, Value> {
-    dbg!("check");
     let mut viewed_lines = viewed_to_lines(viewed);
     //viewed_lines is now a Vec of strings that were lines in viewed.
     dbg!(&viewed_lines);
