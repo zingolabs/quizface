@@ -686,6 +686,32 @@ mod unit {
     // ----------------annotate_arguments---------------
 
     #[test]
+    fn simple_annotate_argument() {
+        let simple_argument = test::SIMPLE_ARGUMENT;
+        let annotated = annotate_arguments(vec![simple_argument.to_string()]);
+        let expected_result = serde_json::json!({"1_filename": "String"});
+        assert_eq!(expected_result, annotated);
+    }
+    // one arg per vec element
+    #[test]
+    fn annotate_multiple_arguments() {
+        let multiple_arguments = vec![
+            test::MULTIPLE_ARGUMENT_ONE.to_string(),
+            test::MULTIPLE_ARGUMENT_TWO.to_string(),
+            test::MULTIPLE_ARGUMENT_THREE.to_string(),
+            test::MULTIPLE_ARGUMENT_FOUR.to_string(),
+        ];
+        let annotated = annotate_arguments(multiple_arguments);
+        let expected_result = serde_json::json!({
+        "1_arg_one": "String",
+        "2_arg_two": "String",
+        "3_arg_three": "String",
+        "4_arg_four": "String"});
+        assert_eq!(expected_result, annotated);
+    }
+    //different labels?
+
+    #[test]
     fn annotate_arguments_with_option() {
         let argument_with_option = test::ARGUMENT_WITH_OPTION;
         let annotated =
