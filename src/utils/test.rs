@@ -737,6 +737,10 @@ pub const SPECIAL_NESTED_GETBLOCKCHAININFO: &str = r#"{
 pub const SPECIAL_NESTED_GETBLOCKCHAININFO_RESULT: &str =
     r#"{"String":{"name":"String"}}"#;
 
+pub const ARGUMENT_WITH_OPTION: &str = r#"
+"argument_one_ident"      (string, optional) DEPRECATED. If provided, it MUST be set to the empty string "" or to the string "*", either of which will give the total available balance. Passing any other string will result in an error.
+"#;
+
 pub const SIMPLE_ARRAY: &str = r#"[{
    "outer_id": "xxxx.xxx", (string) extra unimportant text
 }]"#;

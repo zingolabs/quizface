@@ -683,9 +683,29 @@ mod unit {
         assert_eq!(expected_result, annotated);
     }
 
+    // ----------------annotate_arguments---------------
+
+    #[test]
+    fn annotate_arguments_with_option() {
+        let argument_with_option = test::ARGUMENT_WITH_OPTION;
+        let annotated =
+            annotate_arguments(vec![argument_with_option.to_string()]);
+        let expected_result =
+            serde_json::json!({"Option<1_argument_one_ident>": "String"});
+        assert_eq!(expected_result, annotated);
+    }
+
+    #[test]
+    fn disallow_improper_annotate_arguments_with_option() {
+        let argument_with_option = test::ARGUMENT_WITH_OPTION;
+        let annotated =
+            annotate_arguments(vec![argument_with_option.to_string()]);
+        let expected_result =
+            serde_json::json!({"1_Option<argument_one_ident>": "String"});
+        assert_ne!(expected_result, annotated);
+    }
     // ----------------sanity_check---------------
 
-    //TODO make consistantly saner sanity checks
     #[test]
     fn sanity_check_simple_unnested() {
         let simple_unnested_result = test::SIMPLE_UNNESTED_RESULT.to_string();
