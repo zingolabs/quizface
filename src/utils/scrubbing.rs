@@ -477,7 +477,7 @@ macro_rules! args_bool {
 
 macro_rules! setban {
     ($arguments_data:expr) => {
-        $arguments_data.replace(r#"(/netmask)"#, r#"/Option<netmask>"#)
+        $arguments_data.replace(r#"(/netmask)"#, r#""#)
     };
 }
 
