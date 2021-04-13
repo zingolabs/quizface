@@ -1,6 +1,6 @@
 [
   {
-    "1_ip/Option<netmask>": "String",
+    "1_ip": "String",
     "2_command": "String",
     "Option<3_bantime>": "Decimal",
     "Option<4_absolute>": "bool"
