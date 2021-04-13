@@ -1,1 +1,12 @@
-[]
+[
+  {
+    "1": {
+      "addresses": [
+        "String"
+      ]
+    }
+  },
+  {
+    "1_address": "String"
+  }
+]

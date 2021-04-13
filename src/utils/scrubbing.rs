@@ -469,64 +469,147 @@ macro_rules! verifytxoutproof {
     };
 }
 
-pub(crate) fn scrub(cmd_name: String, result_data: String) -> String {
-    if cmd_name == "getaddressdeltas".to_string() {
+macro_rules! args_bool {
+    ($arguments_data:expr) => {
+        $arguments_data.replace(r#"bool"#, r#"boolean"#)
+    };
+}
+
+macro_rules! setban {
+    ($arguments_data:expr) => {
+        $arguments_data.replace(r#"(/netmask)"#, r#"/Option<netmask>"#)
+    };
+}
+
+macro_rules! getaddressbalance {
+    ($arguments_data:expr) => {
+        $arguments_data
+            .replace(r#",..."#, r#""#)
+            .replace(r#""addresses:""#, r#""addresses":"#)
+    };
+}
+
+macro_rules! args_array {
+    ($arguments_data:expr) => {
+        $arguments_data.replace(r#"array"#, r#"string"#)
+    };
+}
+
+macro_rules! getaddress_number {
+    ($arguments_data:expr) => {
+        $arguments_data
+            .replace(r#"number"#, r#"numeric"#)
+            .replace(r#",..."#, r#""#)
+    };
+}
+
+macro_rules! getdotdotdot {
+    ($arguments_data:expr) => {
+        $arguments_data.replace(r#",..."#, r#""#)
+    };
+}
+
+pub(crate) fn scrub_arguments(
+    rpc_name: &str,
+    arguments_data: String,
+) -> String {
+    match rpc_name {
+        "getbalance"
+        | "getreceivedbyaccount"
+        | "getreceivedbyaddress"
+        | "gettransaction"
+        | "listaccounts"
+        | "listreceivedbyaccount"
+        | "listreceivedbyaddress"
+        | "listsinceblock"
+        | "listtransactions"
+        | "z_getbalance"
+        | "z_gettotalbalance"
+        | "z_listaddresses"
+        | "z_listunspent" => {
+            args_bool!(arguments_data)
+        }
+        //TODO check examples of these commands versus others
+        "z_getoperationresult"
+        | "z_getoperationstatus"
+        | "z_mergetoaddress"
+        | "z_sendmany" => {
+            args_array!(arguments_data)
+        }
+        "setban" => {
+            setban!(arguments_data)
+        }
+        "getaddressbalance" => {
+            getaddressbalance!(arguments_data)
+        }
+        "getaddresstxids" | "getaddressdeltas" => {
+            getaddress_number!(arguments_data)
+        }
+        "getaddressutxos" | "getaddressmempool" => {
+            getdotdotdot!(arguments_data)
+        }
+        _ => arguments_data,
+    }
+}
+
+pub(crate) fn scrub_response(rpc_name: String, result_data: String) -> String {
+    if rpc_name == "getaddressdeltas".to_string() {
         getaddressdeltas!(result_data)
-    } else if cmd_name == "verifytxoutproof".to_string() {
+    } else if rpc_name == "verifytxoutproof".to_string() {
         verifytxoutproof!(result_data)
-    } else if cmd_name == "getaddressutxos".to_string() {
+    } else if rpc_name == "getaddressutxos".to_string() {
         getaddressutxos!(result_data)
-    } else if cmd_name == "listunspent".to_string() {
+    } else if rpc_name == "listunspent".to_string() {
         listunspent!(result_data)
-    } else if cmd_name == "z_listunspent".to_string() {
+    } else if rpc_name == "z_listunspent".to_string() {
         z_listunspent!(result_data)
-    } else if cmd_name == "generate".to_string() {
+    } else if rpc_name == "generate".to_string() {
         generate!(result_data)
-    } else if cmd_name == "getblock".to_string() {
+    } else if rpc_name == "getblock".to_string() {
         getblock!(result_data)
-    } else if cmd_name == "getrawtransaction".to_string() {
+    } else if rpc_name == "getrawtransaction".to_string() {
         getrawtransaction!(result_data)
-    } else if cmd_name == "getblockheader".to_string() {
+    } else if rpc_name == "getblockheader".to_string() {
         getblockheader!(result_data)
-    } else if cmd_name == "getrawmempool".to_string() {
+    } else if rpc_name == "getrawmempool".to_string() {
         getrawmempool!(result_data)
-    } else if cmd_name == "getaddressmempool".to_string() {
+    } else if rpc_name == "getaddressmempool".to_string() {
         getaddressmempool!(result_data)
-    } else if cmd_name == "getchaintips".to_string() {
+    } else if rpc_name == "getchaintips".to_string() {
         getchaintips!(result_data)
-    } else if cmd_name == "getblockchaininfo".to_string() {
+    } else if rpc_name == "getblockchaininfo".to_string() {
         getblockchaininfo!(result_data)
-    } else if cmd_name == "getblockdeltas".to_string() {
+    } else if rpc_name == "getblockdeltas".to_string() {
         getblockdeltas!(result_data)
-    } else if cmd_name == "getblockhashes".to_string() {
+    } else if rpc_name == "getblockhashes".to_string() {
         getblockhashes!(result_data)
-    } else if cmd_name == "getdeprecationinfo".to_string() {
+    } else if rpc_name == "getdeprecationinfo".to_string() {
         getdeprecationinfo!(result_data)
-    } else if cmd_name == "getnetworkinfo".to_string() {
+    } else if rpc_name == "getnetworkinfo".to_string() {
         getnetworkinfo!(result_data)
-    } else if cmd_name == "getpeerinfo".to_string() {
+    } else if rpc_name == "getpeerinfo".to_string() {
         getpeerinfo!(result_data)
-    } else if cmd_name == "getspentinfo".to_string() {
+    } else if rpc_name == "getspentinfo".to_string() {
         getspentinfo!(result_data)
-    } else if cmd_name == "gettransaction".to_string() {
+    } else if rpc_name == "gettransaction".to_string() {
         gettransaction!(result_data)
-    } else if cmd_name == "listaccounts".to_string() {
+    } else if rpc_name == "listaccounts".to_string() {
         listaccounts!(result_data)
-    } else if cmd_name == "listreceivedbyaccount".to_string() {
+    } else if rpc_name == "listreceivedbyaccount".to_string() {
         listreceivedbyaccount!(result_data)
-    } else if cmd_name == "listreceivedbyaddress".to_string() {
+    } else if rpc_name == "listreceivedbyaddress".to_string() {
         listreceivedbyaddress!(result_data)
-    } else if cmd_name == "listtransactions".to_string() {
+    } else if rpc_name == "listtransactions".to_string() {
         listtransactions!(result_data)
-    } else if cmd_name == "z_getoperationresult".to_string() {
+    } else if rpc_name == "z_getoperationresult".to_string() {
         z_getoperationresult!(result_data)
-    } else if cmd_name == "z_getoperationstatus".to_string() {
+    } else if rpc_name == "z_getoperationstatus".to_string() {
         z_getoperationstatus!(result_data)
-    } else if cmd_name == "z_listreceivedbyaddress".to_string() {
+    } else if rpc_name == "z_listreceivedbyaddress".to_string() {
         z_listreceivedbyaddress!(result_data)
-    } else if cmd_name == "z_validateaddress".to_string() {
+    } else if rpc_name == "z_validateaddress".to_string() {
         z_validateaddress!(result_data)
-    } else if cmd_name == "getblocktemplate".to_string() {
+    } else if rpc_name == "getblocktemplate".to_string() {
         getblocktemplate!(result_data)
     } else {
         dotdotdot!(result_data)

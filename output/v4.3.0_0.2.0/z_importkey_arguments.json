@@ -1,1 +1,7 @@
-[]
+[
+  {
+    "1_zkey": "String",
+    "Option<2_rescan>": "String",
+    "Option<3_startHeight>": "Decimal"
+  }
+]

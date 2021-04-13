@@ -1,1 +1,7 @@
-[]
+[
+  {
+    "1_txid": "String",
+    "Option<2_verbose>": "Decimal",
+    "Option<3_blockhash>": "String"
+  }
+]

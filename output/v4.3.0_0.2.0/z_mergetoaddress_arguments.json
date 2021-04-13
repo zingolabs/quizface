@@ -1,1 +1,10 @@
-[]
+[
+  {
+    "1_fromaddresses": "String",
+    "2_toaddress": "String",
+    "Option<3_fee>": "Decimal",
+    "Option<4_transparent_limit>": "Decimal",
+    "Option<5_shielded_limit>": "Decimal",
+    "Option<6_memo>": "String"
+  }
+]

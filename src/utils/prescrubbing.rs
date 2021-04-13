@@ -1,6 +1,6 @@
-pub fn prescrub(command: &str, raw_command_help: &str) -> String {
+pub fn prescrub(rpc_name: &str, raw_rpc_name_help: &str) -> String {
     use regex::Regex;
-    match command {
+    match rpc_name {
         "importaddress"
         | "importpubkey"
         | "encryptwallet"
@@ -10,7 +10,6 @@ pub fn prescrub(command: &str, raw_command_help: &str) -> String {
         | "importwallet"
         | "setlogfilter"
         | "setban"
-        | "keypoolrefill"
         | "z_importwallet"
         | "clearbanned"
         | "setaccount"
@@ -18,40 +17,46 @@ pub fn prescrub(command: &str, raw_command_help: &str) -> String {
         | "listbanned"
         | "ping"
         | "z_validatepaymentdisclosure" => {
-            raw_command_help.replace("Examples:", "Result:\nExamples:")
+            raw_rpc_name_help.replace("Examples:", "Result:\nExamples:")
         }
         "getrawtransaction" => Regex::new(r"Result \(if verbose.*\):")
             .unwrap()
-            .replace_all(raw_command_help, "Result:")
+            .replace_all(raw_rpc_name_help, "Result:")
             .to_string(),
-
         "getblock" => Regex::new(r"Result \(for verbosity = [012]\):")
             .unwrap()
-            .replace_all(raw_command_help, "Result:")
+            .replace_all(raw_rpc_name_help, "Result:")
             .to_string(),
-        "settxfee" | "getgenerate" | "generate" => {
-            raw_command_help.replace("Result", "Result:")
+        "keypoolrefill" => {
+            raw_rpc_name_help.replace("Examples:", "Result:\nExamples:")
+                .replace("Arguments", "Arguments:")
         }
-        "help" => raw_command_help
+        "submitblock" => { 
+            raw_rpc_name_help.replace("Arguments", "Arguments:") 
+        }
+        "settxfee" | "getgenerate" | "generate" => {
+            raw_rpc_name_help.replace("Result", "Result:")
+        }
+        "help" => raw_rpc_name_help
             .replace("The help text", "The help text \n Examples:"),
         "estimatepriority" | "estimatefee" => {
-            raw_command_help.replace("Example:", "Examples:")
+            raw_rpc_name_help.replace("Example:", "Examples:")
         }
         "createrawtransaction" => {
-            raw_command_help.replace("Examples", "Examples:")
+            raw_rpc_name_help.replace("Examples", "Examples:")
         }
         "z_getmigrationstatus" => {
-            raw_command_help.replace("}", "}\nExamples:\n")
+            raw_rpc_name_help.replace("}", "}\nExamples:\n")
                 .replace(r#""migration_txids": [txids]                (json array of strings) An array of all migration txids involving this wallet"#, "\"migration_txids\": [\n \"txids\"  (string) An array of all migration txids involving this wallet\n]")
         }
         "zcrawreceive" => {
-            raw_command_help.replace("}", "}\nExamples:\n")
+            raw_rpc_name_help.replace("}", "}\nExamples:\n")
                 .replace(r#"Output: {"#, "Result:\n{")
                 .replace(r#""amount": value"#, r#""amount": (numeric) value"#)
                 .replace(r#""note": noteplaintext"#, r#""note": (string) noteplaintext"#)
                 .replace(r#""exists": exists"#, r#""exists": (boolean) exists"#)
         }
-        "zcrawjoinsplit" => raw_command_help.replace(
+        "zcrawjoinsplit" => raw_rpc_name_help.replace(
             r#"Output: {
   "encryptednote1": enc1,
   "encryptednote2": enc2,
@@ -68,38 +73,38 @@ Examples:
 "#,
         ),
         "zcrawkeygen" => {
-            let intermediate_command_help =
-                raw_command_help.replace("Output:", "Result:")
+            let intermediate_rpc_name_help =
+                raw_rpc_name_help.replace("Output:", "Result:")
                 .replace("zcaddr,", "(string) zcaddr,")
                 .replace("zcsecretkey,", "(string) zcsecretkey,")
                 .replace("zcviewingkey,", "(string) zcviewingkey,");
-            intermediate_command_help.as_str().replace(
+            intermediate_rpc_name_help.as_str().replace(
                 "}",
                 r#"}
             Examples:
             "#,
             )
         }
-        "stop" => raw_command_help.replace(
+        "stop" => raw_rpc_name_help.replace(
             r#"stop"#,
             r#"stop
                                  Result:
                                  Examples:
                                  "#,
         ),
-        "gettxoutproof" => raw_command_help.replace(
+        "gettxoutproof" => raw_rpc_name_help.replace(
             r#"proof."#,
             r#"proof.
                                  Examples:
                                  "#,
         ),
-        "verifytxoutproof" => raw_command_help.replace(
+        "verifytxoutproof" => raw_rpc_name_help.replace(
             r#"proof is invalid"#,
             r#"proof is invalid
         Examples:
         "#,
         ),
-        "zcbenchmark" => raw_command_help.replace(
+        "zcbenchmark" => raw_rpc_name_help.replace(
             r#"Output: [
   {
     "runningtime": runningtime
@@ -119,13 +124,13 @@ Examples:
         ),
         "zcsamplejoinsplit"
         | "z_setmigration" => {
-            let mut r = raw_command_help.to_string();
+            let mut r = raw_rpc_name_help.to_string();
             r.push_str("\nArguments:\nResult:\nExamples:\n");
             r
         }
-        "getunconfirmedbalance" => raw_command_help.replace(
+        "getunconfirmedbalance" => raw_rpc_name_help.replace(
             "Returns the server's total unconfirmed balance",
             "\nResult:\n\"balance\"  (numeric) the server's total unconfirmed balance\n\nExamples:"),
-        _ => raw_command_help.to_string(),
+        _ => raw_rpc_name_help.to_string(),
     }
 }

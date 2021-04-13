@@ -1,1 +1,10 @@
-[]
+[
+  {
+    "1_fromaccount": "String",
+    "2_tozcashaddress": "String",
+    "3_amount": "Decimal",
+    "Option<4_minconf>": "Decimal",
+    "Option<5_comment>": "String",
+    "Option<6_comment-to>": "String"
+  }
+]

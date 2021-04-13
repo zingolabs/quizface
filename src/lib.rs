@@ -1,7 +1,8 @@
 pub mod utils;
 use crate::logging::create_log_dirs;
 use crate::logging::log_masterhelp_output;
-use crate::utils::scrubbing::scrub;
+use crate::utils::scrubbing::scrub_arguments;
+use crate::utils::scrubbing::scrub_response;
 use serde_json::{json, map::Map, Value};
 use std::collections::HashMap;
 use std::path::Path;
@@ -35,62 +36,58 @@ pub fn ingest_commands() -> Vec<String> {
     commands
 }
 
-pub fn get_command_help(cmd_name: &str) -> std::process::Output {
+pub fn get_command_help(rpc_name: &str) -> std::process::Output {
     let command_help = std::process::Command::new(Path::new("zcash-cli"))
         .arg("help")
-        .arg(&cmd_name)
+        .arg(&rpc_name)
         .output()
         .expect("failed to execute command help");
     command_help
 }
 
 fn record_interpretation(
-    cmd_name: String,
-    full_result_interpretation: String,
+    rpc_name: String,
+    full_response_interpretation: String,
     argument_interpretation: String,
 ) {
-    let rawresultlocation = &format!(
-        "./output/{}/{}_result.json",
+    let raw_response_location = &format!(
+        "./output/{}/{}_response.json",
         utils::logging::create_version_name(),
-        cmd_name
+        rpc_name
     );
-    let resultlocation = std::path::Path::new(rawresultlocation);
-    std::fs::create_dir_all(resultlocation.parent().unwrap()).unwrap();
+    let response_location = std::path::Path::new(raw_response_location);
+    std::fs::create_dir_all(response_location.parent().unwrap()).unwrap();
     use std::io::Write as _;
-    let mut resultfile = std::fs::File::create(resultlocation)
+    let mut response_file = std::fs::File::create(response_location)
         .expect("Couldn't create append interface to output file.");
-    resultfile
-        .write_all(full_result_interpretation.as_bytes())
+    response_file
+        .write_all(full_response_interpretation.as_bytes())
         .unwrap();
-    let rawargumentslocation = &format!(
+    let raw_arguments_location = &format!(
         "./output/{}/{}_arguments.json",
         utils::logging::create_version_name(),
-        cmd_name
+        rpc_name
     );
-    let argumentslocation = std::path::Path::new(rawargumentslocation);
-    let mut argumentsfile = std::fs::File::create(argumentslocation)
+    let arguments_location = std::path::Path::new(raw_arguments_location);
+    let mut arguments_file = std::fs::File::create(arguments_location)
         .expect("Couldn't create append interface to output file.");
-    argumentsfile
+    arguments_file
         .write_all(argument_interpretation.as_bytes())
         .unwrap();
 }
 
 pub fn produce_interpretation(raw_command_help: &str) {
-    let (cmd_name, result_interpretations, argument_placeholder) =
+    let (rpc_name, result_interpretations, arguments_interpretation) =
         interpret_help_message(raw_command_help);
-    let full_result_interp = &result_interpretations
-        .iter()
-        .map(|x| x.clone())
-        .collect::<Value>();
-    let full_arg_interp = &argument_placeholder
+    let full_response_interp = &result_interpretations
         .iter()
         .map(|x| x.clone())
         .collect::<Value>();
     record_interpretation(
-        cmd_name,
-        serde_json::ser::to_string_pretty(full_result_interp)
+        rpc_name,
+        serde_json::ser::to_string_pretty(full_response_interp)
             .expect("Couldn't serialize prettily!"),
-        serde_json::ser::to_string_pretty(full_arg_interp)
+        serde_json::ser::to_string_pretty(&arguments_interpretation)
             .expect("Couldn't serialize prettily!"),
     );
 }
@@ -100,11 +97,11 @@ fn partition_help_text(raw_command_help: &str) -> HashMap<String, String> {
     let mut sections = HashMap::new();
 
     //rpc_name
-    let cmd_name = &raw_command_help
+    let rpc_name = &raw_command_help
         .split_ascii_whitespace()
         .next()
-        .expect("cmd_name not found!");
-    sections.insert("rpc_name".to_string(), cmd_name.to_string());
+        .expect("rpc_name not found!");
+    sections.insert("rpc_name".to_string(), rpc_name.to_string());
 
     //response
     let response_delimiters =
@@ -116,7 +113,7 @@ fn partition_help_text(raw_command_help: &str) -> HashMap<String, String> {
         [response_section_match.start()..(response_section_match.end() - 9)];
     sections.insert("response".to_string(), response_section.to_string());
 
-    //description and arguments // TODO description still includes the cmd_name
+    //description and arguments // TODO description still includes the rpc_name
     let arguments_delimiter =
         Regex::new(r"(?s).*?Arguments[:\s]").expect("Invalid regex!!");
     let description_section;
@@ -134,7 +131,6 @@ fn partition_help_text(raw_command_help: &str) -> HashMap<String, String> {
             &raw_command_help[..response_section_match.start()];
         argument_section = "";
     };
-    dbg!(&argument_section);
     sections.insert("description".to_string(), description_section.to_string());
     sections.insert("arguments".to_string(), argument_section.to_string());
 
@@ -154,19 +150,29 @@ fn split_response_into_results(response_section: String) -> Vec<String> {
     r.remove(0);
     r
 }
+
+fn split_arguments(arguments_section: &str) -> Vec<String> {
+    let argreg = regex::Regex::new(r"\n\d\.").expect("invalid regex");
+    let mut a: Vec<String> = argreg
+        .split(arguments_section)
+        .map(|x| x.trim().to_string())
+        .collect();
+    a.remove(0);
+    a
+}
+
 fn interpret_help_message(
     raw_command_help: &str,
 ) -> (String, Vec<serde_json::Value>, Vec<serde_json::Value>) {
-    //TODO sections could be passed in instead of produced,
-    // but would require re-wiring 20 tests
     let sections = partition_help_text(raw_command_help);
-    let cmd_name = sections.get("rpc_name").unwrap().to_string();
-    if cmd_name == "submitblock" {
-        //TODO special case, prescrub or scrub? TODO also, submitblock has arguments.
-        return (cmd_name, vec![json!("ENUM: duplicate, duplicate-invalid, duplicate-inconclusive, inconclusive, rejected")], vec![]);
+    let rpc_name = sections.get("rpc_name").unwrap().to_string();
+    if rpc_name == "submitblock" {
+        //TODO special case, move to (pre)scrub
+        return (rpc_name, vec![json!("ENUM: duplicate, duplicate-invalid, duplicate-inconclusive, inconclusive, rejected")], vec![json!({"1_hexdata": "String", "2_Option<jsonparametersobject>": "String"})]);
     }
     let response_data = sections.get("response").unwrap();
-    let scrubbed_response = scrub(cmd_name.clone(), response_data.clone());
+    let scrubbed_response =
+        scrub_response(rpc_name.clone(), response_data.clone());
     let results = split_response_into_results(scrubbed_response);
     let mut result_vec = vec![];
     if results.len() == 1usize && results[0] == "" {
@@ -176,16 +182,54 @@ fn interpret_help_message(
             result_vec.push(annotate_result(&mut result.chars()));
         }
     }
-    let argument_data = sections.get("arguments").unwrap();
-    // TODO possible scrubbing for args?
-    // TODO possible splitting?
-    let mut argument_vec = vec![];
-    if argument_data == "" {
-        // do not adjust argument_vec
+
+    let arguments_data = sections.get("arguments").unwrap();
+    let scrubbed_arguments = scrub_arguments(&rpc_name, arguments_data.clone());
+    let mut arguments_vec = vec![];
+    if scrubbed_arguments.trim() == "" {
+        // do not adjust arguments_vec
+    } else if scrubbed_arguments.contains("(or)") {
+        let split_arguments: Vec<&str> =
+            scrubbed_arguments.split("(or)").collect();
+        if !split_arguments.len() == 2 {
+            panic!("not two arguments with '(or)'");
+        }
+        let mut arg_chars = split_arguments[0].trim().chars();
+        match arg_chars.next().unwrap() {
+            '{' => {
+                let annotated_object = annotate_object(&mut arg_chars);
+                arguments_vec.push(json!({ "1": annotated_object }));
+            }
+            _ => {
+                panic!("no support for other formats");
+            }
+        }
+        let vec = vec![(split_arguments[1].to_string())];
+        arguments_vec.push(json!(annotate_arguments(vec)));
     } else {
-        //TODO add arg interpret
+        let arguments = split_arguments(&scrubbed_arguments);
+        arguments_vec.push(json!(annotate_arguments(arguments)));
     }
-    (cmd_name, result_vec, argument_vec)
+    (rpc_name, result_vec, arguments_vec)
+}
+
+fn annotate_arguments(arguments: Vec<String>) -> serde_json::Value {
+    let mut arg_map = serde_json::map::Map::new();
+    let arg_regex = regex::Regex::new(r#"[^"]{1,}"#).expect("invalid regex");
+    let mut argument_count = 1;
+    for arg in arguments {
+        let proto_ident = arg.split_whitespace().next();
+        let naked_ident = &arg_regex.captures(proto_ident.unwrap()).unwrap()[0];
+        let ident = format!("{}_{}", argument_count, &naked_ident);
+        let (raw_label, annotated_ident) =
+            label_identifier_optional(make_raw_label(arg), ident);
+        arg_map.insert(
+            annotated_ident,
+            serde_json::Value::String(make_label(raw_label)),
+        );
+        argument_count += 1;
+    }
+    json!(arg_map)
 }
 
 fn annotate_result(result_chars: &mut std::str::Chars) -> serde_json::Value {
@@ -264,18 +308,13 @@ fn annotate_array(result_chars: &mut std::str::Chars) -> serde_json::Value {
                     annotate_object(result_chars)
                 };
                 viewed.clear();
-                // TODO maybe temporary: to allow detection of `, ...`
                 ordered_results.push(inner_value)
             }
             // TODO: Handle unbalanced braces? add test.
             x if x.is_ascii() => viewed.push(x),
-            // TODO add processing of non-Value members:
-            // in the case of z_listaddresses, stings
-            // must be accepted as array members.
             _ => panic!("character is UTF-8 but not ASCII!"),
         }
     }
-
     Value::Array(ordered_results)
 }
 
@@ -292,14 +331,12 @@ fn bind_idents_labels(
     inner_value: Option<Value>,
 ) -> Map<String, Value> {
     let mut viewed_lines = viewed_to_lines(viewed);
-    // ignoring the first line if it is only whitespace or
-    // does not contain a `:` char.
+    //viewed_lines is now a Vec of strings that were lines in viewed.
     if viewed_lines[0].trim().is_empty()
         || !viewed_lines[0].trim().contains(":")
     {
         viewed_lines.remove(0); //.trim();
     }
-    //viewed_lines is now a Vec of strings that were lines in viewed.
     if inner_value != None {
         // possible if/let
         let mut viewed_lines_mutable = viewed_lines.clone();
@@ -364,16 +401,23 @@ fn raw_to_ident_and_metadata(ident_with_metadata: String) -> (String, String) {
     (ident, metadata)
 }
 
-// assumes well-formed `ident_with_metadata`
-fn label_identifier(ident_with_metadata: String) -> (String, String) {
-    let (mut ident, meta_data) = raw_to_ident_and_metadata(ident_with_metadata);
-    let mut raw_label = make_raw_label(meta_data);
+fn label_identifier_optional(
+    raw_label: String,
+    mut ident: String,
+) -> (String, String) {
     if raw_label.contains(", optional") {
         ident = format!("Option<{}>", ident);
-        raw_label = raw_label.replace(", optional", "");
     };
+    (raw_label, ident)
+}
+
+// assumes well-formed `ident_with_metadata`
+fn label_identifier(ident_with_metadata: String) -> (String, String) {
+    let (ident, meta_data) = raw_to_ident_and_metadata(ident_with_metadata);
+    let (raw_label, annotated_ident) =
+        label_identifier_optional(make_raw_label(meta_data), ident);
     let annotation: String = make_label(raw_label);
-    (ident.to_string(), annotation)
+    (annotated_ident.to_string(), annotation)
 }
 
 fn make_label(raw_label: String) -> String {
@@ -403,11 +447,11 @@ mod unit {
     fn partition_help_text_getblockchaininfo_enforce_fragment() {
         let expected_data = test::GETBLOCKCHAININFO_ENFORCE_FRAGMENT;
         let help_sections = partition_help_text(expected_data);
-        let cmd_name = help_sections.get("rpc_name").unwrap().clone();
+        let rpc_name = help_sections.get("rpc_name").unwrap().clone();
         let result = help_sections.get("response").unwrap().clone();
         let expected_result = test::GETBLOCKCHAININFO_ENFORCE_FRAGMENT_RESULT;
-        //let bound = bind_idents_labels(fake_ident_label, cmd_name, None);
-        assert_eq!(cmd_name, "getblockchaininfo".to_string());
+        //let bound = bind_idents_labels(fake_ident_label, rpc_name, None);
+        assert_eq!(rpc_name, "getblockchaininfo".to_string());
         assert_eq!(result, expected_result);
     }
 
@@ -415,7 +459,7 @@ mod unit {
     #[test]
     fn scrub_result_getblockchaininfo_scrubbed() {
         let expected_result = test::HELP_GETBLOCKCHAININFO_RESULT_SCRUBBED;
-        let result = scrub(
+        let result = scrub_response(
             "getblockchaininfo".to_string(),
             test::HELP_GETBLOCKCHAININFO_RESULT.to_string(),
         );
@@ -528,13 +572,13 @@ mod unit {
     fn annotate_result_from_getinfo() {
         let expected_testdata_annotated = test::valid_getinfo_annotation();
         let help_sections = partition_help_text(test::HELP_GETINFO);
-        let cmd_name = help_sections.get("rpc_name").unwrap().clone();
+        let rpc_name = help_sections.get("rpc_name").unwrap().clone();
         let response = help_sections.get("response").unwrap().clone();
         let responses = split_response_into_results(response);
         let data_stream = &mut responses[0].chars();
         let annotated = annotate_result(data_stream);
         assert_eq!(annotated, expected_testdata_annotated);
-        assert_eq!(cmd_name, "getinfo");
+        assert_eq!(rpc_name, "getinfo");
     }
 
     #[test]
@@ -880,15 +924,15 @@ mod unit {
     fn record_interpretation_getblockchaininfo() {
         //! This test simply shows that record_interpretation doesn't mutate-or
         //! destroy any input.
-        let test_cmd_name = "TEST_record_interpretation_getblockchaininfo";
+        let test_rpc_name = "TEST_record_interpretation_getblockchaininfo";
         let location = format!(
-            "./output/{}/{}_result.json",
+            "./output/{}/{}_response.json",
             utils::logging::create_version_name(),
-            test_cmd_name
+            test_rpc_name
         );
         let output = std::path::Path::new(&location);
         record_interpretation(
-            test_cmd_name.to_string(),
+            test_rpc_name.to_string(),
             getblockchaininfo_interpretation().to_string(),
             "".to_string(),
         );

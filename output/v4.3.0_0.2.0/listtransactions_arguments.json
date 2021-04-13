@@ -1,1 +1,8 @@
-[]
+[
+  {
+    "Option<1_account>": "String",
+    "Option<2_count>": "Decimal",
+    "Option<3_from>": "Decimal",
+    "Option<4_includeWatchonly>": "bool"
+  }
+]

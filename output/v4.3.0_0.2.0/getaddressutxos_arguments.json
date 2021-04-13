@@ -1,1 +1,13 @@
-[]
+[
+  {
+    "1": {
+      "Option<chainInfo>": "bool",
+      "addresses": [
+        "String"
+      ]
+    }
+  },
+  {
+    "1_address": "String"
+  }
+]

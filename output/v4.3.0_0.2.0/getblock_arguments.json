@@ -1,1 +1,6 @@
-[]
+[
+  {
+    "1_hash|height": "String",
+    "Option<2_verbosity>": "Decimal"
+  }
+]
