@@ -168,7 +168,7 @@ fn interpret_help_message(
     let rpc_name = sections.get("rpc_name").unwrap().to_string();
     if rpc_name == "submitblock" {
         //TODO special case, move to (pre)scrub
-        return (rpc_name, vec![json!("ENUM: duplicate, duplicate-invalid, duplicate-inconclusive, inconclusive, rejected")], vec![json!({"1_hexdata": "String", "2_Option<jsonparametersobject>": "String"})]);
+        return (rpc_name, vec![json!("ENUM: duplicate, duplicate-invalid, duplicate-inconclusive, inconclusive, rejected")], vec![json!({"1_hexdata": "String", "Option<2_jsonparametersobject>": "String"})]);
     }
     let response_data = sections.get("response").unwrap();
     let scrubbed_response =
