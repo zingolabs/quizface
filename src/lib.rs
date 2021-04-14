@@ -691,7 +691,7 @@ mod unit {
         let expected_result = serde_json::json!({"1_filename": "String"});
         assert_eq!(expected_result, annotated);
     }
-    // one arg per vec element
+
     #[test]
     fn annotate_multiple_arguments() {
         let multiple_arguments = vec![
@@ -708,7 +708,25 @@ mod unit {
         "4_arg_four": "String"});
         assert_eq!(expected_result, annotated);
     }
-    //different labels?
+
+    #[test]
+    fn annotate_multiple_labels_over_arguments() {
+        let multiple_arguments = vec![
+            test::MULTIPLE_ARGS_LABEL_ONE.to_string(),
+            test::MULTIPLE_ARGS_LABEL_TWO.to_string(),
+            test::MULTIPLE_ARGS_LABEL_THREE.to_string(),
+            test::MULTIPLE_ARGS_LABEL_FOUR.to_string(),
+            test::MULTIPLE_ARGS_LABEL_FIVE.to_string(),
+        ];
+        let annotated = annotate_arguments(multiple_arguments);
+        let expected_result = serde_json::json!({
+        "1_arg_one": "Decimal",
+        "2_arg_two": "String",
+        "3_arg_three": "bool",
+        "4_arg_four": "hexadecimal",
+        "5_arg_five": "INSUFFICIENT",});
+        assert_eq!(expected_result, annotated);
+    }
 
     #[test]
     fn annotate_arguments_with_option() {
