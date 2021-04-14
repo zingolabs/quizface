@@ -737,6 +737,39 @@ pub const SPECIAL_NESTED_GETBLOCKCHAININFO: &str = r#"{
 pub const SPECIAL_NESTED_GETBLOCKCHAININFO_RESULT: &str =
     r#"{"String":{"name":"String"}}"#;
 
+pub const SIMPLE_ARGUMENT: &str = r#"
+"filename"    (string, required) The filename, saved in folder set by zcashd -exportdir option
+"#;
+
+pub const MULTIPLE_ARGUMENT_ONE: &str = r#"
+"arg_one"    (string, required) The filename, saved in folder set by zcashd -exportdir option
+"#;
+
+pub const MULTIPLE_ARGUMENT_TWO: &str = r#"
+"arg_two"    (string, required) The filename, saved in folder set by zcashd -exportdir option"#;
+
+pub const MULTIPLE_ARGUMENT_THREE: &str = r#"
+"arg_three"    (string, required) The filename, saved in folder set by zcashd -exportdir option"#;
+
+pub const MULTIPLE_ARGUMENT_FOUR: &str = r#"
+"arg_four"    (string, required) The filename, saved in folder set by zcashd -exportdir option"#;
+
+pub const MULTIPLE_ARGS_LABEL_ONE: &str = r#"
+"arg_one"    (numeric, required) extra text
+"#;
+
+pub const MULTIPLE_ARGS_LABEL_TWO: &str = r#"
+"arg_two"    (string, required) extra extra text"#;
+
+pub const MULTIPLE_ARGS_LABEL_THREE: &str = r#"
+"arg_three"    (boolean, required) extra extra extra text"#;
+
+pub const MULTIPLE_ARGS_LABEL_FOUR: &str = r#"
+"arg_four"    (hexadecimal, required) extra extra and so on... "#;
+
+pub const MULTIPLE_ARGS_LABEL_FIVE: &str = r#"
+"arg_five"    (INSUFFICIENT, required) and so forth"#;
+
 pub const ARGUMENT_WITH_OPTION: &str = r#"
 "argument_one_ident"      (string, optional) DEPRECATED. If provided, it MUST be set to the empty string "" or to the string "*", either of which will give the total available balance. Passing any other string will result in an error.
 "#;

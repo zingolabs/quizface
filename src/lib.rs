@@ -429,7 +429,6 @@ fn make_label(raw_label: String) -> String {
         label if label.starts_with("INSUFFICIENT") => {
             "INSUFFICIENT".to_string()
         }
-        label if label.starts_with("enum") => label,
         label => panic!("Label '{}' is invalid", label),
     }
 }
@@ -684,6 +683,50 @@ mod unit {
     }
 
     // ----------------annotate_arguments---------------
+
+    #[test]
+    fn simple_annotate_argument() {
+        let simple_argument = test::SIMPLE_ARGUMENT;
+        let annotated = annotate_arguments(vec![simple_argument.to_string()]);
+        let expected_result = serde_json::json!({"1_filename": "String"});
+        assert_eq!(expected_result, annotated);
+    }
+
+    #[test]
+    fn annotate_multiple_arguments() {
+        let multiple_arguments = vec![
+            test::MULTIPLE_ARGUMENT_ONE.to_string(),
+            test::MULTIPLE_ARGUMENT_TWO.to_string(),
+            test::MULTIPLE_ARGUMENT_THREE.to_string(),
+            test::MULTIPLE_ARGUMENT_FOUR.to_string(),
+        ];
+        let annotated = annotate_arguments(multiple_arguments);
+        let expected_result = serde_json::json!({
+        "1_arg_one": "String",
+        "2_arg_two": "String",
+        "3_arg_three": "String",
+        "4_arg_four": "String"});
+        assert_eq!(expected_result, annotated);
+    }
+
+    #[test]
+    fn annotate_multiple_labels_over_arguments() {
+        let multiple_arguments = vec![
+            test::MULTIPLE_ARGS_LABEL_ONE.to_string(),
+            test::MULTIPLE_ARGS_LABEL_TWO.to_string(),
+            test::MULTIPLE_ARGS_LABEL_THREE.to_string(),
+            test::MULTIPLE_ARGS_LABEL_FOUR.to_string(),
+            test::MULTIPLE_ARGS_LABEL_FIVE.to_string(),
+        ];
+        let annotated = annotate_arguments(multiple_arguments);
+        let expected_result = serde_json::json!({
+        "1_arg_one": "Decimal",
+        "2_arg_two": "String",
+        "3_arg_three": "bool",
+        "4_arg_four": "hexadecimal",
+        "5_arg_five": "INSUFFICIENT",});
+        assert_eq!(expected_result, annotated);
+    }
 
     #[test]
     fn annotate_arguments_with_option() {
