@@ -1,3 +1,43 @@
 [
-  "INSUFFICIENT"
+  {
+    "bits": "String",
+    "coinbasetxn": {
+      "data": "hexadecimal",
+      "depends": [
+        "Decimal"
+      ],
+      "fee": "Decimal",
+      "foundersreward": "Decimal",
+      "hash": "hexadecimal",
+      "required": "bool",
+      "sigops": "Decimal"
+    },
+    "curtime": "Decimal",
+    "finalsaplingroothash": "String",
+    "height": "Decimal",
+    "lightclientroothash": "String",
+    "longpollid": "String",
+    "mintime": "Decimal",
+    "mutable": [
+      "String"
+    ],
+    "noncerange": "String",
+    "previousblockhash": "String",
+    "sigoplimit": "Decimal",
+    "sizelimit": "Decimal",
+    "target": "String",
+    "transactions": [
+      {
+        "data": "String",
+        "depends": [
+          "Decimal"
+        ],
+        "fee": "Decimal",
+        "hash": "String",
+        "required": "bool",
+        "sigops": "Decimal"
+      }
+    ],
+    "version": "Decimal"
+  }
 ]

@@ -747,6 +747,9 @@ mod unit {
             serde_json::json!({"1_Option<argument_one_ident>": "String"});
         assert_ne!(expected_result, annotated);
     }
+
+    // add test across interpret_help_message()
+
     // ----------------sanity_check---------------
 
     #[test]

@@ -332,7 +332,18 @@ Examples:
 None"#;
 macro_rules! getblocktemplate {
     ($result_data:expr) => {
-        INSUFFICIENT.to_string()
+        $result_data.replace(r#"{ ... },           (json object) information for coinbase transaction"#, r#"{     (json object) information for coinbase transaction
+            "data":    (hexadecimal)
+            "hash":    (hexadecimal)
+            "depends":    [
+            (numeric)
+            ]
+            "fee":    (numeric)
+            "foundersreward":    (numeric)
+            "sigops":    (numeric)
+            "required":    (boolean)
+            }"#
+        ).replace(r#",..."#, r#""#);
     };
 }
 
