@@ -991,12 +991,18 @@ mod unit {
         //! This test simply shows that record_interpretation doesn't mutate-or
         //! destroy any input.
         let test_rpc_name = "TEST_record_interpretation_getblockchaininfo";
-        let location = format!(
+        let response_location = format!(
             "./output/{}/{}_response.json",
             utils::logging::create_version_name(),
             test_rpc_name
         );
-        let output = std::path::Path::new(&location);
+        let arguments_location = format!(
+            "./output/{}/{}_arguments.json",
+            utils::logging::create_version_name(),
+            test_rpc_name
+        );
+        let response_output = std::path::Path::new(&response_location);
+        let arguments_output = std::path::Path::new(&arguments_location);
         record_interpretation(
             test_rpc_name.to_string(),
             getblockchaininfo_interpretation().to_string(),
@@ -1004,12 +1010,14 @@ mod unit {
         );
 
         //Now let's examine the results!
-        let reader =
-            std::io::BufReader::new(std::fs::File::open(output).unwrap());
+        let reader = std::io::BufReader::new(
+            std::fs::File::open(response_output).unwrap(),
+        );
 
         let read_in: serde_json::Value =
             serde_json::from_reader(reader).unwrap();
         assert_eq!(read_in, getblockchaininfo_interpretation());
-        std::fs::remove_file(output).unwrap();
+        std::fs::remove_file(response_output).unwrap();
+        std::fs::remove_file(arguments_output).unwrap();
     }
 }
