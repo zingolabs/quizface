@@ -218,7 +218,13 @@ macro_rules! getblockhashes {
 
 macro_rules! getchaintips {
     ($result_data:expr) => {
-    $result_data.replace(
+    $result_data.replace(r#",
+  {
+    "height": xxxx,
+    "hash": "xxxx",
+    "branchlen": 1          (numeric) length of branch connecting the tip to the main chain
+    "status": "xxxx"        (string) status of the chain (active, valid-fork, valid-headers, headers-only, invalid)
+  }"#, r#""#).replace(
             r#"Possible values for status:
 1.  "invalid"               This branch contains at least one invalid block
 2.  "headers-only"          Not all blocks for this branch are available, but the headers are valid
