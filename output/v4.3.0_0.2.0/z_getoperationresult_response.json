@@ -1,3 +1,69 @@
 [
-  "INSUFFICIENT"
+  [
+    [
+      {
+        "creation_time": "Decimal",
+        "id": "String",
+        "method": "String",
+        "params": {
+          "amounts": [
+            {
+              "address": "String",
+              "amount": "Decimal"
+            }
+          ],
+          "fee": "Decimal",
+          "fromaddress": "String",
+          "minconf": "Decimal"
+        },
+        "status": "String"
+      }
+    ],
+    [
+      {
+        "creation_time": "Decimal",
+        "execution_secs": "Decimal",
+        "id": "String",
+        "method": "String",
+        "params": {
+          "amounts": [
+            {
+              "address": "String",
+              "amount": "Decimal"
+            }
+          ],
+          "fee": "Decimal",
+          "fromaddress": "String",
+          "minconf": "Decimal"
+        },
+        "result": {
+          "txid": "hexadecimal"
+        },
+        "status": "String"
+      }
+    ],
+    [
+      {
+        "creation_time": "Decimal",
+        "error": {
+          "code": "Decimal",
+          "message": "String"
+        },
+        "id": "String",
+        "method": "String",
+        "params": {
+          "amounts": [
+            {
+              "address": "String",
+              "amount": "Decimal"
+            }
+          ],
+          "fee": "Decimal",
+          "fromaddress": "String",
+          "minconf": "Decimal"
+        },
+        "status": "String"
+      }
+    ]
+  ]
 ]

@@ -426,9 +426,9 @@ fn make_label(raw_label: String) -> String {
         label if label.starts_with("string") => "String".to_string(),
         label if label.starts_with("boolean") => "bool".to_string(),
         label if label.starts_with("hexadecimal") => "hexadecimal".to_string(),
-        label if label.starts_with("INSUFFICIENT") => {
+        /*label if label.starts_with("INSUFFICIENT") => {
             "INSUFFICIENT".to_string()
-        }
+        }*/
         label => panic!("Label '{}' is invalid", label),
     }
 }
@@ -716,15 +716,13 @@ mod unit {
             test::MULTIPLE_ARGS_LABEL_TWO.to_string(),
             test::MULTIPLE_ARGS_LABEL_THREE.to_string(),
             test::MULTIPLE_ARGS_LABEL_FOUR.to_string(),
-            test::MULTIPLE_ARGS_LABEL_FIVE.to_string(),
         ];
         let annotated = annotate_arguments(multiple_arguments);
         let expected_result = serde_json::json!({
         "1_arg_one": "Decimal",
         "2_arg_two": "String",
         "3_arg_three": "bool",
-        "4_arg_four": "hexadecimal",
-        "5_arg_five": "INSUFFICIENT",});
+        "4_arg_four": "hexadecimal",});
         assert_eq!(expected_result, annotated);
     }
 

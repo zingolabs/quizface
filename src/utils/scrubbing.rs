@@ -324,12 +324,6 @@ macro_rules! listtransactions {
     };
 }
 
-const INSUFFICIENT: &str = r#"INSUFFICIENT_INFORMATION
-Result:
-"do_not_use_this": (INSUFFICIENT)
-
-Examples:
-None"#;
 macro_rules! getblocktemplate {
     ($result_data:expr) => {
         $result_data.replace(r#"{ ... },           (json object) information for coinbase transaction"#, r#"{     (json object) information for coinbase transaction
@@ -347,15 +341,158 @@ macro_rules! getblocktemplate {
     };
 }
 
+//TODO double check this result
 macro_rules! z_getoperationresult {
     ($result_data:expr) => {
-        INSUFFICIENT.to_string()
+        $result_data.replace(
+            r#""    [object, ...]"      (array) A list of JSON objects"#,
+            r#"[
+[
+  {
+    "id":    (string)
+    "status":    (string)
+    "creation_time":    (numeric)
+    "method":    (string)
+    "params": {
+      "fromaddress":    (string)
+      "amounts": [
+        {
+          "address":    (string)
+          "amount":    (numeric)
+        }
+      ]
+      "minconf":    (numeric)
+      "fee":    (numeric)
+    }
+  }
+]
+
+[   
+  {
+    "id":    (string)
+    "status":    (string)
+    "creation_time":     (numeric)
+    "result": {
+      "txid":    (hexadecimal)
+    }
+    "execution_secs": (numeric)
+    "method":    (string)
+    "params": {
+      "fromaddress":    (string)
+      "amounts": [
+        {
+          "address":    (string)
+          "amount":    (numeric)
+        }
+      ]
+      "minconf":    (numeric)
+      "fee":    (numeric)
+    }
+  }
+]
+[
+  {
+    "id":    (string)
+    "status":    (string)
+    "creation_time":    (numeric)
+    "error": {
+      "code":    (numeric)
+      "message":    (string)
+    }
+    "method":     (string)
+    "params": {
+      "fromaddress":    (string)
+      "amounts": [
+        {
+          "address":    (string)
+          "amount":    (numeric)
+        }
+      ]
+      "minconf":    (numeric)
+      "fee":    (numeric)
+    }
+  }
+]
+
+]"#,
+        );
     };
 }
 
 macro_rules! z_getoperationstatus {
     ($result_data:expr) => {
-        INSUFFICIENT.to_string()
+        $result_data.replace(
+            r#""    [object, ...]"      (array) A list of JSON objects"#,
+            r#"[
+[
+  {
+    "id":    (string)
+    "status":    (string)
+    "creation_time":    (numeric)
+    "method":    (string)
+    "params": {
+      "fromaddress":    (string)
+      "amounts": [
+        {
+          "address":    (string)
+          "amount":    (numeric)
+        }
+      ]
+      "minconf":    (numeric)
+      "fee":    (numeric)
+    }
+  }
+]
+
+[   
+  {
+    "id":    (string)
+    "status":    (string)
+    "creation_time":     (numeric)
+    "result": {
+      "txid":    (hexadecimal)
+    }
+    "execution_secs": (numeric)
+    "method":    (string)
+    "params": {
+      "fromaddress":    (string)
+      "amounts": [
+        {
+          "address":    (string)
+          "amount":    (numeric)
+        }
+      ]
+      "minconf":    (numeric)
+      "fee":    (numeric)
+    }
+  }
+]
+[
+  {
+    "id":    (string)
+    "status":    (string)
+    "creation_time":    (numeric)
+    "error": {
+      "code":    (numeric)
+      "message":    (string)
+    }
+    "method":     (string)
+    "params": {
+      "fromaddress":    (string)
+      "amounts": [
+        {
+          "address":    (string)
+          "amount":    (numeric)
+        }
+      ]
+      "minconf":    (numeric)
+      "fee":    (numeric)
+    }
+  }
+]
+
+]"#,
+        );
     };
 }
 
@@ -500,6 +637,15 @@ macro_rules! getaddressbalance {
     };
 }
 
+macro_rules! args_example_values {
+    ($arguments_data:expr) => {
+        $arguments_data.replace(r#"1. "operationid"         (array, optional) A list of operation ids we are interested in.  If not provided, examine all operations known to the node."#, r#"1.   "stand-in": [
+        "s":    (string, optional)
+        ]
+            A list of operation ids we are interested in.  If not provided, examine all operations known to the node."#)
+    };
+}
+
 macro_rules! args_array {
     ($arguments_data:expr) => {
         $arguments_data.replace(r#"array"#, r#"string"#)
@@ -540,11 +686,11 @@ pub(crate) fn scrub_arguments(
         | "z_listunspent" => {
             args_bool!(arguments_data)
         }
-        //TODO check examples of these commands versus others
-        "z_getoperationresult"
-        | "z_getoperationstatus"
-        | "z_mergetoaddress"
-        | "z_sendmany" => {
+        "z_getoperationresult" | "z_getoperationstatus" => {
+            args_example_values!(arguments_data)
+        }
+        //TODO these need adjustment.
+        "z_mergetoaddress" | "z_sendmany" => {
             args_array!(arguments_data)
         }
         "setban" => {
