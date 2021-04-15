@@ -186,6 +186,7 @@ fn interpret_help_message(
     let arguments_data = sections.get("arguments").unwrap();
     let scrubbed_arguments = scrub_arguments(&rpc_name, arguments_data.clone());
     let mut arguments_vec = vec![];
+    dbg!(&scrubbed_arguments);
     if scrubbed_arguments.trim() == "" {
         // do not adjust arguments_vec
     } else if scrubbed_arguments.contains("(or)") {
@@ -206,6 +207,18 @@ fn interpret_help_message(
         }
         let vec = vec![(split_arguments[1].to_string())];
         arguments_vec.push(json!(annotate_arguments(vec)));
+    } else if scrubbed_arguments.starts_with("[") {
+        dbg!(&scrubbed_arguments);
+        let (raw_label, ident) = label_identifier_optional(
+            make_raw_label(scrubbed_arguments.clone()),
+            "1".to_string(),
+        );
+        //let arg = json![get_array_terminal(scrubbed_arguments)];
+        let arg = get_array_terminal(scrubbed_arguments);
+        arguments_vec.push(json!({ ident: "foo" }));
+    //TODO TODO TODO
+    //[ { ident: ["String"] } ]
+    //arguments_vec.push(json!({ ident: label }));
     } else {
         let arguments = split_arguments(&scrubbed_arguments);
         arguments_vec.push(json!(annotate_arguments(arguments)));
@@ -426,9 +439,6 @@ fn make_label(raw_label: String) -> String {
         label if label.starts_with("string") => "String".to_string(),
         label if label.starts_with("boolean") => "bool".to_string(),
         label if label.starts_with("hexadecimal") => "hexadecimal".to_string(),
-        /*label if label.starts_with("INSUFFICIENT") => {
-            "INSUFFICIENT".to_string()
-        }*/
         label => panic!("Label '{}' is invalid", label),
     }
 }
