@@ -1,5 +1,7 @@
 [
   {
-    "Option<1_operationid>": "String"
+    "Option<1>": [
+      "String"
+    ]
   }
 ]

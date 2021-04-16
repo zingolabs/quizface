@@ -1,6 +1,8 @@
 [
   {
-    "1_fromaddresses": "String",
+    "1_fromaddresses": [
+      "String"
+    ],
     "2_toaddress": "String",
     "Option<3_fee>": "Decimal",
     "Option<4_transparent_limit>": "Decimal",

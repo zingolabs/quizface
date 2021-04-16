@@ -218,7 +218,13 @@ macro_rules! getblockhashes {
 
 macro_rules! getchaintips {
     ($result_data:expr) => {
-    $result_data.replace(
+    $result_data.replace(r#",
+  {
+    "height": xxxx,
+    "hash": "xxxx",
+    "branchlen": 1          (numeric) length of branch connecting the tip to the main chain
+    "status": "xxxx"        (string) status of the chain (active, valid-fork, valid-headers, headers-only, invalid)
+  }"#, r#""#).replace(
             r#"Possible values for status:
 1.  "invalid"               This branch contains at least one invalid block
 2.  "headers-only"          Not all blocks for this branch are available, but the headers are valid
@@ -324,27 +330,165 @@ macro_rules! listtransactions {
     };
 }
 
-const INSUFFICIENT: &str = r#"INSUFFICIENT_INFORMATION
-Result:
-"do_not_use_this": (INSUFFICIENT)
-
-Examples:
-None"#;
 macro_rules! getblocktemplate {
     ($result_data:expr) => {
-        INSUFFICIENT.to_string()
+        $result_data.replace(r#"{ ... },           (json object) information for coinbase transaction"#, r#"{     (json object) information for coinbase transaction
+            "data":    (hexadecimal)
+            "hash":    (hexadecimal)
+            "depends":    [
+            (numeric)
+            ]
+            "fee":    (numeric)
+            "foundersreward":    (numeric)
+            "sigops":    (numeric)
+            "required":    (boolean)
+            }"#
+        ).replace(r#",..."#, r#""#);
     };
 }
 
+//TODO enumeration need for params field
 macro_rules! z_getoperationresult {
     ($result_data:expr) => {
-        INSUFFICIENT.to_string()
+        $result_data.replace(
+            r#""    [object, ...]"      (array) A list of JSON objects"#,
+            r#"[
+[
+  {
+    "id":    (string)
+    "status":    (string)
+    "creation_time":    (numeric)
+    "method":    (string)
+    "params": {
+      "fromaddress":    (string)
+      "amounts": [
+        {
+          "address":    (string)
+          "amount":    (numeric)
+        }
+      ]
+      "minconf":    (numeric)
+      "fee":    (numeric)
+    }
+  },
+  {
+    "id":    (string)
+    "status":    (string)
+    "creation_time":     (numeric)
+    "result": {
+      "txid":    (hexadecimal)
+    }
+    "execution_secs": (numeric)
+    "method":    (string)
+    "params": {
+      "fromaddress":    (string)
+      "amounts": [
+        {
+          "address":    (string)
+          "amount":    (numeric)
+        }
+      ]
+      "minconf":    (numeric)
+      "fee":    (numeric)
+    }
+  },
+  {
+    "id":    (string)
+    "status":    (string)
+    "creation_time":    (numeric)
+    "error": {
+      "code":    (numeric)
+      "message":    (string)
+    }
+    "method":     (string)
+    "params": {
+      "fromaddress":    (string)
+      "amounts": [
+        {
+          "address":    (string)
+          "amount":    (numeric)
+        }
+      ]
+      "minconf":    (numeric)
+      "fee":    (numeric)
+    }
+  }
+]
+
+]"#,
+        );
     };
 }
 
 macro_rules! z_getoperationstatus {
     ($result_data:expr) => {
-        INSUFFICIENT.to_string()
+        $result_data.replace(
+            r#""    [object, ...]"      (array) A list of JSON objects"#,
+            r#"[
+[
+  {
+    "id":    (string)
+    "status":    (string)
+    "creation_time":    (numeric)
+    "method":    (string)
+    "params": {
+      "fromaddress":    (string)
+      "amounts": [
+        {
+          "address":    (string)
+          "amount":    (numeric)
+        }
+      ]
+      "minconf":    (numeric)
+      "fee":    (numeric)
+    }
+  },
+  {
+    "id":    (string)
+    "status":    (string)
+    "creation_time":     (numeric)
+    "result": {
+      "txid":    (hexadecimal)
+    }
+    "execution_secs": (numeric)
+    "method":    (string)
+    "params": {
+      "fromaddress":    (string)
+      "amounts": [
+        {
+          "address":    (string)
+          "amount":    (numeric)
+        }
+      ]
+      "minconf":    (numeric)
+      "fee":    (numeric)
+    }
+  },
+{
+    "id":    (string)
+    "status":    (string)
+    "creation_time":    (numeric)
+    "error": {
+      "code":    (numeric)
+      "message":    (string)
+    }
+    "method":     (string)
+    "params": {
+      "fromaddress":    (string)
+      "amounts": [
+        {
+          "address":    (string)
+          "amount":    (numeric)
+        }
+      ]
+      "minconf":    (numeric)
+      "fee":    (numeric)
+    }
+  }
+]
+
+]"#,
+        );
     };
 }
 
@@ -407,7 +551,7 @@ Result:
         ]
   }
 }"#)
-    };
+     };
 }
 
 macro_rules! getblockheader {
@@ -451,7 +595,6 @@ r#"Result:
     };
 }
 
-//TODO turn into individual scrubbers
 macro_rules! dotdotdot {
     ($result_data:expr) => {
         $result_data
@@ -489,9 +632,46 @@ macro_rules! getaddressbalance {
     };
 }
 
-macro_rules! args_array {
+macro_rules! args_example_values {
     ($arguments_data:expr) => {
-        $arguments_data.replace(r#"array"#, r#"string"#)
+        $arguments_data.replace(r#"
+1. "operationid"         (array, optional) A list of operation ids we are interested in.  If not provided, examine all operations known to the node."#, r#"[
+        (string, optional)
+        ]
+            A list of operation ids we are interested in.  If not provided, examine all operations known to the node."#)
+    };
+}
+
+macro_rules! args_fromaddresses_array {
+    ($arguments_data:expr) => {
+        $arguments_data.replace(r#"(array, required) A JSON array with addresses.
+                         The following special strings are accepted inside the array:
+                             - "ANY_TADDR":   Merge UTXOs from any taddrs belonging to the wallet.
+                             - "ANY_SPROUT":  Merge notes from any Sprout zaddrs belonging to the wallet.
+                             - "ANY_SAPLING": Merge notes from any Sapling zaddrs belonging to the wallet.
+                         While it is possible to use a variety of different combinations of addresses and the above values,
+                         it is not possible to send funds from both sprout and sapling addresses simultaneously. If a special
+                         string is given, any given addresses of that type will be counted as duplicates and cause an error.
+    [
+      "address"          (string) Can be a taddr or a zaddr
+      ,...
+    ]"#, r#"[
+    "address"          (string) Can be a taddr or a zaddr
+    ]"#)
+    };
+}
+macro_rules! args_amounts_array {
+    ($arguments_data:expr) => {
+        $arguments_data.replace(r#"(array, required) An array of json objects representing the amounts to send.
+    [{
+      "address":address  (string, required) The address is a taddr or zaddr
+      "amount":amount    (numeric, required) The numeric amount in ZEC is the value
+      "memo":memo        (string, optional) If the address is a zaddr, raw data represented in hexadecimal string format
+    }, ... ]"#, r#"[{
+      "address":address  (string, required) The address is a taddr or zaddr
+      "amount":amount    (numeric, required) The numeric amount in ZEC is the value
+      "memo":memo        (string, optional) If the address is a zaddr, raw data represented in hexadecimal string format
+    }]"#)
     };
 }
 
@@ -529,12 +709,14 @@ pub(crate) fn scrub_arguments(
         | "z_listunspent" => {
             args_bool!(arguments_data)
         }
-        //TODO check examples of these commands versus others
-        "z_getoperationresult"
-        | "z_getoperationstatus"
-        | "z_mergetoaddress"
-        | "z_sendmany" => {
-            args_array!(arguments_data)
+        "z_getoperationresult" | "z_getoperationstatus" => {
+            args_example_values!(arguments_data)
+        }
+        "z_mergetoaddress" => {
+            args_fromaddresses_array!(arguments_data)
+        }
+        "z_sendmany" => {
+            args_amounts_array!(arguments_data)
         }
         "setban" => {
             setban!(arguments_data)

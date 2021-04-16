@@ -206,6 +206,15 @@ fn interpret_help_message(
         }
         let vec = vec![(split_arguments[1].to_string())];
         arguments_vec.push(json!(annotate_arguments(vec)));
+    } else if scrubbed_arguments.starts_with("[") {
+        let (_raw_label, ident) = label_identifier_optional(
+            make_raw_label(scrubbed_arguments.clone()),
+            "1".to_string(),
+        );
+        let arg = vec![get_array_terminal(scrubbed_arguments)];
+        let mut arg_map = serde_json::map::Map::new();
+        arg_map.insert(ident.clone(), serde_json::Value::Array(arg.clone()));
+        arguments_vec.push(json!({ ident: arg }));
     } else {
         let arguments = split_arguments(&scrubbed_arguments);
         arguments_vec.push(json!(annotate_arguments(arguments)));
@@ -221,12 +230,23 @@ fn annotate_arguments(arguments: Vec<String>) -> serde_json::Value {
         let proto_ident = arg.split_whitespace().next();
         let naked_ident = &arg_regex.captures(proto_ident.unwrap()).unwrap()[0];
         let ident = format!("{}_{}", argument_count, &naked_ident);
-        let (raw_label, annotated_ident) =
-            label_identifier_optional(make_raw_label(arg), ident);
-        arg_map.insert(
-            annotated_ident,
-            serde_json::Value::String(make_label(raw_label)),
-        );
+        if arg.split_whitespace().nth(1) == Some("[") {
+            let arg = vec![get_array_terminal(arg)];
+            arg_map.insert(ident, serde_json::Value::Array(arg.clone()));
+        } else if arg.split_whitespace().nth(1) == Some("[{") {
+            let nested_pairs =
+                arg.split(|c| c == '{' || c == ']').collect::<Vec<&str>>()[1]
+                    .to_string();
+            let arg_vec = vec![annotate_object(&mut nested_pairs.chars())];
+            arg_map.insert(ident, serde_json::Value::Array(arg_vec.clone()));
+        } else {
+            let (raw_label, annotated_ident) =
+                label_identifier_optional(make_raw_label(arg), ident);
+            arg_map.insert(
+                annotated_ident,
+                serde_json::Value::String(make_label(raw_label)),
+            );
+        }
         argument_count += 1;
     }
     json!(arg_map)
@@ -426,9 +446,6 @@ fn make_label(raw_label: String) -> String {
         label if label.starts_with("string") => "String".to_string(),
         label if label.starts_with("boolean") => "bool".to_string(),
         label if label.starts_with("hexadecimal") => "hexadecimal".to_string(),
-        label if label.starts_with("INSUFFICIENT") => {
-            "INSUFFICIENT".to_string()
-        }
         label => panic!("Label '{}' is invalid", label),
     }
 }
@@ -716,15 +733,13 @@ mod unit {
             test::MULTIPLE_ARGS_LABEL_TWO.to_string(),
             test::MULTIPLE_ARGS_LABEL_THREE.to_string(),
             test::MULTIPLE_ARGS_LABEL_FOUR.to_string(),
-            test::MULTIPLE_ARGS_LABEL_FIVE.to_string(),
         ];
         let annotated = annotate_arguments(multiple_arguments);
         let expected_result = serde_json::json!({
         "1_arg_one": "Decimal",
         "2_arg_two": "String",
         "3_arg_three": "bool",
-        "4_arg_four": "hexadecimal",
-        "5_arg_five": "INSUFFICIENT",});
+        "4_arg_four": "hexadecimal",});
         assert_eq!(expected_result, annotated);
     }
 
@@ -747,6 +762,9 @@ mod unit {
             serde_json::json!({"1_Option<argument_one_ident>": "String"});
         assert_ne!(expected_result, annotated);
     }
+
+    // add test across interpret_help_message()
+
     // ----------------sanity_check---------------
 
     #[test]
@@ -988,12 +1006,18 @@ mod unit {
         //! This test simply shows that record_interpretation doesn't mutate-or
         //! destroy any input.
         let test_rpc_name = "TEST_record_interpretation_getblockchaininfo";
-        let location = format!(
+        let response_location = format!(
             "./output/{}/{}_response.json",
             utils::logging::create_version_name(),
             test_rpc_name
         );
-        let output = std::path::Path::new(&location);
+        let arguments_location = format!(
+            "./output/{}/{}_arguments.json",
+            utils::logging::create_version_name(),
+            test_rpc_name
+        );
+        let response_output = std::path::Path::new(&response_location);
+        let arguments_output = std::path::Path::new(&arguments_location);
         record_interpretation(
             test_rpc_name.to_string(),
             getblockchaininfo_interpretation().to_string(),
@@ -1001,12 +1025,14 @@ mod unit {
         );
 
         //Now let's examine the results!
-        let reader =
-            std::io::BufReader::new(std::fs::File::open(output).unwrap());
+        let reader = std::io::BufReader::new(
+            std::fs::File::open(response_output).unwrap(),
+        );
 
         let read_in: serde_json::Value =
             serde_json::from_reader(reader).unwrap();
         assert_eq!(read_in, getblockchaininfo_interpretation());
-        std::fs::remove_file(output).unwrap();
+        std::fs::remove_file(response_output).unwrap();
+        std::fs::remove_file(arguments_output).unwrap();
     }
 }
