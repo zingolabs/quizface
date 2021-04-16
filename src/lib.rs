@@ -230,12 +230,24 @@ fn annotate_arguments(arguments: Vec<String>) -> serde_json::Value {
         let proto_ident = arg.split_whitespace().next();
         let naked_ident = &arg_regex.captures(proto_ident.unwrap()).unwrap()[0];
         let ident = format!("{}_{}", argument_count, &naked_ident);
-        let (raw_label, annotated_ident) =
-            label_identifier_optional(make_raw_label(arg), ident);
-        arg_map.insert(
-            annotated_ident,
-            serde_json::Value::String(make_label(raw_label)),
-        );
+        dbg!(&ident);
+        dbg!(&arg);
+        dbg!(&arg.split_whitespace().nth(1).unwrap());
+        if arg.split_whitespace().nth(1) == Some("[") {
+            let arg = vec![get_array_terminal(arg)];
+            dbg!(&ident);
+            dbg!(&arg);
+            arg_map.insert(ident, serde_json::Value::Array(arg.clone()));
+            dbg!("y");
+        //do something!
+        } else {
+            let (raw_label, annotated_ident) =
+                label_identifier_optional(make_raw_label(arg), ident);
+            arg_map.insert(
+                annotated_ident,
+                serde_json::Value::String(make_label(raw_label)),
+            );
+        }
         argument_count += 1;
     }
     json!(arg_map)

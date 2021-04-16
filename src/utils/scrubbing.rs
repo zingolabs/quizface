@@ -551,7 +551,7 @@ Result:
         ]
   }
 }"#)
-    };
+     };
 }
 
 macro_rules! getblockheader {
@@ -642,7 +642,25 @@ macro_rules! args_example_values {
     };
 }
 
-macro_rules! args_array {
+macro_rules! args_fromaddresses_array {
+    ($arguments_data:expr) => {
+        $arguments_data.replace(r#"(array, required) A JSON array with addresses.
+                         The following special strings are accepted inside the array:
+                             - "ANY_TADDR":   Merge UTXOs from any taddrs belonging to the wallet.
+                             - "ANY_SPROUT":  Merge notes from any Sprout zaddrs belonging to the wallet.
+                             - "ANY_SAPLING": Merge notes from any Sapling zaddrs belonging to the wallet.
+                         While it is possible to use a variety of different combinations of addresses and the above values,
+                         it is not possible to send funds from both sprout and sapling addresses simultaneously. If a special
+                         string is given, any given addresses of that type will be counted as duplicates and cause an error.
+    [
+      "address"          (string) Can be a taddr or a zaddr
+      ,...
+    ]"#, r#"[
+    "address"          (string) Can be a taddr or a zaddr
+    ]"#)
+    };
+}
+macro_rules! args_amounts_array {
     ($arguments_data:expr) => {
         $arguments_data.replace(r#"array"#, r#"string"#)
     };
@@ -685,9 +703,11 @@ pub(crate) fn scrub_arguments(
         "z_getoperationresult" | "z_getoperationstatus" => {
             args_example_values!(arguments_data)
         }
-        //TODO these need adjustment.
-        "z_mergetoaddress" | "z_sendmany" => {
-            args_array!(arguments_data)
+        "z_mergetoaddress" => {
+            args_fromaddresses_array!(arguments_data)
+        }
+        "z_sendmany" => {
+            args_amounts_array!(arguments_data)
         }
         "setban" => {
             setban!(arguments_data)
