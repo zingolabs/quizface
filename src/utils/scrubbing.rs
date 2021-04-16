@@ -347,7 +347,7 @@ macro_rules! getblocktemplate {
     };
 }
 
-//TODO double check this result
+//TODO enumeration need for params field
 macro_rules! z_getoperationresult {
     ($result_data:expr) => {
         $result_data.replace(
@@ -370,10 +370,7 @@ macro_rules! z_getoperationresult {
       "minconf":    (numeric)
       "fee":    (numeric)
     }
-  }
-]
-
-[   
+  },
   {
     "id":    (string)
     "status":    (string)
@@ -394,9 +391,7 @@ macro_rules! z_getoperationresult {
       "minconf":    (numeric)
       "fee":    (numeric)
     }
-  }
-]
-[
+  },
   {
     "id":    (string)
     "status":    (string)
@@ -447,10 +442,7 @@ macro_rules! z_getoperationstatus {
       "minconf":    (numeric)
       "fee":    (numeric)
     }
-  }
-]
-
-[   
+  },
   {
     "id":    (string)
     "status":    (string)
@@ -471,10 +463,8 @@ macro_rules! z_getoperationstatus {
       "minconf":    (numeric)
       "fee":    (numeric)
     }
-  }
-]
-[
-  {
+  },
+{
     "id":    (string)
     "status":    (string)
     "creation_time":    (numeric)

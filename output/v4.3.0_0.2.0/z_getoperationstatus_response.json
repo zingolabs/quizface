@@ -17,9 +17,7 @@
           "minconf": "Decimal"
         },
         "status": "String"
-      }
-    ],
-    [
+      },
       {
         "creation_time": "Decimal",
         "execution_secs": "Decimal",
@@ -40,9 +38,7 @@
           "txid": "hexadecimal"
         },
         "status": "String"
-      }
-    ],
-    [
+      },
       {
         "creation_time": "Decimal",
         "error": {
