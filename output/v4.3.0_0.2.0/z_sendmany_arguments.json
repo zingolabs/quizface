@@ -1,7 +1,13 @@
 [
   {
     "1_fromaddress": "String",
-    "2_amounts": "String",
+    "2_amounts": [
+      {
+        "Option<memo>": "String",
+        "address": "String",
+        "amount": "Decimal"
+      }
+    ],
     "Option<3_minconf>": "Decimal",
     "Option<4_fee>": "Decimal"
   }

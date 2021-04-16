@@ -662,7 +662,16 @@ macro_rules! args_fromaddresses_array {
 }
 macro_rules! args_amounts_array {
     ($arguments_data:expr) => {
-        $arguments_data.replace(r#"array"#, r#"string"#)
+        $arguments_data.replace(r#"(array, required) An array of json objects representing the amounts to send.
+    [{
+      "address":address  (string, required) The address is a taddr or zaddr
+      "amount":amount    (numeric, required) The numeric amount in ZEC is the value
+      "memo":memo        (string, optional) If the address is a zaddr, raw data represented in hexadecimal string format
+    }, ... ]"#, r#"[{
+      "address":address  (string, required) The address is a taddr or zaddr
+      "amount":amount    (numeric, required) The numeric amount in ZEC is the value
+      "memo":memo        (string, optional) If the address is a zaddr, raw data represented in hexadecimal string format
+    }]"#)
     };
 }
 
