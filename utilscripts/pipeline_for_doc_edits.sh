@@ -17,6 +17,7 @@ sleep 2.5
 cd $QUIZFACEROOT
 cat $QUIZFACEROOT/lists/passing.txt | \
     PATH=$PATH:$ZCASHROOT/src xargs cargo run && \
-    QUIZFOUT=$QUIZFACEROOT/output/`ls -1rct $QUIZFACEROOT/output/ | tail -n 1` && \
-    cd $TYPEGENROOT && \
-    cargo run $QUIZFOUT
+    QUIZFOUT=$QUIZFACEROOT/output/`ls -1rct $QUIZFACEROOT/output/ | \
+    tail -n 1` && \
+    cd $ZCASHRPCROOT && cargo test --workspace && \
+    cd $TYPEGENROOT && cargo run $QUIZFOUT
