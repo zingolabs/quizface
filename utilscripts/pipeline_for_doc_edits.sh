@@ -11,9 +11,9 @@ set -x
 cd $ZCASHROOT
 killall zcashd
 set -e
-time make
-./src/zcashd -d &
-
-# Run quizface
+time make && ./src/zcashd &
+# 2.5 seconds appears to be close to the minimum necessary boot time
+sleep 2.5
+$ZCASHROOT/src/zcash-cli help getblockchaininfo
 cd $QUIZFACEROOT
-echo `pwd`
+#$QUIZFACEROOT/utilscripts/run_quizface.sh
