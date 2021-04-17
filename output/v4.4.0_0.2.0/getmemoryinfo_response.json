@@ -1,0 +1,12 @@
+[
+  {
+    "locked": {
+      "chunks_free": "Decimal",
+      "chunks_used": "Decimal",
+      "free": "Decimal",
+      "locked": "Decimal",
+      "total": "Decimal",
+      "used": "Decimal"
+    }
+  }
+]

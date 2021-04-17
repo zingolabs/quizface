@@ -1,0 +1,9 @@
+[
+  {
+    "opid": "String",
+    "remainingUTXOs": "Decimal",
+    "remainingValue": "Decimal",
+    "shieldingUTXOs": "Decimal",
+    "shieldingValue": "Decimal"
+  }
+]

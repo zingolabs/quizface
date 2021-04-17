@@ -1,0 +1,26 @@
+[
+  [
+    {
+      "address": "String",
+      "height": "Decimal",
+      "outputIndex": "Decimal",
+      "satoshis": "Decimal",
+      "script": "String",
+      "txid": "String"
+    }
+  ],
+  {
+    "hash": "String",
+    "height": "Decimal",
+    "utxos": [
+      {
+        "address": "String",
+        "height": "Decimal",
+        "outputIndex": "Decimal",
+        "satoshis": "Decimal",
+        "script": "String",
+        "txid": "String"
+      }
+    ]
+  }
+]
