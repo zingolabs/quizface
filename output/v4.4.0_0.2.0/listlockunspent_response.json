@@ -1,0 +1,8 @@
+[
+  [
+    {
+      "txid": "String",
+      "vout": "Decimal"
+    }
+  ]
+]

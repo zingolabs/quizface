@@ -1,0 +1,12 @@
+[
+  {
+    "addresses": [
+      "String"
+    ],
+    "asm": "String",
+    "hex": "String",
+    "p2sh": "String",
+    "reqSigs": "Decimal",
+    "type": "String"
+  }
+]

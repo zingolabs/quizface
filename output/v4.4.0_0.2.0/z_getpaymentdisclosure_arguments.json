@@ -1,0 +1,8 @@
+[
+  {
+    "1_txid": "String",
+    "2_js_index": "String",
+    "3_output_index": "String",
+    "Option<4_message>": "String"
+  }
+]
