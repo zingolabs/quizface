@@ -1,0 +1,15 @@
+[
+  {
+    "timemillis": "Decimal",
+    "totalbytesrecv": "Decimal",
+    "totalbytessent": "Decimal",
+    "uploadtarget": {
+      "bytes_left_in_cycle": "Decimal",
+      "serve_historical_blocks": "bool",
+      "target": "Decimal",
+      "target_reached": "bool",
+      "time_left_in_cycle": "Decimal",
+      "timeframe": "Decimal"
+    }
+  }
+]

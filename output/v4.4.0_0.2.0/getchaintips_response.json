@@ -1,0 +1,10 @@
+[
+  [
+    {
+      "branchlen": "Decimal",
+      "hash": "String",
+      "height": "Decimal",
+      "status": "String"
+    }
+  ]
+]

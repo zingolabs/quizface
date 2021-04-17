@@ -1,0 +1,6 @@
+[
+  {
+    "1_address": "String",
+    "Option<2_minconf>": "Decimal"
+  }
+]

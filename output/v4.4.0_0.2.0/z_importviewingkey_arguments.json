@@ -1,0 +1,7 @@
+[
+  {
+    "1_vkey": "String",
+    "Option<2_rescan>": "String",
+    "Option<3_startHeight>": "Decimal"
+  }
+]

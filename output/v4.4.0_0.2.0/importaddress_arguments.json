@@ -1,0 +1,8 @@
+[
+  {
+    "1_script": "String",
+    "Option<2_label>": "String",
+    "Option<3_rescan>": "bool",
+    "Option<4_p2sh>": "bool"
+  }
+]

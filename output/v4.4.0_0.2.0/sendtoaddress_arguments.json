@@ -1,0 +1,9 @@
+[
+  {
+    "1_zcashaddress": "String",
+    "2_amount": "Decimal",
+    "Option<3_comment>": "String",
+    "Option<4_comment-to>": "String",
+    "Option<5_subtractfeefromamount>": "bool"
+  }
+]

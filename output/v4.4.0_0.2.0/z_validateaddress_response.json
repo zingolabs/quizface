@@ -1,0 +1,12 @@
+[
+  {
+    "address": "String",
+    "diversifiedtransmissionkey": "String",
+    "diversifier": "String",
+    "ismine": "bool",
+    "isvalid": "bool",
+    "payingkey": "String",
+    "transmissionkey": "String",
+    "type": "String"
+  }
+]

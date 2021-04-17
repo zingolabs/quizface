@@ -1,0 +1,9 @@
+[
+  {
+    "1_fromaccount": "String",
+    "2_amounts": "String",
+    "Option<3_minconf>": "Decimal",
+    "Option<4_comment>": "String",
+    "Option<5_subtractfeefromamount>": "String"
+  }
+]

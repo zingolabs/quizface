@@ -1,0 +1,27 @@
+[
+  {
+    "connections": "Decimal",
+    "localaddresses": [
+      {
+        "address": "String",
+        "port": "Decimal",
+        "score": "Decimal"
+      }
+    ],
+    "localservices": "String",
+    "networks": [
+      {
+        "limited": "bool",
+        "name": "String",
+        "proxy": "String",
+        "reachable": "bool"
+      }
+    ],
+    "protocolversion": "Decimal",
+    "relayfee": "Decimal",
+    "subversion": "String",
+    "timeoffset": "Decimal",
+    "version": "Decimal",
+    "warnings": "String"
+  }
+]
