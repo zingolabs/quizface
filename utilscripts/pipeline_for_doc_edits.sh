@@ -14,6 +14,5 @@ set -e
 time make && ./src/zcashd &
 # 2.5 seconds appears to be close to the minimum necessary boot time
 sleep 2.5
-$ZCASHROOT/src/zcash-cli help getblockchaininfo
 cd $QUIZFACEROOT
-#$QUIZFACEROOT/utilscripts/run_quizface.sh
+cat $QUIZFACEROOT/lists/passing.txt | PATH=$PATH:$ZCASHROOT/src xargs cargo run
