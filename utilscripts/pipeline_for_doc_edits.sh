@@ -15,4 +15,8 @@ time make && ./src/zcashd &
 # 2.5 seconds appears to be close to the minimum necessary boot time
 sleep 2.5
 cd $QUIZFACEROOT
-cat $QUIZFACEROOT/lists/passing.txt | PATH=$PATH:$ZCASHROOT/src xargs cargo run
+cat $QUIZFACEROOT/lists/passing.txt | \
+    PATH=$PATH:$ZCASHROOT/src xargs cargo run && \
+    QUIZFOUT=$QUIZFACEROOT/output/`ls -1rct $QUIZFACEROOT/output/ | tail -n 1` && \
+    cd $TYPEGENROOT && \
+    cargo run $QUIZFOUT
