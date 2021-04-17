@@ -4,4 +4,4 @@ ZCASHROOT=YOUR_SYSTEM
 QUIZFACEROOT=YOURS
 TYPEGENROOT=YOURS
 
-source $QUIZFACEROOT/utilscripts/echo.sh
+source $QUIZFACEROOT/utilscripts/pipeline_for_doc_edits.sh
