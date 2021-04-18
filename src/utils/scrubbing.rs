@@ -1,15 +1,3 @@
-macro_rules! getaddressmempool {
-    ($result_data:expr) => {
-        $result_data.replace(r#"number"#, r#"numeric"#)
-    };
-}
-
-macro_rules! listunspent {
-    ($result_data:expr) => {
-        $result_data.replace(r#"(bool)"#, r#"(boolean)"#)
-    };
-}
-
 macro_rules! z_listunspent {
     ($result_data:expr) => {
         $result_data
@@ -94,16 +82,6 @@ macro_rules! getnetworkinfo {
 macro_rules! getpeerinfo {
     ($result_data:expr) => {
         $result_data.replace(r#"MagicBean:x.y.z[-v]"#, r#"MagicBean"#)
-    };
-}
-
-macro_rules! getspentinfo {
-    ($result_data:expr) => {
-        $result_data.replace(r#"number"#, r#"numeric"#).replace(
-            r#"  ,...
-"#,
-            r#""#,
-        )
     };
 }
 
@@ -553,8 +531,6 @@ pub(crate) fn scrub_arguments(
 pub(crate) fn scrub_response(rpc_name: String, result_data: String) -> String {
     if rpc_name == "verifytxoutproof".to_string() {
         verifytxoutproof!(result_data)
-    } else if rpc_name == "listunspent".to_string() {
-        listunspent!(result_data)
     } else if rpc_name == "z_listunspent".to_string() {
         z_listunspent!(result_data)
     } else if rpc_name == "generate".to_string() {
@@ -563,8 +539,6 @@ pub(crate) fn scrub_response(rpc_name: String, result_data: String) -> String {
         getblockheader!(result_data)
     } else if rpc_name == "getrawmempool".to_string() {
         getrawmempool!(result_data)
-    } else if rpc_name == "getaddressmempool".to_string() {
-        getaddressmempool!(result_data)
     } else if rpc_name == "getchaintips".to_string() {
         getchaintips!(result_data)
     } else if rpc_name == "getblockchaininfo".to_string() {
@@ -579,8 +553,6 @@ pub(crate) fn scrub_response(rpc_name: String, result_data: String) -> String {
         getnetworkinfo!(result_data)
     } else if rpc_name == "getpeerinfo".to_string() {
         getpeerinfo!(result_data)
-    } else if rpc_name == "getspentinfo".to_string() {
-        getspentinfo!(result_data)
     } else if rpc_name == "gettransaction".to_string() {
         gettransaction!(result_data)
     } else if rpc_name == "listaccounts".to_string() {
