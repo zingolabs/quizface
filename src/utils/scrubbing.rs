@@ -631,14 +631,6 @@ macro_rules! args_amounts_array {
     };
 }
 
-macro_rules! getaddress_number {
-    ($arguments_data:expr) => {
-        $arguments_data
-            .replace(r#"number"#, r#"numeric"#)
-            .replace(r#",..."#, r#""#)
-    };
-}
-
 macro_rules! getdotdotdot {
     ($arguments_data:expr) => {
         $arguments_data.replace(r#",..."#, r#""#)
@@ -679,9 +671,6 @@ pub(crate) fn scrub_arguments(
         }
         "getaddressbalance" => {
             getaddressbalance!(arguments_data)
-        }
-        "getaddresstxids" => {
-            getaddress_number!(arguments_data)
         }
         "getaddressutxos" | "getaddressmempool" => {
             getdotdotdot!(arguments_data)
