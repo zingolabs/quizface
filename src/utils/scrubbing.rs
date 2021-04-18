@@ -345,14 +345,6 @@ r#"Result:
     };
 }
 
-macro_rules! dotdotdot {
-    ($result_data:expr) => {
-        $result_data
-            .replace(", ...\n", r#""#)
-            .replace(",...\n", r#""#)
-    };
-}
-
 macro_rules! verifytxoutproof {
     ($result_data:expr) => {
         $result_data
@@ -477,6 +469,6 @@ pub(crate) fn scrub_response(rpc_name: String, result_data: String) -> String {
     } else if rpc_name == "getblocktemplate".to_string() {
         getblocktemplate!(result_data)
     } else {
-        dotdotdot!(result_data)
+        result_data
     }
 }
