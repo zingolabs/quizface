@@ -1,34 +1,3 @@
-macro_rules! getaddressdeltas {
-    ($result_data:expr) => {
-        $result_data
-            .replace(r#"(or, if chainInfo is true):"#, "Result:")
-            .replace(
-                r#"  "start":
-    {
-      "hash"          (string)  The start block hash
-      "height"        (numeric) The height of the start block
-    }"#,
-                r#"  "start":
-    {
-      "hash":         (string)  The start block hash
-      "height":       (numeric) The height of the start block
-    }"#,
-            )
-            .replace(
-                r#"  "end":
-    {
-      "hash"          (string)  The end block hash
-      "height"        (numeric) The height of the end block
-    }"#,
-                r#"  "end":
-    {
-      "hash":         (string)  The end block hash
-      "height":       (numeric) The height of the end block
-    }"#,
-            )
-    };
-}
-
 macro_rules! getaddressutxos {
     ($result_data:expr) => {
         $result_data
@@ -722,9 +691,7 @@ pub(crate) fn scrub_arguments(
 }
 
 pub(crate) fn scrub_response(rpc_name: String, result_data: String) -> String {
-    if rpc_name == "getaddressdeltas".to_string() {
-        getaddressdeltas!(result_data)
-    } else if rpc_name == "verifytxoutproof".to_string() {
+    if rpc_name == "verifytxoutproof".to_string() {
         verifytxoutproof!(result_data)
     } else if rpc_name == "getaddressutxos".to_string() {
         getaddressutxos!(result_data)
