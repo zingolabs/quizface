@@ -182,7 +182,8 @@ fn interpret_help_message(
         .replace("(json array of string)", "")
         .replace("(json object) The script", "")
         .replace("(json object)", "")
-        .replace(r#"(or, if chainInfo is true):"#, "Result:");
+        .replace(r#"(or, if chainInfo is true):"#, "Result:")
+        .replace(r#"(array, required) An array of json objects representing the amounts to send.\n"#, "");
     dbg!(&rpc_name);
     let results = split_response_into_results(scrubbed_response);
     let mut result_vec = vec![];
@@ -194,7 +195,8 @@ fn interpret_help_message(
         }
     }
 
-    let arguments_data = sections.get("arguments").unwrap();
+    let arguments_data = sections.get("arguments").unwrap()
+        .replace(r#"(array, required) An array of json objects representing the amounts to send."#, "");
     let scrubbed_arguments = scrub_arguments(&rpc_name, arguments_data.clone());
     let mut arguments_vec = vec![];
     if scrubbed_arguments.trim() == "" {

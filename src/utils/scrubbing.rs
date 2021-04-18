@@ -1,11 +1,3 @@
-macro_rules! z_listunspent {
-    ($result_data:expr) => {
-        $result_data
-            .replace(" (sprout) : n,", ": <sprout> n,")
-            .replace(" (sapling) : n,", ": <sapling> n,")
-    };
-}
-
 macro_rules! generate {
     ($result_data:expr) => {
         $result_data.replace(
@@ -474,20 +466,6 @@ macro_rules! args_fromaddresses_array {
     ]"#)
     };
 }
-macro_rules! args_amounts_array {
-    ($arguments_data:expr) => {
-        $arguments_data.replace(r#"(array, required) An array of json objects representing the amounts to send.
-    [{
-      "address":address  (string, required) The address is a taddr or zaddr
-      "amount":amount    (numeric, required) The numeric amount in ZEC is the value
-      "memo":memo        (string, optional) If the address is a zaddr, raw data represented in hexadecimal string format
-    }, ... ]"#, r#"[{
-      "address":address  (string, required) The address is a taddr or zaddr
-      "amount":amount    (numeric, required) The numeric amount in ZEC is the value
-      "memo":memo        (string, optional) If the address is a zaddr, raw data represented in hexadecimal string format
-    }]"#)
-    };
-}
 
 pub(crate) fn scrub_arguments(
     rpc_name: &str,
@@ -515,9 +493,6 @@ pub(crate) fn scrub_arguments(
         "z_mergetoaddress" => {
             args_fromaddresses_array!(arguments_data)
         }
-        "z_sendmany" => {
-            args_amounts_array!(arguments_data)
-        }
         "setban" => {
             setban!(arguments_data)
         }
@@ -531,8 +506,6 @@ pub(crate) fn scrub_arguments(
 pub(crate) fn scrub_response(rpc_name: String, result_data: String) -> String {
     if rpc_name == "verifytxoutproof".to_string() {
         verifytxoutproof!(result_data)
-    } else if rpc_name == "z_listunspent".to_string() {
-        z_listunspent!(result_data)
     } else if rpc_name == "generate".to_string() {
         generate!(result_data)
     } else if rpc_name == "getblockheader".to_string() {
