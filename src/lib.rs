@@ -176,6 +176,8 @@ fn interpret_help_message(
     let scrubbed_response = scrubbed_response.replace(", ...", "");
     let scrubbed_response = scrubbed_response.replace(",...", "");
     let scrubbed_response = scrubbed_response.replace("...", "");
+    let scrubbed_response =
+        scrubbed_response.replace(r#"(or, if chainInfo is true):"#, "Result:");
     dbg!(&rpc_name);
     let results = split_response_into_results(scrubbed_response);
     let mut result_vec = vec![];
