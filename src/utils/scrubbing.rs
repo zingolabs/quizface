@@ -1,18 +1,3 @@
-macro_rules! listtransactions {
-    ($result_data:expr) => {
-        $result_data
-            .lines()
-            .filter(|l| {
-                !l.starts_with("                                         ")
-            })
-            .fold(String::new(), |mut accumulator, new| {
-                accumulator.push_str(new);
-                accumulator.push_str("\n");
-                accumulator
-            })
-    };
-}
-
 macro_rules! getblocktemplate {
     ($result_data:expr) => {
         $result_data.replace(r#"{ ... },           (json object) information for coinbase transaction"#, r#"{     (json object) information for coinbase transaction
@@ -358,8 +343,6 @@ pub(crate) fn scrub_response(rpc_name: String, result_data: String) -> String {
         getblockheader!(result_data)
     } else if rpc_name == "getrawmempool".to_string() {
         getrawmempool!(result_data)
-    } else if rpc_name == "listtransactions".to_string() {
-        listtransactions!(result_data)
     } else if rpc_name == "z_getoperationresult".to_string() {
         z_getoperationresult!(result_data)
     } else if rpc_name == "z_getoperationstatus".to_string() {
