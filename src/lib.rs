@@ -173,6 +173,10 @@ fn interpret_help_message(
     let response_data = sections.get("response").unwrap();
     let scrubbed_response =
         scrub_response(rpc_name.clone(), response_data.clone());
+    let scrubbed_response = scrubbed_response.replace(", ...", "");
+    let scrubbed_response = scrubbed_response.replace(",...", "");
+    let scrubbed_response = scrubbed_response.replace("...", "");
+    dbg!(&rpc_name);
     let results = split_response_into_results(scrubbed_response);
     let mut result_vec = vec![];
     if results.len() == 1usize && results[0] == "" {
