@@ -1,148 +1,3 @@
-//TODO enumeration need for params field
-macro_rules! z_getoperationresult {
-    ($result_data:expr) => {
-        $result_data.replace(
-            r#""    [object, ...]"      (array) A list of JSON objects"#,
-            r#"[
-[
-  {
-    "id":    (string)
-    "status":    (string)
-    "creation_time":    (numeric)
-    "method":    (string)
-    "params": {
-      "fromaddress":    (string)
-      "amounts": [
-        {
-          "address":    (string)
-          "amount":    (numeric)
-        }
-      ]
-      "minconf":    (numeric)
-      "fee":    (numeric)
-    }
-  },
-  {
-    "id":    (string)
-    "status":    (string)
-    "creation_time":     (numeric)
-    "result": {
-      "txid":    (hexadecimal)
-    }
-    "execution_secs": (numeric)
-    "method":    (string)
-    "params": {
-      "fromaddress":    (string)
-      "amounts": [
-        {
-          "address":    (string)
-          "amount":    (numeric)
-        }
-      ]
-      "minconf":    (numeric)
-      "fee":    (numeric)
-    }
-  },
-  {
-    "id":    (string)
-    "status":    (string)
-    "creation_time":    (numeric)
-    "error": {
-      "code":    (numeric)
-      "message":    (string)
-    }
-    "method":     (string)
-    "params": {
-      "fromaddress":    (string)
-      "amounts": [
-        {
-          "address":    (string)
-          "amount":    (numeric)
-        }
-      ]
-      "minconf":    (numeric)
-      "fee":    (numeric)
-    }
-  }
-]
-
-]"#,
-        );
-    };
-}
-
-macro_rules! z_getoperationstatus {
-    ($result_data:expr) => {
-        $result_data.replace(
-            r#""    [object, ...]"      (array) A list of JSON objects"#,
-            r#"[
-[
-  {
-    "id":    (string)
-    "status":    (string)
-    "creation_time":    (numeric)
-    "method":    (string)
-    "params": {
-      "fromaddress":    (string)
-      "amounts": [
-        {
-          "address":    (string)
-          "amount":    (numeric)
-        }
-      ]
-      "minconf":    (numeric)
-      "fee":    (numeric)
-    }
-  },
-  {
-    "id":    (string)
-    "status":    (string)
-    "creation_time":     (numeric)
-    "result": {
-      "txid":    (hexadecimal)
-    }
-    "execution_secs": (numeric)
-    "method":    (string)
-    "params": {
-      "fromaddress":    (string)
-      "amounts": [
-        {
-          "address":    (string)
-          "amount":    (numeric)
-        }
-      ]
-      "minconf":    (numeric)
-      "fee":    (numeric)
-    }
-  },
-{
-    "id":    (string)
-    "status":    (string)
-    "creation_time":    (numeric)
-    "error": {
-      "code":    (numeric)
-      "message":    (string)
-    }
-    "method":     (string)
-    "params": {
-      "fromaddress":    (string)
-      "amounts": [
-        {
-          "address":    (string)
-          "amount":    (numeric)
-        }
-      ]
-      "minconf":    (numeric)
-      "fee":    (numeric)
-    }
-  }
-]
-
-]"#,
-        );
-    };
-}
-
 macro_rules! z_listreceivedbyaddress {
     ($result_data:expr) => {
         $result_data
@@ -303,9 +158,6 @@ pub(crate) fn scrub_arguments(
     arguments_data: String,
 ) -> String {
     match rpc_name {
-        "z_getoperationresult" | "z_getoperationstatus" => {
-            args_example_values!(arguments_data)
-        }
         "z_mergetoaddress" => {
             args_fromaddresses_array!(arguments_data)
         }
@@ -326,10 +178,6 @@ pub(crate) fn scrub_response(rpc_name: String, result_data: String) -> String {
         getblockheader!(result_data)
     } else if rpc_name == "getrawmempool".to_string() {
         getrawmempool!(result_data)
-    } else if rpc_name == "z_getoperationresult".to_string() {
-        z_getoperationresult!(result_data)
-    } else if rpc_name == "z_getoperationstatus".to_string() {
-        z_getoperationstatus!(result_data)
     } else if rpc_name == "z_listreceivedbyaddress".to_string() {
         z_listreceivedbyaddress!(result_data)
     } else if rpc_name == "z_validateaddress".to_string() {
