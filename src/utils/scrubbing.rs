@@ -1,12 +1,3 @@
-macro_rules! generate {
-    ($result_data:expr) => {
-        $result_data.replace(
-            r#"[ blockhashes ]     (array) hashes of blocks generated"#,
-            "[\nblockhashes     (string) hashes of blocks generated\n]",
-        )
-    };
-}
-
 macro_rules! getblockchaininfo {
     ($result_data:expr) => {
     $result_data.replace("[0..1]", "").replace(
@@ -506,8 +497,6 @@ pub(crate) fn scrub_arguments(
 pub(crate) fn scrub_response(rpc_name: String, result_data: String) -> String {
     if rpc_name == "verifytxoutproof".to_string() {
         verifytxoutproof!(result_data)
-    } else if rpc_name == "generate".to_string() {
-        generate!(result_data)
     } else if rpc_name == "getblockheader".to_string() {
         getblockheader!(result_data)
     } else if rpc_name == "getrawmempool".to_string() {
