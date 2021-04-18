@@ -3,7 +3,6 @@ macro_rules! getaddressdeltas {
         $result_data
             .replace(r#"(or, if chainInfo is true):"#, "Result:")
             .replace("number", "numeric")
-            .replace(", ...", "")
             .replace(
                 r#"  "start":
     {
@@ -36,7 +35,6 @@ macro_rules! getaddressutxos {
         $result_data
             .replace(r#"(or, if chainInfo is true):"#, "Result:")
             .replace("number", "numeric")
-            .replace(", ...", "")
     };
 }
 
@@ -113,7 +111,6 @@ const RAWTRANSACTION: &str = r#"{
 macro_rules! getrawtransaction {
     ($result_data:expr) => {
         $result_data
-            .replace(",...", "")
             .replace("bool", "boolean")
             .replace("(array of json objects, only for version >= 2)", "")
             .replace("(array of json objects)", "")
@@ -161,16 +158,13 @@ macro_rules! getaddressmempool {
 
 macro_rules! listunspent {
     ($result_data:expr) => {
-        $result_data
-            .replace(r#"(bool)"#, r#"(boolean)"#)
-            .replace(",...", "")
+        $result_data.replace(r#"(bool)"#, r#"(boolean)"#)
     };
 }
 
 macro_rules! z_listunspent {
     ($result_data:expr) => {
         $result_data
-            .replace(",...", "")
             .replace(" (sprout) : n,", ": <sprout> n,")
             .replace(" (sapling) : n,", ": <sapling> n,")
     };
@@ -194,7 +188,7 @@ macro_rules! getblockchaininfo {
 \"found\": (numeric)
 \"required\": (numeric)
 \"window\": (numeric)
-}").replace("(same fields as \"enforce\")", "").replace(", ...", "")
+}").replace("(same fields as \"enforce\")", "")
     };
 }
 
@@ -203,7 +197,6 @@ macro_rules! getblockdeltas {
         $result_data
             .replace(r#"hex string"#, r#"hexadecimal"#)
             .replace(r#"hexstring"#, r#"hexadecimal"#)
-            .replace(r#", ..."#, r#""#)
     };
 }
 
@@ -212,7 +205,6 @@ macro_rules! getblockhashes {
         $result_data
             .replace(r#"hex string"#, r#"hexadecimal"#)
             .replace(r#"hexstring"#, r#"hexadecimal"#)
-            .replace(r#", ..."#, r#""#)
     };
 }
 
@@ -247,17 +239,13 @@ macro_rules! getdeprecationinfo {
 
 macro_rules! getnetworkinfo {
     ($result_data:expr) => {
-        $result_data
-            .replace(r#"MagicBean:x.y.z[-v]"#, r#"MagicBean"#)
-            .replace(r#",..."#, r#""#)
+        $result_data.replace(r#"MagicBean:x.y.z[-v]"#, r#"MagicBean"#)
     };
 }
 
 macro_rules! getpeerinfo {
     ($result_data:expr) => {
-        $result_data
-            .replace(r#"MagicBean:x.y.z[-v]"#, r#"MagicBean"#)
-            .replace(r#",..."#, r#""#)
+        $result_data.replace(r#"MagicBean:x.y.z[-v]"#, r#"MagicBean"#)
     };
 }
 
