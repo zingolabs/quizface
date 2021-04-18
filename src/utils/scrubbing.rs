@@ -1,11 +1,3 @@
-macro_rules! getaddressutxos {
-    ($result_data:expr) => {
-        $result_data
-            .replace(r#"(or, if chainInfo is true):"#, "Result:")
-            .replace("number", "numeric")
-    };
-}
-
 const RAWTRANSACTION: &str = r#"{
   "in_active_chain": b,   (bool) Whether specified block is in the active chain or not (only present with explicit "blockhash" argument)
   "hex" : "data",       (string) The serialized, hex-encoded data for 'txid'
@@ -673,8 +665,6 @@ pub(crate) fn scrub_arguments(
 pub(crate) fn scrub_response(rpc_name: String, result_data: String) -> String {
     if rpc_name == "verifytxoutproof".to_string() {
         verifytxoutproof!(result_data)
-    } else if rpc_name == "getaddressutxos".to_string() {
-        getaddressutxos!(result_data)
     } else if rpc_name == "listunspent".to_string() {
         listunspent!(result_data)
     } else if rpc_name == "z_listunspent".to_string() {
