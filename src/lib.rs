@@ -173,11 +173,16 @@ fn interpret_help_message(
     let response_data = sections.get("response").unwrap();
     let scrubbed_response =
         scrub_response(rpc_name.clone(), response_data.clone());
-    let scrubbed_response = scrubbed_response.replace(", ...", "");
-    let scrubbed_response = scrubbed_response.replace(",...", "");
-    let scrubbed_response = scrubbed_response.replace("...", "");
-    let scrubbed_response =
-        scrubbed_response.replace(r#"(or, if chainInfo is true):"#, "Result:");
+    let scrubbed_response = scrubbed_response
+        .replace(", ...", "")
+        .replace(",...", "")
+        .replace("...", "")
+        .replace("(array of json objects, only for version >= 2)", "")
+        .replace("(array of json objects)", "")
+        .replace("(json array of string)", "")
+        .replace("(json object) The script", "")
+        .replace("(json object)", "")
+        .replace(r#"(or, if chainInfo is true):"#, "Result:");
     dbg!(&rpc_name);
     let results = split_response_into_results(scrubbed_response);
     let mut result_vec = vec![];
