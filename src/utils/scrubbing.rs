@@ -680,7 +680,7 @@ pub(crate) fn scrub_arguments(
         "getaddressbalance" => {
             getaddressbalance!(arguments_data)
         }
-        "getaddresstxids" | "getaddressdeltas" => {
+        "getaddresstxids" => {
             getaddress_number!(arguments_data)
         }
         "getaddressutxos" | "getaddressmempool" => {
