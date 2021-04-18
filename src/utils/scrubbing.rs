@@ -1,26 +1,3 @@
-macro_rules! getchaintips {
-    ($result_data:expr) => {
-    $result_data.replace(r#",
-  {
-    "height": xxxx,
-    "hash": "xxxx",
-    "branchlen": 1          (numeric) length of branch connecting the tip to the main chain
-    "status": "xxxx"        (string) status of the chain (active, valid-fork, valid-headers, headers-only, invalid)
-  }"#, r#""#).replace(
-            r#"Possible values for status:
-1.  "invalid"               This branch contains at least one invalid block
-2.  "headers-only"          Not all blocks for this branch are available, but the headers are valid
-3.  "valid-headers"         All blocks are available for this branch, but they were never fully validated
-4.  "valid-fork"            This branch is not part of the active chain, but is fully validated
-5.  "active"                This is the tip of the active main chain, which is certainly valid"#, "")
-.replace(r#""height": xxxx,
-"#, r#""height": xxxx,         (numeric) height of the chain tip
-"#).replace(r#""hash": "xxxx",
-"#, r#""hash": "xxxx",         (string) block hash of the tip
-"#)
-    };
-}
-
 macro_rules! gettransaction {
     ($result_data:expr) => {
     $result_data.replace(r#"      "nullifiers" : [ string, ... ]      (string) Nullifiers of input notes
@@ -446,8 +423,6 @@ pub(crate) fn scrub_response(rpc_name: String, result_data: String) -> String {
         getblockheader!(result_data)
     } else if rpc_name == "getrawmempool".to_string() {
         getrawmempool!(result_data)
-    } else if rpc_name == "getchaintips".to_string() {
-        getchaintips!(result_data)
     } else if rpc_name == "gettransaction".to_string() {
         gettransaction!(result_data)
     } else if rpc_name == "listaccounts".to_string() {
