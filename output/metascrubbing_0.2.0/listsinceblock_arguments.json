@@ -1,0 +1,7 @@
+[
+  {
+    "Option<1_blockhash>": "String",
+    "Option<2_target-confirmations>": "Decimal",
+    "Option<3_includeWatchonly>": "bool"
+  }
+]

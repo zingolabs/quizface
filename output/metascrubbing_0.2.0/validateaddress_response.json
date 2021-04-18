@@ -1,0 +1,12 @@
+[
+  {
+    "account": "String",
+    "address": "String",
+    "iscompressed": "bool",
+    "ismine": "bool",
+    "isscript": "bool",
+    "isvalid": "bool",
+    "pubkey": "String",
+    "scriptPubKey": "String"
+  }
+]

@@ -1,0 +1,34 @@
+[
+  {
+    "outputs": [
+      {
+        "address": "String",
+        "js": "Decimal",
+        "jsOutput": "Decimal",
+        "memo": "String",
+        "memoStr": "String",
+        "outgoing": "bool",
+        "output": "Decimal",
+        "type": "String",
+        "value": "Decimal",
+        "valueZat": "Decimal"
+      }
+    ],
+    "spends": [
+      {
+        "address": "String",
+        "js": "Decimal",
+        "jsOutputPrev": "Decimal",
+        "jsPrev": "Decimal",
+        "jsSpend": "Decimal",
+        "outputPrev": "Decimal",
+        "spend": "Decimal",
+        "txidPrev": "String",
+        "type": "String",
+        "value": "Decimal",
+        "valueZat": "Decimal"
+      }
+    ],
+    "txid": "String"
+  }
+]

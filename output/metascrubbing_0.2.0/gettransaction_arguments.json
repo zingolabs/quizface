@@ -1,0 +1,6 @@
+[
+  {
+    "1_txid": "String",
+    "Option<2_includeWatchonly>": "bool"
+  }
+]

@@ -1,0 +1,7 @@
+[
+  {
+    "1_account": "String",
+    "Option<2_minconf>": "Decimal",
+    "Option<3_inZat>": "bool"
+  }
+]
