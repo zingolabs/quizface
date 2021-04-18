@@ -1,32 +1,3 @@
-macro_rules! getblockchaininfo {
-    ($result_data:expr) => {
-    $result_data.replace("[0..1]", "").replace(
-        "{ ... }      (object) progress toward rejecting pre-softfork blocks",
-        "{
-\"status\": (boolean)
-\"found\": (numeric)
-\"required\": (numeric)
-\"window\": (numeric)
-}").replace("(same fields as \"enforce\")", "")
-    };
-}
-
-macro_rules! getblockdeltas {
-    ($result_data:expr) => {
-        $result_data
-            .replace(r#"hex string"#, r#"hexadecimal"#)
-            .replace(r#"hexstring"#, r#"hexadecimal"#)
-    };
-}
-
-macro_rules! getblockhashes {
-    ($result_data:expr) => {
-        $result_data
-            .replace(r#"hex string"#, r#"hexadecimal"#)
-            .replace(r#"hexstring"#, r#"hexadecimal"#)
-    };
-}
-
 macro_rules! getchaintips {
     ($result_data:expr) => {
     $result_data.replace(r#",
@@ -47,24 +18,6 @@ macro_rules! getchaintips {
 "#).replace(r#""hash": "xxxx",
 "#, r#""hash": "xxxx",         (string) block hash of the tip
 "#)
-    };
-}
-
-macro_rules! getdeprecationinfo {
-    ($result_data:expr) => {
-        $result_data.replace(r#"MagicBean:x.y.z[-v]"#, r#"MagicBean"#)
-    };
-}
-
-macro_rules! getnetworkinfo {
-    ($result_data:expr) => {
-        $result_data.replace(r#"MagicBean:x.y.z[-v]"#, r#"MagicBean"#)
-    };
-}
-
-macro_rules! getpeerinfo {
-    ($result_data:expr) => {
-        $result_data.replace(r#"MagicBean:x.y.z[-v]"#, r#"MagicBean"#)
     };
 }
 
@@ -503,18 +456,6 @@ pub(crate) fn scrub_response(rpc_name: String, result_data: String) -> String {
         getrawmempool!(result_data)
     } else if rpc_name == "getchaintips".to_string() {
         getchaintips!(result_data)
-    } else if rpc_name == "getblockchaininfo".to_string() {
-        getblockchaininfo!(result_data)
-    } else if rpc_name == "getblockdeltas".to_string() {
-        getblockdeltas!(result_data)
-    } else if rpc_name == "getblockhashes".to_string() {
-        getblockhashes!(result_data)
-    } else if rpc_name == "getdeprecationinfo".to_string() {
-        getdeprecationinfo!(result_data)
-    } else if rpc_name == "getnetworkinfo".to_string() {
-        getnetworkinfo!(result_data)
-    } else if rpc_name == "getpeerinfo".to_string() {
-        getpeerinfo!(result_data)
     } else if rpc_name == "gettransaction".to_string() {
         gettransaction!(result_data)
     } else if rpc_name == "listaccounts".to_string() {

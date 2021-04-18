@@ -183,6 +183,7 @@ fn interpret_help_message(
         .replace("(json object) The script", "")
         .replace("(json object)", "")
         .replace(r#"(or, if chainInfo is true):"#, "Result:")
+        .replace(r#"MagicBean:x.y.z[-v]"#, r#"MagicBean"#)
         .replace(r#"(array, required) An array of json objects representing the amounts to send.\n"#, "");
     dbg!(&rpc_name);
     let results = split_response_into_results(scrubbed_response);
