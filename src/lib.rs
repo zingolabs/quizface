@@ -185,7 +185,6 @@ fn interpret_help_message(
         .replace(r#"(or, if chainInfo is true):"#, "Result:")
         .replace(r#"MagicBean:x.y.z[-v]"#, r#"MagicBean"#)
         .replace(r#"(array, required) An array of json objects representing the amounts to send.\n"#, "");
-    dbg!(&rpc_name);
     let results = split_response_into_results(scrubbed_response);
     let mut result_vec = vec![];
     if results.len() == 1usize && results[0] == "" {
@@ -220,7 +219,7 @@ fn interpret_help_message(
         }
         let vec = vec![(split_arguments[1].to_string())];
         arguments_vec.push(json!(annotate_arguments(vec)));
-    } else if scrubbed_arguments.starts_with("[") {
+    } else if scrubbed_arguments.trim().starts_with("[") {
         let (_raw_label, ident) = label_identifier_optional(
             make_raw_label(scrubbed_arguments.clone()),
             "1".to_string(),
