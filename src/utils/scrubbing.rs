@@ -631,12 +631,6 @@ macro_rules! args_amounts_array {
     };
 }
 
-macro_rules! getdotdotdot {
-    ($arguments_data:expr) => {
-        $arguments_data.replace(r#",..."#, r#""#)
-    };
-}
-
 pub(crate) fn scrub_arguments(
     rpc_name: &str,
     arguments_data: String,
@@ -671,9 +665,6 @@ pub(crate) fn scrub_arguments(
         }
         "getaddressbalance" => {
             getaddressbalance!(arguments_data)
-        }
-        "getaddressutxos" | "getaddressmempool" => {
-            getdotdotdot!(arguments_data)
         }
         _ => arguments_data,
     }
