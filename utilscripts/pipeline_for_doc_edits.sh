@@ -11,7 +11,9 @@ set -x
 cd $ZCASHROOT
 killall zcashd
 set -e
-time make && ./src/zcashd &
+time make
+sleep 25
+./src/zcashd &
 # 2.5 seconds appears to be close to the minimum necessary boot time
 sleep 2.5
 cd $QUIZFACEROOT
