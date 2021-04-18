@@ -1,5 +1,5 @@
 const RAWTRANSACTION: &str = r#"{
-  "in_active_chain": b,   (bool) Whether specified block is in the active chain or not (only present with explicit "blockhash" argument)
+  "in_active_chain": b,   (boolean) Whether specified block is in the active chain or not (only present with explicit "blockhash" argument)
   "hex" : "data",       (string) The serialized, hex-encoded data for 'txid'
   "txid" : "id",        (string) The transaction id (same as provided)
   "size" : n,             (numeric) The transaction size
@@ -71,7 +71,6 @@ const RAWTRANSACTION: &str = r#"{
 macro_rules! getrawtransaction {
     ($result_data:expr) => {
         $result_data
-            .replace("bool", "boolean")
             .replace("(array of json objects, only for version >= 2)", "")
             .replace("(array of json objects)", "")
             .replace("(json array of string)", "")
