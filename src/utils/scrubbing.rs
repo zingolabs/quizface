@@ -1,28 +1,3 @@
-macro_rules! gettransaction {
-    ($result_data:expr) => {
-    $result_data.replace(r#"      "nullifiers" : [ string, ... ]      (string) Nullifiers of input notes
-      "commitments" : [ string, ... ]     (string) Note commitments for note outputs
-      "macs" : [ string, ... ]            (string) Message authentication tags"#,
-    r#""nullifiers": [
-        "nullifier" (string)
-    ],
-    "commitments": [
-        "commitment" (string)
-    ],
-    "macs": [
-        "mac" (string)
-    ],"#).replace(r#",..."#,r#""#).replace(r#", ..."#,r#""#)
-    };
-}
-
-macro_rules! listaccounts{
-    ($result_data:expr) =>  {
-    $result_data.replace(r#"                      (json object where keys are account names, and values are numeric balances"#, "")
-        .replace(r#"  ...
-"#, "")
-    };
-}
-
 macro_rules! listreceivedbyaccount {
     ($result_data:expr) => {
         $result_data.replace(r#"bool"#, "boolean").replace(
@@ -388,8 +363,6 @@ pub(crate) fn scrub_arguments(
         "getbalance"
         | "getreceivedbyaccount"
         | "getreceivedbyaddress"
-        | "gettransaction"
-        | "listaccounts"
         | "listreceivedbyaccount"
         | "listreceivedbyaddress"
         | "listsinceblock"
@@ -423,10 +396,6 @@ pub(crate) fn scrub_response(rpc_name: String, result_data: String) -> String {
         getblockheader!(result_data)
     } else if rpc_name == "getrawmempool".to_string() {
         getrawmempool!(result_data)
-    } else if rpc_name == "gettransaction".to_string() {
-        gettransaction!(result_data)
-    } else if rpc_name == "listaccounts".to_string() {
-        listaccounts!(result_data)
     } else if rpc_name == "listreceivedbyaccount".to_string() {
         listreceivedbyaccount!(result_data)
     } else if rpc_name == "listreceivedbyaddress".to_string() {
