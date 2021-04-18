@@ -1,22 +1,3 @@
-macro_rules! listreceivedbyaccount {
-    ($result_data:expr) => {
-        $result_data.replace(r#"bool"#, "boolean").replace(
-            r#"  ,...
-"#,
-            "",
-        )
-    };
-}
-
-macro_rules! listreceivedbyaddress {
-    ($result_data:expr) => {
-        $result_data.replace(r#"bool"#, "boolean").replace(
-            r#"  ,...
-"#,
-            "",
-        )
-    };
-}
 macro_rules! listtransactions {
     ($result_data:expr) => {
         $result_data
@@ -306,12 +287,6 @@ macro_rules! verifytxoutproof {
     };
 }
 
-macro_rules! args_bool {
-    ($arguments_data:expr) => {
-        $arguments_data.replace(r#"bool"#, r#"boolean"#)
-    };
-}
-
 macro_rules! setban {
     ($arguments_data:expr) => {
         $arguments_data.replace(r#"(/netmask)"#, r#""#)
@@ -360,19 +335,6 @@ pub(crate) fn scrub_arguments(
     arguments_data: String,
 ) -> String {
     match rpc_name {
-        "getbalance"
-        | "getreceivedbyaccount"
-        | "getreceivedbyaddress"
-        | "listreceivedbyaccount"
-        | "listreceivedbyaddress"
-        | "listsinceblock"
-        | "listtransactions"
-        | "z_getbalance"
-        | "z_gettotalbalance"
-        | "z_listaddresses"
-        | "z_listunspent" => {
-            args_bool!(arguments_data)
-        }
         "z_getoperationresult" | "z_getoperationstatus" => {
             args_example_values!(arguments_data)
         }
@@ -396,10 +358,6 @@ pub(crate) fn scrub_response(rpc_name: String, result_data: String) -> String {
         getblockheader!(result_data)
     } else if rpc_name == "getrawmempool".to_string() {
         getrawmempool!(result_data)
-    } else if rpc_name == "listreceivedbyaccount".to_string() {
-        listreceivedbyaccount!(result_data)
-    } else if rpc_name == "listreceivedbyaddress".to_string() {
-        listreceivedbyaddress!(result_data)
     } else if rpc_name == "listtransactions".to_string() {
         listtransactions!(result_data)
     } else if rpc_name == "z_getoperationresult".to_string() {
