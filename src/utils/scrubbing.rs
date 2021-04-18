@@ -1,20 +1,3 @@
-macro_rules! getblocktemplate {
-    ($result_data:expr) => {
-        $result_data.replace(r#"{ ... },           (json object) information for coinbase transaction"#, r#"{     (json object) information for coinbase transaction
-            "data":    (hexadecimal)
-            "hash":    (hexadecimal)
-            "depends":    [
-            (numeric)
-            ]
-            "fee":    (numeric)
-            "foundersreward":    (numeric)
-            "sigops":    (numeric)
-            "required":    (boolean)
-            }"#
-        ).replace(r#",..."#, r#""#);
-    };
-}
-
 //TODO enumeration need for params field
 macro_rules! z_getoperationresult {
     ($result_data:expr) => {
@@ -351,8 +334,6 @@ pub(crate) fn scrub_response(rpc_name: String, result_data: String) -> String {
         z_listreceivedbyaddress!(result_data)
     } else if rpc_name == "z_validateaddress".to_string() {
         z_validateaddress!(result_data)
-    } else if rpc_name == "getblocktemplate".to_string() {
-        getblocktemplate!(result_data)
     } else {
         result_data
     }
