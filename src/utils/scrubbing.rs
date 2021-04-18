@@ -2,7 +2,6 @@ macro_rules! getaddressdeltas {
     ($result_data:expr) => {
         $result_data
             .replace(r#"(or, if chainInfo is true):"#, "Result:")
-            .replace("number", "numeric")
             .replace(
                 r#"  "start":
     {
