@@ -1,9 +1,8 @@
 #! /usr/bin/sh
 
-# to use:
-# cd to the root of quizface
-# ZCASHROOT=WHERE_EVER QUIZFACEROOT=splasm TYPEGENROOT=woosh ./utilscripts/pipeline_for_doc_edits.sh
-# 
+# Load Variable Values
+source ${HOME}/.config/quizface.conf
+
 # Update zcashd and start it
 killall zcashd
 set -e
