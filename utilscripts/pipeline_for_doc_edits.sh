@@ -7,8 +7,8 @@ source ${HOME}/.config/quizface.conf
 killall zcashd
 set -e
 cd $ZCASHROOT
-time make
-./src/zcashd -conf=$QUIZFACEROOT/utilscripts/pipeline_zcash.conf &
+time make -j$(nproc)
+./src/zcashd -conf=$QUIZFACEROOT/utilscripts/regtest_zcash.conf &
 # 2.5 seconds appears to be close to the minimum necessary boot time
 sleep 2.5
 cd $QUIZFACEROOT
