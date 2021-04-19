@@ -124,16 +124,6 @@ macro_rules! getaddressbalance {
     };
 }
 
-macro_rules! args_example_values {
-    ($arguments_data:expr) => {
-        $arguments_data.replace(r#"
-1. "operationid"         (array, optional) A list of operation ids we are interested in.  If not provided, examine all operations known to the node."#, r#"[
-        (string, optional)
-        ]
-            A list of operation ids we are interested in.  If not provided, examine all operations known to the node."#)
-    };
-}
-
 macro_rules! args_fromaddresses_array {
     ($arguments_data:expr) => {
         $arguments_data.replace(r#"(array, required) A JSON array with addresses.

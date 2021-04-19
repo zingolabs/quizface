@@ -132,7 +132,8 @@ fn partition_help_text(raw_command_help: &str) -> HashMap<String, String> {
         argument_section = "";
     };
     sections.insert("description".to_string(), description_section.to_string());
-    sections.insert("arguments".to_string(), argument_section.to_string());
+    sections
+        .insert("arguments".to_string(), argument_section.trim().to_string());
 
     //examples
     let examples_section =
@@ -152,7 +153,7 @@ fn split_response_into_results(response_section: String) -> Vec<String> {
 }
 
 fn split_arguments(arguments_section: &str) -> Vec<String> {
-    let argreg = regex::Regex::new(r"\n\d\.").expect("invalid regex");
+    let argreg = regex::Regex::new(r"(?m)^\d\. ").expect("invalid regex");
     let mut a: Vec<String> = argreg
         .split(arguments_section)
         .map(|x| x.trim().to_string())
@@ -199,7 +200,7 @@ fn interpret_help_message(
         .replace(r#"(array, required) An array of json objects representing the amounts to send."#, "");
     let scrubbed_arguments = scrub_arguments(&rpc_name, arguments_data.clone());
     let mut arguments_vec = vec![];
-    if scrubbed_arguments.trim() == "" {
+    if scrubbed_arguments == "" {
         // do not adjust arguments_vec
     } else if scrubbed_arguments.contains("(or)") {
         let split_arguments: Vec<&str> =
@@ -219,7 +220,7 @@ fn interpret_help_message(
         }
         let vec = vec![(split_arguments[1].to_string())];
         arguments_vec.push(json!(annotate_arguments(vec)));
-    } else if scrubbed_arguments.trim().starts_with("[") {
+    } else if scrubbed_arguments.starts_with("[") {
         let (_raw_label, ident) = label_identifier_optional(
             make_raw_label(scrubbed_arguments.clone()),
             "1".to_string(),
