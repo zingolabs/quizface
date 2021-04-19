@@ -9,7 +9,7 @@ killall zcashd
 set -e
 cd $ZCASHROOT
 time make
-./src/zcashd -conf $QUIZFACEROOT/utilscripts/pipeline_zcash.conf &
+./src/zcashd -conf=$QUIZFACEROOT/utilscripts/pipeline_zcash.conf &
 # 2.5 seconds appears to be close to the minimum necessary boot time
 sleep 2.5
 cd $QUIZFACEROOT
