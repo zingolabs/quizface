@@ -1,0 +1,10 @@
+#! /bin/sh
+# copy this file to ${HOME}/.config/quiface.conf and fill in appropriate values
+
+set -x
+
+SRCDIR=
+ZCASHROOT=
+QUIZFACEROOT=
+ZCASHRPCROOT=
+TYPEGENROOT=
