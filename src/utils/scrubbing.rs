@@ -1,11 +1,3 @@
-macro_rules! getaddressbalance {
-    ($arguments_data:expr) => {
-        $arguments_data
-            .replace(r#",..."#, r#""#)
-            .replace(r#""addresses:""#, r#""addresses":"#)
-    };
-}
-
 macro_rules! args_fromaddresses_array {
     ($arguments_data:expr) => {
         $arguments_data.replace(r#"(array, required) A JSON array with addresses.
@@ -32,9 +24,6 @@ pub(crate) fn scrub_arguments(
     match rpc_name {
         "z_mergetoaddress" => {
             args_fromaddresses_array!(arguments_data)
-        }
-        "getaddressbalance" => {
-            getaddressbalance!(arguments_data)
         }
         _ => arguments_data,
     }
