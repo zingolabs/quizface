@@ -1,8 +1,6 @@
 pub mod utils;
 use crate::logging::create_log_dirs;
 use crate::logging::log_masterhelp_output;
-use crate::utils::scrubbing::scrub_arguments;
-use crate::utils::scrubbing::scrub_response;
 use serde_json::{json, map::Map, Value};
 use std::collections::HashMap;
 use std::path::Path;
@@ -172,9 +170,7 @@ fn interpret_help_message(
         return (rpc_name, vec![json!("ENUM: duplicate, duplicate-invalid, duplicate-inconclusive, inconclusive, rejected")], vec![json!({"1_hexdata": "String", "Option<2_jsonparametersobject>": "String"})]);
     }
     let response_data = sections.get("response").unwrap();
-    let scrubbed_response =
-        scrub_response(rpc_name.clone(), response_data.clone());
-    let scrubbed_response = scrubbed_response
+    let scrubbed_response = response_data
         .replace(", ...", "")
         .replace(",...", "")
         .replace("...", "")
@@ -198,13 +194,11 @@ fn interpret_help_message(
 
     let arguments_data = sections.get("arguments").unwrap()
         .replace(r#"(array, required) An array of json objects representing the amounts to send."#, "");
-    let scrubbed_arguments = scrub_arguments(&rpc_name, arguments_data.clone());
     let mut arguments_vec = vec![];
-    if scrubbed_arguments == "" {
+    if arguments_data == "".to_string() {
         // do not adjust arguments_vec
-    } else if scrubbed_arguments.contains("(or)") {
-        let split_arguments: Vec<&str> =
-            scrubbed_arguments.split("(or)").collect();
+    } else if arguments_data.contains("(or)") {
+        let split_arguments: Vec<&str> = arguments_data.split("(or)").collect();
         if !split_arguments.len() == 2 {
             panic!("not two arguments with '(or)'");
         }
@@ -220,17 +214,17 @@ fn interpret_help_message(
         }
         let vec = vec![(split_arguments[1].to_string())];
         arguments_vec.push(json!(annotate_arguments(vec)));
-    } else if scrubbed_arguments.starts_with("[") {
+    } else if arguments_data.starts_with("[") {
         let (_raw_label, ident) = label_identifier_optional(
-            make_raw_label(scrubbed_arguments.clone()),
+            make_raw_label(arguments_data.clone()),
             "1".to_string(),
         );
-        let arg = vec![get_array_terminal(scrubbed_arguments)];
+        let arg = vec![get_array_terminal(arguments_data)];
         let mut arg_map = serde_json::map::Map::new();
         arg_map.insert(ident.clone(), serde_json::Value::Array(arg.clone()));
         arguments_vec.push(json!({ ident: arg }));
     } else {
-        let arguments = split_arguments(&scrubbed_arguments);
+        let arguments = split_arguments(&arguments_data);
         arguments_vec.push(json!(annotate_arguments(arguments)));
     }
     (rpc_name, result_vec, arguments_vec)
@@ -486,6 +480,7 @@ mod unit {
     }
 
     // ----------------scrub_result-------------------
+    #[ignore]
     #[test]
     fn scrub_result_getblockchaininfo_scrubbed() {
         let expected_result = test::HELP_GETBLOCKCHAININFO_RESULT_SCRUBBED;
