@@ -1,9 +1,3 @@
-macro_rules! setban {
-    ($arguments_data:expr) => {
-        $arguments_data.replace(r#"(/netmask)"#, r#""#)
-    };
-}
-
 macro_rules! getaddressbalance {
     ($arguments_data:expr) => {
         $arguments_data
@@ -38,9 +32,6 @@ pub(crate) fn scrub_arguments(
     match rpc_name {
         "z_mergetoaddress" => {
             args_fromaddresses_array!(arguments_data)
-        }
-        "setban" => {
-            setban!(arguments_data)
         }
         "getaddressbalance" => {
             getaddressbalance!(arguments_data)
