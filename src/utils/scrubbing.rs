@@ -1,12 +1,3 @@
-macro_rules! verifytxoutproof {
-    ($result_data:expr) => {
-        $result_data
-            .replace(
-                r#"["txid"]      (array, strings) The txid(s) which the proof commits to, or empty array if the proof is invalid"#,
-                "[\n\"txid\"   (string) The txid(s) which the proof commits to, or empty array if the proof is invalid\n]")
-    };
-}
-
 macro_rules! setban {
     ($arguments_data:expr) => {
         $arguments_data.replace(r#"(/netmask)"#, r#""#)
@@ -59,9 +50,5 @@ pub(crate) fn scrub_arguments(
 }
 
 pub(crate) fn scrub_response(rpc_name: String, result_data: String) -> String {
-    if rpc_name == "verifytxoutproof".to_string() {
-        verifytxoutproof!(result_data)
-    } else {
-        result_data
-    }
+    result_data
 }
