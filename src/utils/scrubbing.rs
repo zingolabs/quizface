@@ -1,49 +1,3 @@
-macro_rules! getrawmempool {
-    ($result_data:expr) => {
-        $result_data
-            .replace(r#"Result: (for verbose = false):
-[                     (json array of string)
-  "transactionid"     (string) The transaction id
-  ,...
-]
-
-Result: (for verbose = true):
-{                           (json object)
-  "transactionid" : {       (json object)
-    "size" : n,             (numeric) transaction size in bytes
-    "fee" : n,              (numeric) transaction fee in ZEC
-    "time" : n,             (numeric) local time transaction entered pool in seconds since 1 Jan 1970 GMT
-    "height" : n,           (numeric) block height when transaction entered pool
-    "startingpriority" : n, (numeric) priority when transaction entered pool
-    "currentpriority" : n,  (numeric) transaction priority now
-    "depends" : [           (array) unconfirmed transactions used as inputs for this transaction
-        "transactionid",    (string) parent transaction id
-       ... ]
-  }, ...
-}"#,
-
-r#"Result:
-[                     
-  "transactionid"     (string) The transaction id
-]
-
-Result:
-{
-  "transactionid" : {
-    "size" : n,             (numeric) transaction size in bytes
-    "fee" : n,              (numeric) transaction fee in ZEC
-    "time" : n,             (numeric) local time transaction entered pool in seconds since 1 Jan 1970 GMT
-    "height" : n,           (numeric) block height when transaction entered pool
-    "startingpriority" : n, (numeric) priority when transaction entered pool
-    "currentpriority" : n,  (numeric) transaction priority now
-    "depends" : [
-        "transactionid",    (string) parent transaction id
-        ]
-  }
-}"#)
-     };
-}
-
 macro_rules! getblockheader {
     ($result_data:expr) => {
         $result_data.replace(r#"Result (for verbose = true):
@@ -150,8 +104,6 @@ pub(crate) fn scrub_response(rpc_name: String, result_data: String) -> String {
         verifytxoutproof!(result_data)
     } else if rpc_name == "getblockheader".to_string() {
         getblockheader!(result_data)
-    } else if rpc_name == "getrawmempool".to_string() {
-        getrawmempool!(result_data)
     } else {
         result_data
     }
