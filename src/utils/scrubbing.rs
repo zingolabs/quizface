@@ -1,11 +1,3 @@
-macro_rules! z_validateaddress {
-    ($result_data:expr) => {
-        $result_data
-            .replace(r#"[sprout]"#, r#"<sprout>"#)
-            .replace(r#"[sapling]"#, r#"<sapling>"#)
-    };
-}
-
 macro_rules! getrawmempool {
     ($result_data:expr) => {
         $result_data
@@ -160,8 +152,6 @@ pub(crate) fn scrub_response(rpc_name: String, result_data: String) -> String {
         getblockheader!(result_data)
     } else if rpc_name == "getrawmempool".to_string() {
         getrawmempool!(result_data)
-    } else if rpc_name == "z_validateaddress".to_string() {
-        z_validateaddress!(result_data)
     } else {
         result_data
     }
