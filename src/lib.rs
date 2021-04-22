@@ -932,23 +932,33 @@ mod unit {
     fn interpret_help_message_getblockchaininfo_softforks_fragment() {
         let expected_incoming = test::GETBLOCKCHAININFO_SOFTFORK_FRAGMENT;
         let expected_result = serde_json::json!(
-            {"softforks":[
-                {"enforce": {"found":"Decimal",
-                             "required":"Decimal",
-                             "status":"bool",
-                             "window":"Decimal"},
-                            "id":"String",
-                            "reject":{"found":"Decimal",
-                                      "required":"Decimal",
-                                      "status":"bool",
-                                      "window":"Decimal"},
-                            "version":"Decimal"}]
+            {
+                "softforks": [
+                    {
+                        "enforce": {
+                            "found":"Decimal",
+                            "required":"Decimal",
+                            "status":"bool",
+                            "window":"Decimal"
+                        },
+                        "id":"String",
+                        "reject": {
+                            "found":"Decimal",
+                            "required":"Decimal",
+                            "status":"bool",
+                            "window":"Decimal"
+                        },
+                        "version":"Decimal"
+                    }
+                ]
             }
         );
-        assert_eq!(
-            interpret_help_message(expected_incoming).1[0],
-            expected_result
+        let interpreted = interpret_help_message(expected_incoming);
+        println!(
+            "{}",
+            serde_json::to_string_pretty(&interpreted.1[0]).unwrap()
         );
+        assert_eq!(expected_result, interpreted.1[0]);
     }
 
     #[ignore]
