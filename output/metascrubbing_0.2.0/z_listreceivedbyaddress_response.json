@@ -1,0 +1,16 @@
+[
+  {
+    "amount": "Decimal",
+    "amountZat": "Decimal",
+    "blockheight": "Decimal",
+    "blockindex": "Decimal",
+    "blocktime": "Decimal",
+    "change": "bool",
+    "confirmations": "Decimal",
+    "jsindex": "Decimal",
+    "jsoutindex": "Decimal",
+    "memo": "String",
+    "outindex": "Decimal",
+    "txid": "String"
+  }
+]

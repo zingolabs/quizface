@@ -1,0 +1,40 @@
+[
+  {
+    "bits": "hexadecimal",
+    "chainwork": "hexadecimal",
+    "confirmations": "Decimal",
+    "deltas": [
+      {
+        "index": "Decimal",
+        "inputs": [
+          {
+            "address": "String",
+            "index": "Decimal",
+            "prevout": "Decimal",
+            "prevtxid": "String",
+            "satoshis": "Decimal"
+          }
+        ],
+        "outputs": [
+          {
+            "address": "String",
+            "index": "Decimal",
+            "satoshis": "Decimal"
+          }
+        ],
+        "txid": "hexadecimal"
+      }
+    ],
+    "difficulty": "Decimal",
+    "hash": "String",
+    "height": "Decimal",
+    "mediantime": "Decimal",
+    "merkleroot": "hexadecimal",
+    "nextblockhash": "hexadecimal",
+    "nonce": "hexadecimal",
+    "previousblockhash": "hexadecimal",
+    "size": "Decimal",
+    "time": "Decimal",
+    "version": "Decimal"
+  }
+]

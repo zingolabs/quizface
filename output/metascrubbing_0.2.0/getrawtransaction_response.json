@@ -1,0 +1,64 @@
+[
+  "String",
+  {
+    "Option<expiryheight>": "Decimal",
+    "blockhash": "String",
+    "blocktime": "Decimal",
+    "confirmations": "Decimal",
+    "hex": "String",
+    "in_active_chain": "bool",
+    "locktime": "Decimal",
+    "size": "Decimal",
+    "time": "Decimal",
+    "txid": "String",
+    "version": "Decimal",
+    "vin": [
+      {
+        "scriptSig": {
+          "asm": "String",
+          "hex": "String"
+        },
+        "sequence": "Decimal",
+        "txid": "String",
+        "vout": "Decimal"
+      }
+    ],
+    "vjoinsplit": [
+      {
+        "anchor": "String",
+        "ciphertexts": [
+          "String"
+        ],
+        "commitments": [
+          "String"
+        ],
+        "macs": [
+          "String"
+        ],
+        "nullifiers": [
+          "String"
+        ],
+        "onetimePubKey": "String",
+        "proof": "String",
+        "randomSeed": "String",
+        "vpub_new": "Decimal",
+        "vpub_old": "Decimal"
+      }
+    ],
+    "vout": [
+      {
+        "n": "Decimal",
+        "scriptPubKey": {
+          "addresses": [
+            "String"
+          ],
+          "asm": "String",
+          "hex": "String",
+          "reqSigs": "Decimal",
+          "type": "String"
+        },
+        "value": "Decimal"
+      }
+    ]
+  }
+]

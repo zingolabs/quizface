@@ -1,0 +1,15 @@
+[
+  {
+    "1": {
+      "Option<chainInfo>": "bool",
+      "Option<end>": "Decimal",
+      "Option<start>": "Decimal",
+      "addresses": [
+        "String"
+      ]
+    }
+  },
+  {
+    "1_address": "String"
+  }
+]

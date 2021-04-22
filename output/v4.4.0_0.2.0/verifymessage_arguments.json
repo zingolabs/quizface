@@ -1,0 +1,7 @@
+[
+  {
+    "1_zcashaddress": "String",
+    "2_signature": "String",
+    "3_message": "String"
+  }
+]

@@ -1,0 +1,13 @@
+[
+  [
+    {
+      "address": "String",
+      "index": "Decimal",
+      "prevout": "String",
+      "prevtxid": "String",
+      "satoshis": "Decimal",
+      "timestamp": "Decimal",
+      "txid": "String"
+    }
+  ]
+]

@@ -1,0 +1,15 @@
+[
+  {
+    "complete": "bool",
+    "errors": [
+      {
+        "error": "String",
+        "scriptSig": "String",
+        "sequence": "Decimal",
+        "txid": "String",
+        "vout": "Decimal"
+      }
+    ],
+    "hex": "String"
+  }
+]

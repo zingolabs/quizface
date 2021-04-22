@@ -1,0 +1,6 @@
+[
+  {
+    "1_dns": "bool",
+    "Option<2_node>": "String"
+  }
+]

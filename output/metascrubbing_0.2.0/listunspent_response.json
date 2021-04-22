@@ -1,0 +1,17 @@
+[
+  [
+    {
+      "account": "String",
+      "address": "String",
+      "amount": "Decimal",
+      "amountZat": "Decimal",
+      "confirmations": "Decimal",
+      "generated": "bool",
+      "redeemScript": "String",
+      "scriptPubKey": "String",
+      "spendable": "bool",
+      "txid": "String",
+      "vout": "Decimal"
+    }
+  ]
+]

@@ -14,6 +14,7 @@ fn name_logdirs() -> (String, String, String) {
 }
 
 pub fn get_zcashd_version() -> String {
+    /*
     let version = std::process::Command::new("zcash-cli")
         .arg("--version")
         .output()
@@ -28,6 +29,8 @@ pub fn get_zcashd_version() -> String {
         .last()
         .unwrap()
         .to_string()
+    */
+    "metascrubbing".to_string()
 }
 
 pub fn create_version_name() -> String {
