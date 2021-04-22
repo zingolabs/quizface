@@ -887,7 +887,6 @@ mod unit {
         assert_eq!(valid_help_in.1[0], test::valid_getinfo_annotation());
     }
 
-    #[ignore]
     #[test]
     fn interpret_help_message_upgrades_in_obj_extracted() {
         dbg!(interpret_help_message(test::UPGRADES_IN_OBJ_EXTRACTED));
@@ -929,11 +928,23 @@ mod unit {
         assert_eq!(valid_help_in.1[0], test::valid_getinfo_annotation());
     }
 
-    #[ignore]
     #[test]
     fn interpret_help_message_getblockchaininfo_softforks_fragment() {
         let expected_incoming = test::GETBLOCKCHAININFO_SOFTFORK_FRAGMENT;
-        let expected_result = serde_json::json!({"softforks":[{"enforce":{"found":"Decimal","required":"Decimal","status":"bool","window":"Decimal"},"id":"String","reject":{"found":"Decimal","required":"Decimal","status":"bool","window":"Decimal"},"version":"Decimal"}]});
+        let expected_result = serde_json::json!(
+            {"softforks":[
+                {"enforce": {"found":"Decimal",
+                             "required":"Decimal",
+                             "status":"bool",
+                             "window":"Decimal"},
+                            "id":"String",
+                            "reject":{"found":"Decimal",
+                                      "required":"Decimal",
+                                      "status":"bool",
+                                      "window":"Decimal"},
+                            "version":"Decimal"}]
+            }
+        );
         assert_eq!(
             interpret_help_message(expected_incoming).1[0],
             expected_result
