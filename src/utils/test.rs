@@ -89,7 +89,12 @@ Result:
            "required": xx,     (numeric) number of blocks required to trigger
            "window": xx,       (numeric) maximum size of examined window of recent blocks
         },
-        "reject": { ... }      (object) progress toward rejecting pre-softfork blocks (same fields as "enforce")
+        "reject": {
+           "status": (boolean)
+           "found": (numeric)
+           "required": (numeric)
+           "window": (numeric)
+        }
      }, ...
   ],
 }
