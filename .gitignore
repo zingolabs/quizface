@@ -4,3 +4,4 @@ Cargo.lock
 /output/v4.2*
 /output/v4.3.0_0.1.0/*
 /output/*-*/
+/v4.4.0_helpoutput*
