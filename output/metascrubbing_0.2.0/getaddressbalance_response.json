@@ -1,6 +1,6 @@
 [
   {
-    "balance": "String",
-    "received": "String"
+    "balance": "Decimal",
+    "received": "Decimal"
   }
 ]
