@@ -16,3 +16,4 @@ cargo build -q && cargo doc -q && cargo test -q && cat $QUIZFACEROOT/lists/passi
 QUIZFOUT=$QUIZFACEROOT/output/`ls -1rct $QUIZFACEROOT/output/ | tail -n 1`
 cd $ZCASHRPCROOT && cargo test -q --workspace
 cd $TYPEGENROOT && cargo run -q $QUIZFOUT
+cd $ZCASHROOT && ./src/zcash-gtest --gtest_filter=rpc.CheckExperimentalDisabledHelpMsg
