@@ -34,7 +34,7 @@ pub fn prescrub(rpc_name: &str, raw_rpc_name_help: &str) -> String {
         "submitblock" => { 
             raw_rpc_name_help.replace("Arguments", "Arguments:") 
         }
-        "settxfee" | "getgenerate" | "generate" => {
+        "settxfee" | "getgenerate" => {
             raw_rpc_name_help.replace("Result", "Result:")
         }
         "help" => raw_rpc_name_help
