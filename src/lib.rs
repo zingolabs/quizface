@@ -94,6 +94,7 @@ fn partition_help_text(raw_command_help: &str) -> HashMap<String, String> {
     use regex::Regex;
     let mut sections = HashMap::new();
 
+    let raw_command_help = raw_command_help.trim_start_matches("Usage: ");
     //rpc_name
     let rpc_name = &raw_command_help
         .split_ascii_whitespace()
