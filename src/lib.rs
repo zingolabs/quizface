@@ -170,7 +170,9 @@ fn interpret_help_message(
         return (rpc_name, vec![json!("ENUM: duplicate, duplicate-invalid, duplicate-inconclusive, inconclusive, rejected")], vec![json!({"1_hexdata": "String", "Option<2_jsonparametersobject>": "String"})]);
     }
     let response_data = sections.get("response").unwrap();
-    let scrubbed_response = response_data
+    let mut result_vec = vec![];
+    if !response_data.contains("This RPC does not return a result by default") {
+        let scrubbed_response = response_data
         .replace(", ...", "")
         .replace(",...", "")
         .replace("...", "")
@@ -182,13 +184,13 @@ fn interpret_help_message(
         .replace(r#"(or, if chainInfo is true):"#, "Result:")
         .replace(r#"MagicBean:x.y.z[-v]"#, r#"MagicBean"#)
         .replace(r#"(array, required) An array of json objects representing the amounts to send.\n"#, "");
-    let results = split_response_into_results(scrubbed_response);
-    let mut result_vec = vec![];
-    if results.len() == 1usize && results[0] == "" {
-        // do not adjust result_vec
-    } else {
-        for result in results {
-            result_vec.push(annotate_result(&mut result.chars()));
+        let results = split_response_into_results(scrubbed_response);
+        if results.len() == 1usize && results[0] == "" {
+            // do not adjust result_vec
+        } else {
+            for result in results {
+                result_vec.push(annotate_result(&mut result.chars()));
+            }
         }
     }
 
