@@ -4,10 +4,10 @@ pub fn prescrub(rpc_name: &str, raw_rpc_name_help: &str) -> String {
         "importaddress"      // Za
         | "importpubkey"     // Za
         | "encryptwallet"    // Za
-        | "importprivkey"
-        | "importwallet"
-        | "setlogfilter"
-        | "setgenerate"
+        | "importprivkey"    // Za
+        | "importwallet"     // Za
+        | "setlogfilter"     // Za
+        | "setgenerate"      // Za
         | "z_validatepaymentdisclosure" => {
             raw_rpc_name_help.replace("Examples:", "Result:\nExamples:")
         }
