@@ -56,19 +56,6 @@ pub fn prescrub(rpc_name: &str, raw_rpc_name_help: &str) -> String {
 Examples:
 "#,
         ),
-        "zcrawkeygen" => {
-            let intermediate_rpc_name_help =
-                raw_rpc_name_help.replace("Output:", "Result:")
-                .replace("zcaddr,", "(string) zcaddr,")
-                .replace("zcsecretkey,", "(string) zcsecretkey,")
-                .replace("zcviewingkey,", "(string) zcviewingkey,");
-            intermediate_rpc_name_help.as_str().replace(
-                "}",
-                r#"}
-            Examples:
-            "#,
-            )
-        }
         "stop" => raw_rpc_name_help.replace(
             r#"stop"#,
             r#"stop
