@@ -82,24 +82,6 @@ Examples:
         Examples:
         "#,
         ),
-        "zcbenchmark" => raw_rpc_name_help.replace(
-            r#"Output: [
-  {
-    "runningtime": runningtime
-  },
-  {
-    "runningtime": runningtime
-  }
-  ...
-]"#,
-            r#"Result: [
-  {
-    "runningtime": (numeric)
-  }
-]
-Examples:
-"#,
-        ),
         _ => raw_rpc_name_help.to_string(),
     }
 }
