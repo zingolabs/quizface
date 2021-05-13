@@ -106,9 +106,6 @@ Examples:
             r.push_str("\nArguments:\nResult:\nExamples:\n");
             r
         }
-        "getunconfirmedbalance" => raw_rpc_name_help.replace(
-            "Returns the server's total unconfirmed balance",
-            "\nResult:\n\"balance\"  (numeric) the server's total unconfirmed balance\n\nExamples:"),
         _ => raw_rpc_name_help.to_string(),
     }
 }
