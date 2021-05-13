@@ -23,19 +23,11 @@ pub fn prescrub(rpc_name: &str, raw_rpc_name_help: &str) -> String {
             raw_rpc_name_help.replace("Examples:", "Result:\nExamples:")
                 .replace("Arguments", "Arguments:")
         }
-        "submitblock" => { 
-            raw_rpc_name_help.replace("Arguments", "Arguments:") 
-        }
         "settxfee" => {
             raw_rpc_name_help.replace("Result", "Result:")
         }
-        "help" => raw_rpc_name_help
-            .replace("The help text", "The help text \n Examples:"),
         "estimatepriority" | "estimatefee" => {
             raw_rpc_name_help.replace("Example:", "Examples:")
-        }
-        "createrawtransaction" => {
-            raw_rpc_name_help.replace("Examples", "Examples:")
         }
         "z_getmigrationstatus" => {
             raw_rpc_name_help.replace("}", "}\nExamples:\n")
@@ -81,12 +73,6 @@ Examples:
             r#"stop"#,
             r#"stop
                                  Result:
-                                 Examples:
-                                 "#,
-        ),
-        "gettxoutproof" => raw_rpc_name_help.replace(
-            r#"proof."#,
-            r#"proof.
                                  Examples:
                                  "#,
         ),
