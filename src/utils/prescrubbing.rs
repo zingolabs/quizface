@@ -1,21 +1,13 @@
 pub fn prescrub(rpc_name: &str, raw_rpc_name_help: &str) -> String {
     use regex::Regex;
     match rpc_name {
-        "importaddress"
-        | "importpubkey"
-        | "encryptwallet"
-        | "addnode"
-        | "disconnectnode"
+        "importaddress"      // Za
+        | "importpubkey"     // Za
+        | "encryptwallet"    // Za
         | "importprivkey"
         | "importwallet"
         | "setlogfilter"
-        | "setban"
-        | "z_importwallet"
-        | "clearbanned"
-        | "setaccount"
         | "setgenerate"
-        | "listbanned"
-        | "ping"
         | "z_validatepaymentdisclosure" => {
             raw_rpc_name_help.replace("Examples:", "Result:\nExamples:")
         }
