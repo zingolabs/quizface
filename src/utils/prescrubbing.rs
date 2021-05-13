@@ -100,8 +100,7 @@ Examples:
 Examples:
 "#,
         ),
-        "zcsamplejoinsplit"
-        | "z_setmigration" => {
+        "zcsamplejoinsplit" => {
             let mut r = raw_rpc_name_help.to_string();
             r.push_str("\nArguments:\nResult:\nExamples:\n");
             r
