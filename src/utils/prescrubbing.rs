@@ -1,9 +1,6 @@
 pub fn prescrub(rpc_name: &str, raw_rpc_name_help: &str) -> String {
     use regex::Regex;
     match rpc_name {
-        "z_validatepaymentdisclosure" => {
-            raw_rpc_name_help.replace("Examples:", "Result:\nExamples:")
-        }
         "getrawtransaction" => Regex::new(r"Result \(if verbose.*\):")
             .unwrap()
             .replace_all(raw_rpc_name_help, "Result:")
