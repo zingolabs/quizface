@@ -16,7 +16,6 @@ pub fn prescrub(rpc_name: &str, raw_rpc_name_help: &str) -> String {
             .replace("Examples:", "Result:\nExamples:")
             .replace("Arguments", "Arguments:"),
         "settxfee" => raw_rpc_name_help.replace("Result", "Result:"),
-        "estimatefee" => raw_rpc_name_help.replace("Example:", "Examples:"),
         _ => raw_rpc_name_help.to_string(),
     }
 }
