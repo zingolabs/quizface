@@ -26,22 +26,6 @@ pub fn prescrub(rpc_name: &str, raw_rpc_name_help: &str) -> String {
             raw_rpc_name_help.replace("}", "}\nExamples:\n")
                 .replace(r#""migration_txids": [txids]                (json array of strings) An array of all migration txids involving this wallet"#, "\"migration_txids\": [\n \"txids\"  (string) An array of all migration txids involving this wallet\n]")
         }
-        "zcrawjoinsplit" => raw_rpc_name_help.replace(
-            r#"Output: {
-  "encryptednote1": enc1,
-  "encryptednote2": enc2,
-  "rawtxn": rawtxout
-}"#,
-            r#"Result: 
-{
-  "encryptednote1": (string) enc1,
-  "encryptednote2": (string) enc2,
-  "rawtxn": (string) rawtxout
-}
-
-Examples:
-"#,
-        ),
         _ => raw_rpc_name_help.to_string(),
     }
 }
