@@ -172,7 +172,7 @@ fn interpret_help_message(
     }
     let response_data = sections.get("response").unwrap();
     let mut result_vec = vec![];
-    if !response_data.contains("This RPC does not return a result by default") {
+    if !response_data.contains("This RPC does not return a result") {
         let scrubbed_response = response_data
         .replace(", ...", "")
         .replace(",...", "")
@@ -198,37 +198,41 @@ fn interpret_help_message(
     let arguments_data = sections.get("arguments").unwrap()
         .replace(r#"(array, required) An array of json objects representing the amounts to send."#, "");
     let mut arguments_vec = vec![];
-    if arguments_data == "".to_string() {
-        // do not adjust arguments_vec
-    } else if arguments_data.contains("(or)") {
-        let split_arguments: Vec<&str> = arguments_data.split("(or)").collect();
-        if !split_arguments.len() == 2 {
-            panic!("not two arguments with '(or)'");
-        }
-        let mut arg_chars = split_arguments[0].trim().chars();
-        match arg_chars.next().unwrap() {
-            '{' => {
-                let annotated_object = annotate_object(&mut arg_chars);
-                arguments_vec.push(json!({ "1": annotated_object }));
+    if !arguments_data.contains("This RPC does not take arguments") {
+        if arguments_data == "".to_string() {
+            // do not adjust arguments_vec
+        } else if arguments_data.contains("(or)") {
+            let split_arguments: Vec<&str> =
+                arguments_data.split("(or)").collect();
+            if !split_arguments.len() == 2 {
+                panic!("not two arguments with '(or)'");
             }
-            _ => {
-                panic!("no support for other formats");
+            let mut arg_chars = split_arguments[0].trim().chars();
+            match arg_chars.next().unwrap() {
+                '{' => {
+                    let annotated_object = annotate_object(&mut arg_chars);
+                    arguments_vec.push(json!({ "1": annotated_object }));
+                }
+                _ => {
+                    panic!("no support for other formats");
+                }
             }
+            let vec = vec![(split_arguments[1].to_string())];
+            arguments_vec.push(json!(annotate_arguments(vec)));
+        } else if arguments_data.starts_with("[") {
+            let (_raw_label, ident) = label_identifier_optional(
+                make_raw_label(arguments_data.clone()),
+                "1".to_string(),
+            );
+            let arg = vec![get_array_terminal(arguments_data)];
+            let mut arg_map = serde_json::map::Map::new();
+            arg_map
+                .insert(ident.clone(), serde_json::Value::Array(arg.clone()));
+            arguments_vec.push(json!({ ident: arg }));
+        } else {
+            let arguments = split_arguments(&arguments_data);
+            arguments_vec.push(json!(annotate_arguments(arguments)));
         }
-        let vec = vec![(split_arguments[1].to_string())];
-        arguments_vec.push(json!(annotate_arguments(vec)));
-    } else if arguments_data.starts_with("[") {
-        let (_raw_label, ident) = label_identifier_optional(
-            make_raw_label(arguments_data.clone()),
-            "1".to_string(),
-        );
-        let arg = vec![get_array_terminal(arguments_data)];
-        let mut arg_map = serde_json::map::Map::new();
-        arg_map.insert(ident.clone(), serde_json::Value::Array(arg.clone()));
-        arguments_vec.push(json!({ ident: arg }));
-    } else {
-        let arguments = split_arguments(&arguments_data);
-        arguments_vec.push(json!(annotate_arguments(arguments)));
     }
     (rpc_name, result_vec, arguments_vec)
 }
