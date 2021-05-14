@@ -1,8 +1,7 @@
 pub fn prescrub(rpc_name: &str, raw_rpc_name_help: &str) -> String {
     use regex::Regex;
     match rpc_name {
-         "importprivkey"    // Za
-        | "importwallet"     // Za
+        "importwallet"     // Za
         | "setlogfilter"     // Za
         | "setgenerate"      // Za
         | "z_validatepaymentdisclosure" => {
