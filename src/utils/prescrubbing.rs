@@ -9,7 +9,6 @@ pub fn prescrub(rpc_name: &str, raw_rpc_name_help: &str) -> String {
             .unwrap()
             .replace_all(raw_rpc_name_help, "Result:")
             .to_string(),
-        "settxfee" => raw_rpc_name_help.replace("Result", "Result:"),
         _ => raw_rpc_name_help.to_string(),
     }
 }
