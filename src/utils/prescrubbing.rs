@@ -63,12 +63,6 @@ Examples:
                                  Examples:
                                  "#,
         ),
-        "verifytxoutproof" => raw_rpc_name_help.replace(
-            r#"proof is invalid"#,
-            r#"proof is invalid
-        Examples:
-        "#,
-        ),
         _ => raw_rpc_name_help.to_string(),
     }
 }
