@@ -55,13 +55,6 @@ pub fn prescrub(rpc_name: &str, raw_rpc_name_help: &str) -> String {
 Examples:
 "#,
         ),
-        "stop" => raw_rpc_name_help.replace(
-            r#"stop"#,
-            r#"stop
-                                 Result:
-                                 Examples:
-                                 "#,
-        ),
         _ => raw_rpc_name_help.to_string(),
     }
 }
