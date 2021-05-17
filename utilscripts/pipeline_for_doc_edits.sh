@@ -16,6 +16,6 @@ cargo build -q && cargo doc -q && cargo test -q
 rm -r output/metascrubbing_0.2.0
 cat $QUIZFACEROOT/lists/passing.txt | PATH=$PATH:$ZCASHROOT/src xargs cargo run -q
 QUIZFOUT=$QUIZFACEROOT/output/`ls -1rct $QUIZFACEROOT/output/ | tail -n 1`
-cd $ZCASHRPCROOT && cargo test -q --workspace
-cd $TYPEGENROOT && cargo run -q $QUIZFOUT
+cd $TYPEGENROOT && cargo test -q --workspace && cargo run -q $QUIZFOUT
+cd $ZCASHRPCROOT && cargo test --workspace
 cd $ZCASHROOT && ./src/zcash-gtest --gtest_filter=rpc.CheckExperimentalDisabledHelpMsg
